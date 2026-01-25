@@ -1,0 +1,45 @@
+
+.cv-template-three  {
+  .resume {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .left-column {
+    background: #2c3e50;
+    color: white;
+    padding: 30px;
+  }
+  
+  .right-column {
+    padding: 30px;
+  }
+  
+  .profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid white;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  h2, h3 {
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+  }
+  
+  .skills span, .languages span {
+    display: block;
+    background: #1abc9c;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    text-align: center;
+  }
+}

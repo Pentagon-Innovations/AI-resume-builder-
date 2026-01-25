@@ -1,0 +1,56 @@
+.cv-template-four  {
+.four {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+}
+
+.four .container {
+    display: flex;
+    max-width: 900px;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.four .left-column {
+    width: 60%;
+    padding: 20px;
+}
+
+.four .right-column {
+    width: 40%;
+    background: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.four .profile-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 15px;
+}
+
+.four h1,
+.four h2 {
+    margin-bottom: 10px;
+}
+
+.four .section {
+    margin-bottom: 20px;
+}
+
+.four .experience-item,
+.four .education-item {
+    margin-bottom: 15px;
+}
+
+.four .skills li {
+    list-style: none;
+    padding: 5px 0;
+}
+}

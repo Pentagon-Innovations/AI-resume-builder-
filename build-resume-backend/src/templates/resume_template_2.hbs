@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+  <title>{{firstName}} {{lastName}} | {{jobTitle}} | {{email}}</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+ 
+  <style>
+    body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .resume {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .left-column {
+    background: #2c3e50;
+    color: white;
+    padding: 30px;
+  }
+  
+  .right-column {
+    padding: 30px;
+  }
+  
+  .profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid white;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  h2, h3 {
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+  }
+  
+  .skills span, .languages span {
+    display: block;
+    background: #1abc9c;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    text-align: center;
+  }
+    </style>
+<div class="resume">
+  <!-- Left Column -->
+  <div class="left-column">
+    <img src="{{profilePhotoBase64}}" alt="Profile Picture" class="profile-pic" />
+    <h2>{{firstName}} {{lastName}}</h2>
+    <p>{{jobTitle}}</p>
+    <hr />
+    <div class="section">
+      <h3>Contact</h3>
+      <p>Email: {{email}}</p>
+      <p>Phone: {{phone}}</p>
+      <p>Address: {{address}}</p>
+    </div>
+    <div class="section skills">
+      <h3>Skills</h3>
+      {{#each skills}}
+        <span>{{name}}</span>
+      {{/each}}
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="right-column">
+    <div class="section">
+      <h3>Summary</h3>
+      <p>{{summery}}</p>
+    </div>
+    <div class="section">
+      <h3>Work Experience</h3>
+      {{#each experience}}
+        <div>
+          <h4>{{title}} | {{companyName}}</h4>
+          <p>{{ startDate}} - {{ endDate}}</p>
+          <div>{{{description}}}</div>
+        </div>
+      {{/each}}
+    </div>
+    <div class="section">
+      <h3>Education</h3>
+      {{#each education}}
+        <div>
+          <h4>{{degree}} in {{major}}</h4>
+          <p>{{universityName}} | {{ startDate}} - {{ endDate}}</p>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</div>

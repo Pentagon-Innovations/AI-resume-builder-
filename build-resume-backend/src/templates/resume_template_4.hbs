@@ -1,0 +1,149 @@
+
+<html lang="en">
+  <head>
+    <style data-emotion="cl-internal" data-s=""></style>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Resume Builder</title>
+    <base href="/" />
+    <style>
+    .four {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f4f4;
+    }
+
+    .four .container {
+        display: flex;
+        max-width: 900px;
+        margin: 20px auto;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .four .left-column {
+        width: 60%;
+        padding: 20px;
+    }
+
+    .four .right-column {
+        width: 40%;
+        background: #333;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .four .profile-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 15px;
+    }
+
+    .four h1,
+    .four h2 {
+        margin-bottom: 10px;
+    }
+
+    .four .section {
+        margin-bottom: 20px;
+    }
+
+    .four .experience-item,
+    .four .education-item {
+        margin-bottom: 15px;
+    }
+
+    .four .skills li {
+        list-style: none;
+        padding: 5px 0;
+    }
+
+        </style>
+        </head>
+        <body>
+<div style="background-color: #f7fafc; padding: 24px;">
+  <div style="max-width: 900px; margin: 0 auto; background-color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 32px; display: flex;">
+    
+    <!-- Left Column -->
+    <div style="width: 65%; padding-right: 24px;">
+      <h1 style="font-size: 24px; font-weight: bold; color: #2d3748;">{{firstName}} {{lastName}}</h1>
+      <h3 style="font-size: 20px; color: #4a5568;">{{jobTitle}}</h3>
+
+      <!-- Personal Summary -->
+      <div style="margin-top: 16px;">
+        <h2 style="font-size: 18px; font-weight: bold; color: #4a5568;">Personal Summary</h2>
+        <p style="color: #718096; margin-top: 8px;">{{summery}}</p>
+      </div>
+
+      <!-- Experience -->
+      {{#if experience.length}}
+      <div style="margin-top: 24px;">
+        <h2 style="font-size: 18px; font-weight: bold; color: #4a5568;">Experience</h2>
+        {{#each experience}}
+        <div style="margin-top: 16px; border-left: 4px solid #4299e1; padding-left: 16px;">
+          <h3 style="font-size: 16px; font-weight: bold;">{{title}} - {{companyName}}</h3>
+          <p style="color: #718096; font-size: 14px;">{{city}}, {{state}} ({{startDate}} - {{endDate}})</p>
+          <div style="color: #4a5568; font-size: 14px; margin-top: 8px;">{{{description}}}</div>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      <!-- Education -->
+      {{#if education.length}}
+      <div style="margin-top: 24px;">
+        <h2 style="font-size: 18px; font-weight: bold; color: #4a5568;">Education</h2>
+        {{#each education}}
+        <div style="margin-top: 16px; border-left: 4px solid #48bb78; padding-left: 16px;">
+          <h3 style="font-size: 16px; font-weight: bold;">{{degree}} in {{major}}</h3>
+          <p style="color: #718096; font-size: 14px;">{{universityName}} ({{startDate}} - {{endDate}})</p>
+          <p style="color: #4a5568; font-size: 14px;">{{description}}</p>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+
+    <!-- Right Column -->
+    <div style="width: 35%; background-color: #edf2f7; padding: 24px; border-radius: 8px;">
+      <img src="{{getImageSrc profilePhoto}}" alt="Profile Photo" style="width: 128px; height: 128px; display: block; margin: 0 auto; border-radius: 50%; border: 4px solid #cbd5e0;" />
+
+      <!-- Personal Information -->
+      <div style="margin-top: 24px;">
+        <h2 style="font-size: 18px; font-weight: bold; color: #4a5568;">Personal Information</h2>
+        <p style="color: #4a5568; margin-top: 8px;">{{address}}</p>
+      </div>
+
+      <!-- Contact Information -->
+      <div style="margin-top: 24px;">
+        <h2 style="font-size: 18px; font-weight: bold; color: #4a5568;">Contact Information</h2>
+        <p style="color: #4a5568; margin-top: 8px;"><strong>Email:</strong> {{email}}</p>
+        <p style="color: #4a5568;"><strong>Phone:</strong> {{phone}}</p>
+      </div>
+
+      <!-- Skills -->
+      {{#if skills.length}}
+      <div style="margin-top: 24px;">
+        <h2 style="font-size: 18px; font-weight: bold; color: #4a5568;">Skills</h2>
+        <ul style="margin-top: 8px;">
+          {{#each skills}}
+          <li style="color: #4a5568; display: flex; justify-content: space-between;">
+            <span>{{name}}</span>
+            <span style="color: #2d3748; font-weight: bold;">{{rating}}/5</span>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/if}}
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
+
