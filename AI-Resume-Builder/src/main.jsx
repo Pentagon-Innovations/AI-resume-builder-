@@ -20,6 +20,7 @@ import CreateJob from './recruiter/jobs/create.jsx';
 import JobDetails from './recruiter/jobs/[id]/index.jsx';
 import EditJob from './recruiter/jobs/edit.jsx';
 import Candidates from './recruiter/Candidates.jsx';
+import TestOpenAI from './pages/TestOpenAI.jsx';
 
 const ProtectedRoute = ({ children }) => {
   const { token, loading } = useAuth();
@@ -120,6 +121,10 @@ const router = createBrowserRouter([
   {
     path: '/my-resume/:resumeId/view',
     element: <ViewResume />,
+  },
+  {
+    path: '/test/openai',
+    element: <TestOpenAI />,
   },
 ]);
 
