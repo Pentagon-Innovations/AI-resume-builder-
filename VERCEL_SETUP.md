@@ -1,13 +1,15 @@
 # Vercel Setup Checklist
 
 ## Backend Environment Variables
-- [ ] Add `OPENROUTER_API_KEY` = `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`
+- [ ] Add `OPENROUTER_API_KEY` = `[Your OpenRouter API Key]`
   - Required for all AI features (resume analysis, improvement, etc.)
+  - Get your API key from https://openrouter.ai/
 - [ ] (Optional) Remove `OPENAI_API_KEY` if not needed
 
 ## Frontend Environment Variables
-- [ ] Add `VITE_OPENROUTER_API_KEY` = `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`
+- [ ] Add `VITE_OPENROUTER_API_KEY` = `[Your OpenRouter API Key]`
   - Required for frontend AI features (AI-generated summaries, bullet points)
+  - Use the same API key as backend
 - [ ] (Optional) Remove `VITE_OPENAI_API_KEY` and `VITE_GOOGLE_AI_API_KEY` if not needed
 
 ## Deployment Steps
