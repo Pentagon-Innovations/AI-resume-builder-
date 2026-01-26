@@ -1,5 +1,6 @@
 import { Injectable, StreamableFile, BadRequestException } from '@nestjs/common';
 import puppeteer from 'puppeteer-core';
+// @ts-ignore - @sparticuz/chromium may not have type definitions
 import chromium from '@sparticuz/chromium';
 import { setTimeout } from 'node:timers/promises';
 import * as fs from 'fs';
@@ -20,7 +21,7 @@ export class PdfService {
   }
 
   async generatePdf(resumeId: string): Promise<StreamableFile> {
-    let browser: puppeteer.Browser | null = null;
+    let browser: any = null;
     
     try {
       console.log(`🔍 Generating PDF for resume ID: ${resumeId}`);

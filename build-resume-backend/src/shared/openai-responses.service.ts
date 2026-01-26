@@ -4,15 +4,16 @@ const unirest = require('unirest');
 
 @Injectable()
 export class OpenAIResponsesService {
-  private readonly apiKey: string;
   private readonly baseUrl = 'https://api.openai.com/v1/responses';
   private readonly defaultModel = 'gpt-5.2';
+  private readonly apiKey: string;
 
   constructor(private configService: ConfigService) {
-    this.apiKey = this.configService.get<string>('OPENAI_API_KEY');
-    if (!this.apiKey) {
+    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+    if (!apiKey) {
       throw new Error('OPENAI_API_KEY environment variable is required');
     }
+    this.apiKey = apiKey;
   }
 
   async generateResponse(input: string, model: string = this.defaultModel, store: boolean = true): Promise<string> {

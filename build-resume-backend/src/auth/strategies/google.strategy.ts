@@ -15,7 +15,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         const clientSecret = configService.get<string>('GOOGLE_CLIENT_SECRET');
         
         if (!clientID || !clientSecret) {
-            const missing = [];
+            const missing: string[] = [];
             if (!clientID) missing.push('GOOGLE_CLIENT_ID');
             if (!clientSecret) missing.push('GOOGLE_CLIENT_SECRET');
             console.error('❌ Missing required Google OAuth configuration:', missing.join(', '));
