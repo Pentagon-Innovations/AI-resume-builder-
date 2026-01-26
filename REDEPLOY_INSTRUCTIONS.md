@@ -32,14 +32,15 @@
 4. **Add Environment Variables** (Click "Environment Variables"):
    ```
    OPENROUTER_API_KEY = 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
-   MONGODB_URI = [Your MongoDB URI]
-   JWT_SECRET = [Your JWT Secret]
-   JWT_REFRESH_SECRET = [Your JWT Refresh Secret]
-   BACKEND_URL = [Will be set after deployment]
-   FRONTEND_URL = [Will be set after deployment]
+   MONGODB_URI = mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/resumeDB?retryWrites=true&w=majority
+   JWT_SECRET = [Generate a random secret string]
+   JWT_REFRESH_SECRET = [Generate a random secret string]
+   BACKEND_URL = https://resume-builder-backend-wheat.vercel.app
+   FRONTEND_URL = https://resume-builder-frontend-seven-black.vercel.app
    GOOGLE_CLIENT_ID = [Your Google OAuth Client ID]
    GOOGLE_CLIENT_SECRET = [Your Google OAuth Client Secret]
    ```
+   📝 **Note**: See `MONGODB_SETUP.md` for MongoDB setup instructions
    ⚠️ **Important**: Select all environments (Production, Preview, Development)
 
 5. Click **Deploy**
@@ -64,8 +65,8 @@
 4. **Add Environment Variables**:
    ```
    VITE_OPENROUTER_API_KEY = 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
-   VITE_API_BASE_URL = [Your backend URL from Step 2]
-   VITE_FRONTEND_URL = [Will be set after deployment]
+   VITE_API_BASE_URL = https://resume-builder-backend-wheat.vercel.app
+   VITE_FRONTEND_URL = https://resume-builder-frontend-seven-black.vercel.app
    ```
    ⚠️ **Important**: Select all environments (Production, Preview, Development)
 
@@ -80,8 +81,8 @@
 1. Go to backend project → **Settings** → **Environment Variables**
 2. Update:
    ```
-   BACKEND_URL = https://[your-actual-backend-url].vercel.app
-   FRONTEND_URL = https://[your-actual-frontend-url].vercel.app
+   BACKEND_URL = https://resume-builder-backend-wheat.vercel.app
+   FRONTEND_URL = https://resume-builder-frontend-seven-black.vercel.app
    ```
 3. Click **Save**
 4. Go to **Deployments** → Click **Redeploy** on latest deployment
@@ -90,8 +91,8 @@
 1. Go to frontend project → **Settings** → **Environment Variables**
 2. Update:
    ```
-   VITE_API_BASE_URL = https://[your-actual-backend-url].vercel.app
-   VITE_FRONTEND_URL = https://[your-actual-frontend-url].vercel.app
+   VITE_API_BASE_URL = https://resume-builder-backend-wheat.vercel.app
+   VITE_FRONTEND_URL = https://resume-builder-frontend-seven-black.vercel.app
    ```
 3. Click **Save**
 4. Go to **Deployments** → Click **Redeploy** on latest deployment
@@ -104,7 +105,7 @@
 2. Click on your OAuth 2.0 Client ID
 3. Under **Authorized redirect URIs**, add:
    ```
-   https://[your-new-backend-url]/auth/google/callback
+   https://resume-builder-backend-wheat.vercel.app/auth/google/callback
    ```
 4. Click **Save**
 
@@ -113,12 +114,12 @@
 ## ✅ Step 6: Verify Everything Works
 
 ### Test Backend:
-- Health: `https://[backend-url]/test/health`
-- OpenAI Test: `https://[backend-url]/test/openai`
+- Health: `https://resume-builder-backend-wheat.vercel.app/test/health`
+- OpenAI Test: `https://resume-builder-backend-wheat.vercel.app/test/openai`
 
 ### Test Frontend:
-- Test Page: `https://[frontend-url]/test/openai`
-- Sign In: `https://[frontend-url]/auth/sign-in`
+- Test Page: `https://resume-builder-frontend-seven-black.vercel.app/test/openai`
+- Sign In: `https://resume-builder-frontend-seven-black.vercel.app/auth/sign-in`
 
 ### Test Features:
 - [ ] Resume analysis works
