@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 export default function TestOpenAI() {
   const [loading, setLoading] = useState(false);
@@ -11,23 +12,32 @@ export default function TestOpenAI() {
     setResult(null);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://resume-builder-backend-gold.vercel.app';
-      const response = await fetch(`${baseUrl}/test/openai`, {
-        method: 'GET',
+      // Use the same base URL configuration as GlobalApi
+      const rawBase = (import.meta.env.VITE_API_BASE_URL || 'https://resume-builder-backend-gold.vercel.app').trim();
+      const baseUrl = rawBase.replace(/\/+$/, '');
+      
+      console.log('Testing OpenAI API at:', `${baseUrl}/test/openai`);
+      
+      const response = await axios.get(`${baseUrl}/test/openai`, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      const data = await response.json();
+      const data = response.data;
       
       if (data.success) {
         setResult(data);
       } else {
-        setError(data.error || 'API test failed');
+        setError(data.error || data.message || 'API test failed');
       }
     } catch (err) {
-      setError(err.message || 'Failed to connect to API');
+      console.error('Test API Error:', err);
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to connect to API';
+      const statusCode = err.response?.status;
+      setError(statusCode 
+        ? `HTTP ${statusCode}: ${errorMessage}` 
+        : errorMessage);
     } finally {
       setLoading(false);
     }
@@ -98,7 +108,7 @@ export default function TestOpenAI() {
               <p>
                 <strong>Backend URL:</strong>{' '}
                 <code className="bg-blue-100 px-1 rounded">
-                  {import.meta.env.VITE_API_BASE_URL || 'https://resume-builder-backend-gold.vercel.app'}
+                  {(import.meta.env.VITE_API_BASE_URL || 'https://resume-builder-backend-gold.vercel.app').replace(/\/+$/, '')}
                 </code>
               </p>
               <p>
