@@ -2,7 +2,12 @@ import axios from "axios";
 
 // Centralized sanitization with high redundancy
 const rawBase = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000").trim();
-const BASE_URL = rawBase.replace(/\/+$/, "");
+// Ensure BASE_URL always has protocol (http:// or https://)
+let BASE_URL = rawBase.replace(/\/+$/, "");
+if (!BASE_URL.match(/^https?:\/\//)) {
+  // If no protocol, assume https:// for production (Vercel)
+  BASE_URL = `https://${BASE_URL}`;
+}
 console.log('%c[GlobalApi] ENV:', 'color: orange', import.meta.env);
 console.log('%c[GlobalApi] BASE_URL resolved to:', 'color: cyan; font-weight: bold;', BASE_URL);
 

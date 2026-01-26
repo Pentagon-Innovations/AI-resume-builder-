@@ -25,16 +25,29 @@ function SignInPage() {
   };
 
   const handleGoogleLogin = () => {
-    // Fail-safe sanitization
-    const cleanUrl = (GlobalApi.BASE_URL || '').replace(/\/+$/, "");
+    // Ensure BASE_URL has protocol and is properly formatted
+    let cleanUrl = (GlobalApi.BASE_URL || '').replace(/\/+$/, "");
+    // If BASE_URL doesn't start with http:// or https://, add https://
+    if (cleanUrl && !cleanUrl.match(/^https?:\/\//)) {
+      cleanUrl = `https://${cleanUrl}`;
+    }
+    const googleAuthUrl = `${cleanUrl}/auth/google`;
     console.log('[SignInPage] Current Origin:', window.location.origin);
-    console.log('[SignInPage] Redirecting to Google:', `${cleanUrl}/auth/google`);
-    window.location.href = `${cleanUrl}/auth/google`;
+    console.log('[SignInPage] BASE_URL:', GlobalApi.BASE_URL);
+    console.log('[SignInPage] Redirecting to Google:', googleAuthUrl);
+    window.location.href = googleAuthUrl;
   };
 
   const handleLinkedInLogin = () => {
-    const cleanUrl = (GlobalApi.BASE_URL || '').replace(/\/+$/, "");
-    window.location.href = `${cleanUrl}/auth/linkedin`;
+    // Ensure BASE_URL has protocol and is properly formatted
+    let cleanUrl = (GlobalApi.BASE_URL || '').replace(/\/+$/, "");
+    // If BASE_URL doesn't start with http:// or https://, add https://
+    if (cleanUrl && !cleanUrl.match(/^https?:\/\//)) {
+      cleanUrl = `https://${cleanUrl}`;
+    }
+    const linkedInAuthUrl = `${cleanUrl}/auth/linkedin`;
+    console.log('[SignInPage] Redirecting to LinkedIn:', linkedInAuthUrl);
+    window.location.href = linkedInAuthUrl;
   };
 
   return (
