@@ -74,9 +74,9 @@ export default function TestOpenAI() {
               <p className="text-sm text-red-500 mt-2">
                 Check your Vercel environment variables:
                 <br />
-                - <code className="bg-red-100 px-1 rounded">OPENAI_API_KEY</code> (Backend)
+                - <code className="bg-red-100 px-1 rounded">OPENROUTER_API_KEY</code> (Backend)
                 <br />
-                - <code className="bg-red-100 px-1 rounded">VITE_OPENAI_API_KEY</code> (Frontend)
+                - <code className="bg-red-100 px-1 rounded">VITE_OPENROUTER_API_KEY</code> (Frontend)
               </p>
             </div>
           )}

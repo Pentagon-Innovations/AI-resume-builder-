@@ -4,41 +4,49 @@ const unirest = require('unirest');
 
 @Injectable()
 export class OpenAIResponsesService {
-  private readonly baseUrl = 'https://api.openai.com/v1/responses';
-  private readonly defaultModel = 'gpt-5.2';
+  private readonly baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
+  private readonly defaultModel = 'openai/gpt-4o';
   private readonly apiKey: string;
+  private readonly backendUrl: string;
 
   constructor(private configService: ConfigService) {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+    const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
     if (!apiKey) {
-      throw new Error('OPENAI_API_KEY environment variable is required');
+      throw new Error('OPENROUTER_API_KEY environment variable is required');
     }
     this.apiKey = apiKey;
+    this.backendUrl = this.configService.get<string>('BACKEND_URL') || 'https://resume-builder-backend-gold.vercel.app';
   }
 
-  async generateResponse(input: string, model: string = this.defaultModel, store: boolean = true): Promise<string> {
+  async generateResponse(input: string, model: string = this.defaultModel): Promise<string> {
     return new Promise((resolve, reject) => {
       unirest.post(this.baseUrl)
         .headers({
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.apiKey}`,
+          'HTTP-Referer': this.backendUrl,
+          'X-Title': 'ResumeAlign',
         })
         .send({
           model,
-          input,
-          store,
+          messages: [
+            {
+              role: 'user',
+              content: input,
+            },
+          ],
         })
         .end((res: any) => {
           if (res.error) {
-            console.error('OpenAI Responses API Error:', res.body);
+            console.error('OpenRouter API Error:', res.body);
             reject({ status: res.status, message: JSON.stringify(res.body) });
           } else {
-            const outputText = res.body?.output_text || res.body?.output || '';
-            if (!outputText) {
-              console.error('No output_text in response:', res.body);
-              reject(new Error('No output_text in OpenAI response'));
+            const content = res.body?.choices?.[0]?.message?.content || '';
+            if (!content) {
+              console.error('No content in OpenRouter response:', res.body);
+              reject(new Error('No content in OpenRouter response'));
             } else {
-              resolve(outputText);
+              resolve(content);
             }
           }
         });
@@ -46,7 +54,9 @@ export class OpenAIResponsesService {
   }
 
   async generateJSONResponse(input: string, model: string = this.defaultModel): Promise<any> {
-    const response = await this.generateResponse(input, model);
+    // Add instruction to return JSON
+    const jsonPrompt = `${input}\n\nPlease respond with valid JSON only, no markdown formatting.`;
+    const response = await this.generateResponse(jsonPrompt, model);
     
     // Try to extract JSON from the response
     const cleaned = response

@@ -8,23 +8,22 @@ export class TestController {
   @Get('openai')
   async testOpenAI() {
     try {
-      const testInput = 'Say "OpenAI API is working!" in a friendly way.';
+      const testInput = 'Say "OpenRouter API is working!" in a friendly way.';
       const response = await this.openAIResponsesService.generateResponse(
         testInput,
-        'gpt-5.2',
-        false, // Don't store test requests
+        'openai/gpt-4o',
       );
 
       return {
         success: true,
-        message: 'OpenAI API is working!',
+        message: 'OpenRouter API is working!',
         response: response,
         timestamp: new Date().toISOString(),
       };
     } catch (error: any) {
       return {
         success: false,
-        message: 'OpenAI API test failed',
+        message: 'OpenRouter API test failed',
         error: error.message || 'Unknown error',
         timestamp: new Date().toISOString(),
       };

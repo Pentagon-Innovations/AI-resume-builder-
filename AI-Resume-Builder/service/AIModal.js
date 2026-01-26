@@ -1,14 +1,15 @@
-// OpenAI Responses API Service
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+// OpenRouter API Service
+const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
 if (!apiKey) {
-  console.error('VITE_OPENAI_API_KEY environment variable is required');
+  console.error('VITE_OPENROUTER_API_KEY environment variable is required');
 }
-const baseUrl = 'https://api.openai.com/v1/responses';
-const defaultModel = 'gpt-5.2';
+const baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
+const defaultModel = 'openai/gpt-4o';
+const frontendUrl = import.meta.env.VITE_FRONTEND_URL || 'https://resume-builder-frontend-teal.vercel.app';
 
-async function callOpenAIResponses(input, model = defaultModel, store = true) {
+async function callOpenRouter(input, model = defaultModel) {
   if (!apiKey) {
-    throw new Error('VITE_OPENAI_API_KEY environment variable is not set');
+    throw new Error('VITE_OPENROUTER_API_KEY environment variable is not set');
   }
   
   try {
@@ -17,11 +18,17 @@ async function callOpenAIResponses(input, model = defaultModel, store = true) {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': frontendUrl,
+        'X-Title': 'ResumeAlign',
       },
       body: JSON.stringify({
         model,
-        input,
-        store,
+        messages: [
+          {
+            role: 'user',
+            content: input,
+          },
+        ],
       }),
     });
 
@@ -31,9 +38,13 @@ async function callOpenAIResponses(input, model = defaultModel, store = true) {
     }
 
     const data = await response.json();
-    return data.output_text || data.output || '';
+    const content = data.choices?.[0]?.message?.content || '';
+    if (!content) {
+      throw new Error('No content in OpenRouter response');
+    }
+    return content;
   } catch (error) {
-    console.error('OpenAI Responses API Error:', error);
+    console.error('OpenRouter API Error:', error);
     throw error;
   }
 }
@@ -42,7 +53,7 @@ async function callOpenAIResponses(input, model = defaultModel, store = true) {
 export const AIChatSession = {
   async sendMessage(message) {
     try {
-      const outputText = await callOpenAIResponses(message, defaultModel, true);
+      const outputText = await callOpenRouter(message, defaultModel);
       
       // Parse JSON if the response is JSON
       let parsedResponse;
@@ -58,7 +69,7 @@ export const AIChatSession = {
         },
       };
     } catch (error) {
-      console.error('Error sending message to OpenAI:', error);
+      console.error('Error sending message to OpenRouter:', error);
       throw error;
     }
   },

@@ -1,16 +1,14 @@
 # Vercel Setup Checklist
 
 ## Backend Environment Variables
-- [ ] Add `OPENAI_API_KEY` = `[Your OpenAI API Key]`
-  - Get your API key from the OpenAI dashboard
-  - Required for all AI features
-- [ ] (Optional) Remove `OPENROUTER_API_KEY` if not needed
+- [ ] Add `OPENROUTER_API_KEY` = `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`
+  - Required for all AI features (resume analysis, improvement, etc.)
+- [ ] (Optional) Remove `OPENAI_API_KEY` if not needed
 
 ## Frontend Environment Variables
-- [ ] Add `VITE_OPENAI_API_KEY` = `[Your OpenAI API Key]`
-  - Use the same API key as backend
-  - Required for frontend AI features
-- [ ] (Optional) Remove `VITE_GOOGLE_AI_API_KEY` if not needed
+- [ ] Add `VITE_OPENROUTER_API_KEY` = `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`
+  - Required for frontend AI features (AI-generated summaries, bullet points)
+- [ ] (Optional) Remove `VITE_OPENAI_API_KEY` and `VITE_GOOGLE_AI_API_KEY` if not needed
 
 ## Deployment Steps
 1. Push code changes to Git repository
@@ -25,7 +23,8 @@
 - [ ] AI-generated bullet points work (frontend)
 
 ## Important Notes
-- The API key is hardcoded as fallback in code, but environment variables take precedence
-- All AI calls now use OpenAI Responses API (`gpt-5.2` model)
-- Old OpenRouter and Google AI calls have been replaced
+- All AI calls now use OpenRouter API (`openai/gpt-4o` model)
+- The API key must be set in Vercel environment variables
+- Backend uses `OPENROUTER_API_KEY`
+- Frontend uses `VITE_OPENROUTER_API_KEY`
 
