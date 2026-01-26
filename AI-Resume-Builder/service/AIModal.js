@@ -1,15 +1,13 @@
 // OpenRouter API Service
 const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-if (!apiKey) {
-  console.error('VITE_OPENROUTER_API_KEY environment variable is required');
-}
 const baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
 const defaultModel = 'openai/gpt-4o';
 const frontendUrl = import.meta.env.VITE_FRONTEND_URL || 'https://resume-builder-frontend-teal.vercel.app';
 
 async function callOpenRouter(input, model = defaultModel) {
   if (!apiKey) {
-    throw new Error('VITE_OPENROUTER_API_KEY environment variable is not set');
+    console.warn('VITE_OPENROUTER_API_KEY not set - AI features will not work');
+    throw new Error('VITE_OPENROUTER_API_KEY environment variable is not set. Please configure it in Vercel environment variables.');
   }
   
   try {

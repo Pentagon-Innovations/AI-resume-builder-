@@ -117,25 +117,58 @@ export class AnalyzeService {
       try {
         const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
         console.log('[DEBUG] OpenRouter Raw Response:', raw);
+        console.log('[DEBUG] Raw Response Length:', raw?.length || 0);
+
+        if (!raw || raw.length < 10) {
+          console.error('[ERROR] OpenRouter returned empty or invalid response');
+          throw new Error('Empty response from OpenRouter API');
+        }
 
         const cleaned = raw
           .replace(/```json/gi, '')
           .replace(/```/g, '')
           .trim();
 
-        const parsed = JSON.parse(cleaned);
+        console.log('[DEBUG] Cleaned Response:', cleaned.substring(0, 200));
+
+        let parsed;
+        try {
+          parsed = JSON.parse(cleaned);
+        } catch (parseErr: any) {
+          // Try to extract JSON from the response if it's wrapped in text
+          const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            parsed = JSON.parse(jsonMatch[0]);
+          } else {
+            throw new Error(`Failed to parse JSON: ${parseErr.message}`);
+          }
+        }
+
+        console.log('[DEBUG] Parsed Analysis:', JSON.stringify(parsed, null, 2));
 
         // Robust Mapping (AI sometimes uses snake_case or slightly different names)
-        analysis.matchScore = parsed.matchScore ?? parsed.match_score ?? analysis.matchScore;
-        analysis.missingSkills = parsed.missingSkills ?? parsed.missing_skills ?? analysis.missingSkills;
-        analysis.missingKeywords = parsed.missingKeywords ?? parsed.missing_keywords ?? analysis.missingKeywords;
-        analysis.resumeImprovements = parsed.resumeImprovements ?? parsed.resume_improvements ?? analysis.resumeImprovements;
-        analysis.interviewTopics = parsed.interviewTopics ?? parsed.interview_topics ?? analysis.interviewTopics;
-        analysis.interviewQuestions = parsed.interviewQuestions ?? parsed.interview_questions ?? analysis.interviewQuestions;
+        analysis.matchScore = parsed.matchScore ?? parsed.match_score ?? 0;
+        analysis.missingSkills = parsed.missingSkills ?? parsed.missing_skills ?? [];
+        analysis.missingKeywords = parsed.missingKeywords ?? parsed.missing_keywords ?? [];
+        analysis.resumeImprovements = parsed.resumeImprovements ?? parsed.resume_improvements ?? [];
+        analysis.interviewTopics = parsed.interviewTopics ?? parsed.interview_topics ?? [];
+        analysis.interviewQuestions = parsed.interviewQuestions ?? parsed.interview_questions ?? [];
+
+        // Ensure matchScore is a valid number
+        analysis.matchScore = Number(analysis.matchScore);
+        if (isNaN(analysis.matchScore) || analysis.matchScore < 0) {
+          analysis.matchScore = 0;
+        }
+        if (analysis.matchScore > 100) {
+          analysis.matchScore = 100;
+        }
 
         console.log('[DEBUG] Final Mapped Analysis:', JSON.stringify(analysis, null, 2));
+        console.log('[DEBUG] Match Score:', analysis.matchScore);
       } catch (err: any) {
         console.error('[ERROR] OpenRouter Analysis Failed or Parse Error:', err);
+        console.error('[ERROR] Error Stack:', err.stack);
+        // Don't throw - return analysis with default values so user still gets some feedback
       }
 
       // 4. Advanced Embedding-based Matching
@@ -144,17 +177,35 @@ export class AnalyzeService {
         const embeddingScore = await this.calculateSimilarity(resumeText, jd);
         console.log('Embedding Score:', embeddingScore);
 
-        if (!isNaN(embeddingScore)) {
-          // Blend the scores (e.g., 60% LLM, 40% Embedding)
+        if (!isNaN(embeddingScore) && embeddingScore > 0) {
+          // Blend the scores (e.g., 70% LLM, 30% Embedding) - increased LLM weight
           const llmScore = Number(analysis.matchScore) || 0;
-          analysis.matchScore = Math.round((llmScore * 0.6) + (embeddingScore * 100 * 0.4));
+          if (llmScore > 0) {
+            analysis.matchScore = Math.round((llmScore * 0.7) + (embeddingScore * 100 * 0.3));
+            console.log(`[DEBUG] Blended score - LLM: ${llmScore}, Embedding: ${embeddingScore}, Final: ${analysis.matchScore}`);
+          } else {
+            // If LLM score is 0, use embedding score as fallback
+            analysis.matchScore = Math.round(embeddingScore * 100);
+            console.log(`[DEBUG] Using embedding score as fallback: ${analysis.matchScore}`);
+          }
+        } else {
+          console.warn('[DEBUG] Embedding score invalid or 0, using LLM score only');
         }
       } catch (e) {
         console.error('Embedding calculation failed:', e);
+        // Continue with LLM score only
       }
 
-      // Final Check
-      if (isNaN(analysis.matchScore)) analysis.matchScore = 0;
+      // Final Check - ensure we have a valid score
+      if (isNaN(analysis.matchScore) || analysis.matchScore < 0) {
+        console.warn('[WARNING] Invalid matchScore, defaulting to 0');
+        analysis.matchScore = 0;
+      }
+      if (analysis.matchScore > 100) {
+        analysis.matchScore = 100;
+      }
+      
+      console.log('[DEBUG] Final matchScore after all processing:', analysis.matchScore);
 
       // 5. High Match Score Logic (>80%)
       if (analysis.matchScore > 80) {
@@ -436,25 +487,87 @@ export class AnalyzeService {
   // Simplified scraper for environments where Puppeteer fails (like Vercel)
   private async cheerioScrape(url: string): Promise<string> {
     return new Promise((resolve) => {
+      console.log('[CheerioScrape] Attempting to scrape:', url);
+      
       unirest.get(url)
         .headers({
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Connection': 'keep-alive',
+          'Upgrade-Insecure-Requests': '1',
         })
-        .timeout(8000) // 8 second timeout
+        .timeout(15000) // Increased timeout to 15 seconds
         .end((res: any) => {
           if (res.error) {
             console.error('[CheerioScrape] Error or Timeout:', res.error);
             resolve('');
-          } else {
+            return;
+          }
+
+          if (!res.body) {
+            console.error('[CheerioScrape] No response body');
+            resolve('');
+            return;
+          }
+
+          try {
             const $ = cheerio.load(res.body);
-            // Grab main content blocks
-            const text = $('main, article, .job-description, #jobsearch-jobDescriptionText').text();
-            if (text && text.length > 100) {
-              resolve(text.trim());
-            } else {
-              // Last resort: all body text
-              resolve($('body').text().substring(0, 5000).trim());
+            
+            // LinkedIn-specific selectors
+            if (url.includes('linkedin.com')) {
+              const linkedinSelectors = [
+                '.show-more-less-html__markup',
+                '.jobs-description-content__text',
+                '.description__text',
+                '[data-test-id="job-posting-description"]',
+                '.jobs-box__html-content',
+              ];
+              
+              for (const selector of linkedinSelectors) {
+                const text = $(selector).text();
+                if (text && text.length > 200) {
+                  console.log(`[CheerioScrape] Found LinkedIn content with selector: ${selector}, length: ${text.length}`);
+                  resolve(text.trim());
+                  return;
+                }
+              }
             }
+            
+            // Generic selectors
+            const genericSelectors = [
+              'main',
+              'article',
+              '.job-description',
+              '#job-description',
+              '#jobsearch-jobDescriptionText',
+              '.jobsearch-jobDescriptionText',
+              '[data-test="jobDescriptionText"]',
+            ];
+            
+            for (const selector of genericSelectors) {
+              const text = $(selector).text();
+              if (text && text.length > 200) {
+                console.log(`[CheerioScrape] Found content with selector: ${selector}, length: ${text.length}`);
+                resolve(text.trim());
+                return;
+              }
+            }
+            
+            // Last resort: all body text (limited)
+            const bodyText = $('body').text();
+            if (bodyText && bodyText.length > 200) {
+              console.log(`[CheerioScrape] Using body text, length: ${bodyText.length}`);
+              resolve(bodyText.substring(0, 10000).trim());
+              return;
+            }
+            
+            console.warn('[CheerioScrape] Could not extract sufficient content');
+            resolve('');
+          } catch (parseError: any) {
+            console.error('[CheerioScrape] Parse error:', parseError);
+            resolve('');
           }
         });
     });
