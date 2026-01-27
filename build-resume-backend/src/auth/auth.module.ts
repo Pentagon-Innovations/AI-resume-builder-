@@ -16,10 +16,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         PassportModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('JWT_SECRET') || 'defaultSecret', // Fallback for dev
-                signOptions: { expiresIn: '60m' },
-            }),
+            useFactory: async (configService: ConfigService) => {
+                const secret = configService.get<string>('JWT_SECRET') || 'default-dev-secret-change-in-production';
+                if (!configService.get<string>('JWT_SECRET')) {
+                    console.warn('⚠️ WARNING: JWT_SECRET not configured, using default secret. This is NOT secure for production!');
+                }
+                return {
+                    secret: secret,
+                    signOptions: { expiresIn: '60m' },
+                };
+            },
             inject: [ConfigService],
         }),
     ],

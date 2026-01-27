@@ -15,6 +15,7 @@ async function bootstrap() {
       origin: (origin, callback) => {
         const allowedOrigins = [
           'http://localhost:5173',
+          'https://resume-builder-frontend-seven-black.vercel.app',
           'https://resume-builder-frontend-teal.vercel.app',
           'https://resume-builder-frontend.vercel.app',
         ];
@@ -59,6 +60,7 @@ export default async (req: any, res: any) => {
   // Handle CORS preflight requests explicitly
   const allowedOrigins = [
     'http://localhost:5173',
+    'https://resume-builder-frontend-seven-black.vercel.app',
     'https://resume-builder-frontend-teal.vercel.app',
     'https://resume-builder-frontend.vercel.app',
   ];

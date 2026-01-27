@@ -31,7 +31,7 @@ export class AuthController {
             console.log('🔍 Google OAuth initiated');
         } catch (error) {
             console.error('❌ Error initiating Google OAuth:', error);
-            const frontendUrl = (this.configService.get<string>('FRONTEND_URL') || 'https://resume-builder-frontend-teal.vercel.app').replace(/\/+$/, '');
+            const frontendUrl = (this.configService.get<string>('FRONTEND_URL') || 'https://resume-builder-frontend-seven-black.vercel.app').replace(/\/+$/, '');
             res.redirect(`${frontendUrl}/auth/sign-in?error=oauth_init_failed`);
         }
     }
@@ -66,6 +66,7 @@ export class AuthController {
             if (!frontendUrl) {
                 // Fallback: try to detect from request or use common frontend URLs
                 const allowedFrontends = [
+                    'https://resume-builder-frontend-seven-black.vercel.app',
                     'https://resume-builder-frontend-teal.vercel.app',
                     'https://resume-builder-frontend.vercel.app',
                     'http://localhost:5173'
@@ -86,8 +87,24 @@ export class AuthController {
             console.error('❌ Error stack:', error.stack);
             console.error('❌ Request user:', req.user);
             
-            const frontendUrl = (this.configService.get<string>('FRONTEND_URL') || 'https://resume-builder-frontend-teal.vercel.app').replace(/\/+$/, '');
-            res.redirect(`${frontendUrl}/auth/sign-in?error=oauth_failed&message=${encodeURIComponent(error.message || 'Authentication failed')}`);
+            // Get frontend URL and ensure it's properly formatted
+            let frontendUrl = this.configService.get<string>('FRONTEND_URL');
+            if (!frontendUrl) {
+                frontendUrl = 'https://resume-builder-frontend-seven-black.vercel.app';
+                console.warn('⚠️ FRONTEND_URL not set, using fallback:', frontendUrl);
+            }
+            
+            // Remove trailing slashes and ensure it starts with http:// or https://
+            frontendUrl = frontendUrl.trim().replace(/\/+$/, '');
+            if (!frontendUrl.match(/^https?:\/\//)) {
+                frontendUrl = `https://${frontendUrl}`;
+            }
+            
+            const errorMessage = error?.message || 'Authentication failed';
+            const redirectUrl = `${frontendUrl}/auth/sign-in?error=oauth_failed&message=${encodeURIComponent(errorMessage)}`;
+            
+            console.error('❌ Redirecting to error page:', redirectUrl);
+            res.redirect(redirectUrl);
         }
     }
 
@@ -112,6 +129,7 @@ export class AuthController {
             if (!frontendUrl) {
                 // Fallback: try to detect from request or use common frontend URLs
                 const allowedFrontends = [
+                    'https://resume-builder-frontend-seven-black.vercel.app',
                     'https://resume-builder-frontend-teal.vercel.app',
                     'https://resume-builder-frontend.vercel.app',
                     'http://localhost:5173'
@@ -129,7 +147,7 @@ export class AuthController {
             res.redirect(redirectUrl);
         } catch (error) {
             console.error('❌ LinkedIn OAuth Callback Error:', error);
-            const frontendUrl = (this.configService.get<string>('FRONTEND_URL') || 'https://resume-builder-frontend-teal.vercel.app').replace(/\/+$/, '');
+            const frontendUrl = (this.configService.get<string>('FRONTEND_URL') || 'https://resume-builder-frontend-seven-black.vercel.app').replace(/\/+$/, '');
             res.redirect(`${frontendUrl}/auth/sign-in?error=oauth_failed`);
         }
     }

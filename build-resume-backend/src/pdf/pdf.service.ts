@@ -84,12 +84,8 @@ export class PdfService {
       if (isProduction) {
         // Use serverless Chromium for Vercel
         // Configure Chromium for serverless environment
-        if (typeof chromium.setGraphicsMode === 'function') {
-          chromium.setGraphicsMode(false);
-        }
-        if (typeof chromium.setHeadlessMode === 'function') {
-          chromium.setHeadlessMode(true);
-        }
+        // Note: @sparticuz/chromium doesn't have setGraphicsMode/setHeadlessMode methods
+        // These are handled automatically in serverless environments
         
         try {
           executablePath = await chromium.executablePath();
