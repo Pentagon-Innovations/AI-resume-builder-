@@ -11,22 +11,27 @@ async function bootstrap() {
     app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     // Enable CORS with explicit production origins
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://resume-builder-frontend-seven-black.vercel.app',
+      'https://resume-builder-frontend-teal.vercel.app',
+      'https://resume-builder-frontend.vercel.app',
+    ];
+    
     app.enableCors({
       origin: (origin, callback) => {
-        const allowedOrigins = [
-          'http://localhost:5173',
-          'https://resume-builder-frontend-seven-black.vercel.app',
-          'https://resume-builder-frontend-teal.vercel.app',
-          'https://resume-builder-frontend.vercel.app',
-        ];
-        
         // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
+        if (!origin) {
+          console.log('🔍 CORS: No origin header, allowing');
+          return callback(null, true);
+        }
         
         if (allowedOrigins.indexOf(origin) !== -1) {
+          console.log(`✅ CORS: Allowing origin: ${origin}`);
           callback(null, true);
         } else {
           console.warn(`⚠️ CORS blocked origin: ${origin}`);
+          console.warn(`⚠️ Allowed origins:`, allowedOrigins);
           callback(new Error('Not allowed by CORS'));
         }
       },
@@ -35,8 +40,10 @@ async function bootstrap() {
       allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'Origin'],
       exposedHeaders: ['Content-Disposition'],
       preflightContinue: false,
-      optionsSuccessStatus: 204,
+      optionsSuccessStatus: 200, // Changed to 200 for better compatibility
     });
+    
+    console.log('✅ CORS enabled with origins:', allowedOrigins);
 
     app.setBaseViewsDir(join(__dirname, 'templates'));
     app.setViewEngine('hbs');
@@ -57,7 +64,7 @@ async function bootstrap() {
 
 // For Vercel serverless
 export default async (req: any, res: any) => {
-  // Handle CORS preflight requests explicitly
+  // Handle CORS preflight requests explicitly - MUST be first
   const allowedOrigins = [
     'http://localhost:5173',
     'https://resume-builder-frontend-seven-black.vercel.app',
@@ -70,7 +77,23 @@ export default async (req: any, res: any) => {
   
   console.log(`🔍 Request: ${req.method} ${req.url}, Origin: ${origin}, Allowed: ${isAllowedOrigin}`);
   
-  // Set CORS headers for all responses
+  // Handle preflight OPTIONS request FIRST - before any other processing
+  if (req.method === 'OPTIONS') {
+    console.log('✅ Handling CORS preflight request for:', req.url);
+    // Set CORS headers for preflight
+    if (isAllowedOrigin) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin,X-Requested-With');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+    res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
+    res.status(200).end();
+    return;
+  }
+  
+  // Set CORS headers for all other responses
   if (isAllowedOrigin) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
@@ -79,13 +102,6 @@ export default async (req: any, res: any) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin');
   res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
   res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
-  
-  // Handle preflight OPTIONS request
-  if (req.method === 'OPTIONS') {
-    console.log('✅ Handling CORS preflight request for:', req.url);
-    res.status(200).end();
-    return;
-  }
   
   // Wrap response methods to ensure CORS headers persist
   const originalSetHeader = res.setHeader.bind(res);

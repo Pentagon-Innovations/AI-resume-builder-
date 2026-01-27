@@ -31,8 +31,12 @@ export class AuthController {
             console.log('🔍 Google OAuth initiated');
         } catch (error) {
             console.error('❌ Error initiating Google OAuth:', error);
-            const frontendUrl = (this.configService.get<string>('FRONTEND_URL') || 'https://resume-builder-frontend-seven-black.vercel.app').replace(/\/+$/, '');
-            res.redirect(`${frontendUrl}/auth/sign-in?error=oauth_init_failed`);
+            let frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'https://resume-builder-frontend-seven-black.vercel.app';
+            frontendUrl = frontendUrl.trim().replace(/\/+$/, '');
+            if (!frontendUrl.match(/^https?:\/\//i)) {
+                frontendUrl = `https://${frontendUrl}`;
+            }
+            res.redirect(302, `${frontendUrl}/auth/sign-in?error=oauth_init_failed`);
         }
     }
 
@@ -75,36 +79,86 @@ export class AuthController {
                 console.warn('⚠️ FRONTEND_URL not set, using fallback:', frontendUrl);
             }
             
-            // Remove trailing slashes
-            frontendUrl = frontendUrl.replace(/\/+$/, '');
+            // Clean and validate URL
+            frontendUrl = frontendUrl.trim().replace(/\/+$/, ''); // Remove trailing slashes
+            
+            // Ensure it's an absolute URL with protocol
+            if (!frontendUrl.match(/^https?:\/\//i)) {
+                // If no protocol, add https://
+                frontendUrl = `https://${frontendUrl}`;
+                console.warn('⚠️ Added https:// protocol to FRONTEND_URL:', frontendUrl);
+            }
+            
+            // Validate it's a proper URL
+            try {
+                new URL(frontendUrl); // This will throw if invalid
+            } catch (urlError) {
+                console.error('❌ Invalid FRONTEND_URL, using default:', frontendUrl);
+                frontendUrl = 'https://resume-builder-frontend-seven-black.vercel.app';
+            }
+            
             const redirectUrl = `${frontendUrl}/auth/callback?token=${result.access_token}&refresh_token=${result.refresh_token}${userParams}`;
             
             console.log('✅ Google OAuth Success - Redirecting to:', redirectUrl);
+            console.log('✅ Frontend URL used:', frontendUrl);
             
-            res.redirect(redirectUrl);
+            // Use absolute redirect
+            res.redirect(302, redirectUrl);
         } catch (error) {
             console.error('❌ Google OAuth Callback Error:', error);
             console.error('❌ Error stack:', error.stack);
             console.error('❌ Request user:', req.user);
+            console.error('❌ Error message:', error?.message);
             
-            // Get frontend URL and ensure it's properly formatted
+            // Always use a hardcoded absolute URL to avoid any issues
+            const defaultFrontendUrl = 'https://resume-builder-frontend-seven-black.vercel.app';
+            
+            // Try to get FRONTEND_URL from config, but validate it thoroughly
             let frontendUrl = this.configService.get<string>('FRONTEND_URL');
-            if (!frontendUrl) {
-                frontendUrl = 'https://resume-builder-frontend-seven-black.vercel.app';
-                console.warn('⚠️ FRONTEND_URL not set, using fallback:', frontendUrl);
-            }
             
-            // Remove trailing slashes and ensure it starts with http:// or https://
-            frontendUrl = frontendUrl.trim().replace(/\/+$/, '');
-            if (!frontendUrl.match(/^https?:\/\//)) {
-                frontendUrl = `https://${frontendUrl}`;
+            if (frontendUrl) {
+                // Clean the URL
+                frontendUrl = frontendUrl.trim().replace(/\/+$/, '');
+                
+                // Ensure it has protocol
+                if (!frontendUrl.match(/^https?:\/\//i)) {
+                    frontendUrl = `https://${frontendUrl}`;
+                }
+                
+                // Validate it's a proper absolute URL
+                try {
+                    const urlObj = new URL(frontendUrl);
+                    if (urlObj.protocol !== 'https:' && urlObj.protocol !== 'http:') {
+                        throw new Error('Invalid protocol');
+                    }
+                    // URL is valid, use it
+                } catch (urlError) {
+                    console.error('❌ Invalid FRONTEND_URL format, using default');
+                    frontendUrl = defaultFrontendUrl;
+                }
+            } else {
+                console.warn('⚠️ FRONTEND_URL not set, using default:', defaultFrontendUrl);
+                frontendUrl = defaultFrontendUrl;
             }
             
             const errorMessage = error?.message || 'Authentication failed';
+            // Ensure redirectUrl is always an absolute URL
             const redirectUrl = `${frontendUrl}/auth/sign-in?error=oauth_failed&message=${encodeURIComponent(errorMessage)}`;
             
+            // Final validation - ensure redirectUrl is absolute
+            if (!redirectUrl.match(/^https?:\/\//i)) {
+                console.error('❌ CRITICAL: Redirect URL is not absolute! Using default');
+                const safeRedirectUrl = `${defaultFrontendUrl}/auth/sign-in?error=oauth_failed&message=${encodeURIComponent(errorMessage)}`;
+                console.error('❌ Redirecting to:', safeRedirectUrl);
+                return res.redirect(302, safeRedirectUrl);
+            }
+            
             console.error('❌ Redirecting to error page:', redirectUrl);
-            res.redirect(redirectUrl);
+            console.error('❌ Frontend URL used:', frontendUrl);
+            console.error('❌ FRONTEND_URL env var:', this.configService.get<string>('FRONTEND_URL'));
+            
+            // Use absolute redirect with explicit status code
+            res.redirect(302, redirectUrl);
         }
     }
 
