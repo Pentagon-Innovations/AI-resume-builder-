@@ -252,7 +252,7 @@ export class ImproveResumeService {
   private async openRouterCall(prompt: string): Promise<string> {
     console.log('[DEBUG] Using OpenRouter API (Improve)');
     try {
-      return await this.openAIResponsesService.generateResponse(prompt, 'openai/gpt-4o');
+      return await this.openAIResponsesService.generateResponse(prompt);
     } catch (error: any) {
       console.error('[DEBUG] OpenRouter API Error:', error);
       throw error;
