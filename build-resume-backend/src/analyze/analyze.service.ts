@@ -300,7 +300,7 @@ export class AnalyzeService {
 
       try {
         const parsed = JSON.parse(jsonToParse);
-        console.log('[DEBUG] Structured JD successfully parsed');
+        console.log('[DEBUG] Structured JD successfully parsed. Keys:', Object.keys(parsed));
         return parsed;
       } catch (parseErr) {
         console.error('[ERROR] Failed to parse structured JD JSON:', parseErr);

@@ -57,8 +57,14 @@ export class OpenAIResponsesService {
     // 2. Anthropic-style format via OpenRouter (seen in user logs)
     if (Array.isArray(body.content)) {
       console.log('[DEBUG] AI Response has content array (Anthropic style)');
-      const textContent = body.content.find((c: any) => c.type === 'text');
-      if (textContent) return textContent.text;
+      // Broad search for any text-like field
+      const textContent = body.content.find((c: any) =>
+        c.type === 'text' ||
+        c.type === 'output_text' ||
+        c.type?.includes('text') ||
+        c.text
+      );
+      if (textContent) return textContent.text || textContent.output_text || textContent.output || '';
 
       // Fallback: if it's a simple array of strings/objects
       if (typeof body.content[0] === 'string') return body.content[0];
