@@ -283,14 +283,39 @@ export class AnalyzeService {
       `;
 
       const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
-      const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
-      return JSON.parse(cleaned);
+      console.log('[DEBUG] JD Structuring Raw Response:', raw);
+
+      if (!raw || (typeof raw === 'string' && raw.length < 5)) {
+        console.warn('[WARNING] AI returned empty response for JD structuring');
+        throw new Error('Empty response from AI');
+      }
+
+      const cleaned = typeof raw === 'string'
+        ? raw.replace(/```json/gi, '').replace(/```/g, '').trim()
+        : JSON.stringify(raw);
+
+      // Try to find JSON object in the response
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+      const jsonToParse = jsonMatch ? jsonMatch[0] : cleaned;
+
+      try {
+        const parsed = JSON.parse(jsonToParse);
+        console.log('[DEBUG] Structured JD successfully parsed');
+        return parsed;
+      } catch (parseErr) {
+        console.error('[ERROR] Failed to parse structured JD JSON:', parseErr);
+        throw parseErr;
+      }
     } catch (err: any) {
       console.error('OpenRouter Structuring Error:', err);
+      // Fallback object so the process can continue
       return {
-        role: 'Unknown Role',
-        company: 'Unknown Company',
+        role: 'Job Opportunity',
+        company: 'Unspecified Company',
         skills: [],
+        responsibilities: [],
+        qualifications: [],
+        experience: 'Not specified',
         fullDescription: rawText.substring(0, 5000)
       };
     }
@@ -599,8 +624,9 @@ export class AnalyzeService {
 
     try {
       const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
-      const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
-      return JSON.parse(cleaned);
+      const cleaned = typeof raw === 'string' ? raw.trim() : JSON.stringify(raw);
+      const jsonMatch = cleaned.replace(/```json/gi, '').replace(/```/g, '').trim().match(/\{[\s\S]*\}/);
+      return JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
     } catch (err) {
       console.error('Specialized Content Error:', err);
       return {};
@@ -637,8 +663,9 @@ export class AnalyzeService {
       `;
 
       const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
-      const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
-      return JSON.parse(cleaned);
+      const cleaned = typeof raw === 'string' ? raw.trim() : JSON.stringify(raw);
+      const jsonMatch = cleaned.replace(/```json/gi, '').replace(/```/g, '').trim().match(/\{[\s\S]*\}/);
+      return JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
     } catch (err) {
       console.error('Resume Parsing Error:', err);
       return { error: 'Failed to parse resume to JSON.' };

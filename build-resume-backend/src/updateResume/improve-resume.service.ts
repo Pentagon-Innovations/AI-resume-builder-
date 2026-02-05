@@ -71,8 +71,9 @@ export class ImproveResumeService {
     `;
 
     const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
-    const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned);
+    const cleaned = typeof raw === 'string' ? raw.trim() : JSON.stringify(raw);
+    const jsonMatch = cleaned.replace(/```json/gi, '').replace(/```/g, '').trim().match(/\{[\s\S]*\}/);
+    return JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
   }
 
   // New: Combined Auto-Improve (JSON output)
