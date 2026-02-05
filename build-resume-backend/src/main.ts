@@ -61,30 +61,27 @@ async function bootstrap() {
 
 // For Vercel serverless
 export default async (req: any, res: any) => {
-  const allowedOrigins = [
-    'http://localhost:5173',
-    'https://resume-builder-frontend-seven-black.vercel.app',
-    'https://resume-builder-frontend-teal.vercel.app',
-    'https://resume-builder-frontend.vercel.app',
-  ];
+  const origin = (req.headers.origin || '').toString();
 
-  const origin = req.headers.origin;
-  const isAllowedOrigin = origin && (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.includes('localhost'));
+  // Robust check: allow localhost or anything ending in .vercel.app
+  const isAllowedOrigin =
+    origin.includes('localhost') ||
+    origin.endsWith('.vercel.app') ||
+    origin.includes('resume-builder-frontend'); // Broad match for safety
 
-  console.log(`[VERCEL] Incoming request: ${req.method} ${req.url}, Origin: ${origin}, Allowed: ${isAllowedOrigin}`);
+  console.log(`[VERCEL] Incoming: ${req.method} ${req.url}, Origin: ${origin}, Allowed: ${isAllowedOrigin}`);
 
   if (isAllowedOrigin) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin');
-    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin,Range');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition,Content-Range,Content-Length,Accept-Ranges');
     res.setHeader('Access-Control-Max-Age', '86400');
   }
 
   // Handle preflight
   if (req.method === 'OPTIONS') {
-    console.log('[VERCEL] Handling OPTIONS preflight');
     res.status(200).end();
     return;
   }
@@ -95,7 +92,7 @@ export default async (req: any, res: any) => {
     return server(req, res);
   } catch (error) {
     console.error('❌ Serverless handler error:', error);
-    if (isAllowedOrigin) {
+    if (origin) {
       res.setHeader('Access-Control-Allow-Origin', origin);
     }
     res.status(500).json({ error: 'Internal server error', details: error.message });
