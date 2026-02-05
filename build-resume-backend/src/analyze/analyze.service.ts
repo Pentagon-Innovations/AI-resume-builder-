@@ -117,19 +117,17 @@ export class AnalyzeService {
       try {
         const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
         console.log('[DEBUG] OpenRouter Raw Response:', raw);
-        console.log('[DEBUG] Raw Response Length:', raw?.length || 0);
 
-        if (!raw || raw.length < 10) {
+        if (!raw || (typeof raw === 'string' && raw.length < 5)) {
           console.error('[ERROR] OpenRouter returned empty or invalid response');
           throw new Error('Empty response from OpenRouter API');
         }
 
-        const cleaned = raw
-          .replace(/```json/gi, '')
-          .replace(/```/g, '')
-          .trim();
+        const cleaned = typeof raw === 'string'
+          ? raw.replace(/```json/gi, '').replace(/```/g, '').trim()
+          : JSON.stringify(raw);
 
-        console.log('[DEBUG] Cleaned Response:', cleaned.substring(0, 200));
+        console.log('[DEBUG] Cleaned Response (Start):', cleaned.substring(0, 200));
 
         let parsed;
         try {

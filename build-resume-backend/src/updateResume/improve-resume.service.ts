@@ -154,7 +154,7 @@ export class ImproveResumeService {
 
       const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
       // Robust JSON cleaning and extracting
-      let cleaned = raw.trim();
+      let cleaned = typeof raw === 'string' ? raw.trim() : JSON.stringify(raw);
 
       // Remove markdown code blocks if present
       cleaned = cleaned.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
@@ -350,7 +350,7 @@ export class ImproveResumeService {
       const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
 
       // Robust JSON cleaning and extracting
-      let cleaned = raw.trim();
+      let cleaned = typeof raw === 'string' ? raw.trim() : JSON.stringify(raw);
 
       // Remove markdown code blocks if present
       cleaned = cleaned.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();

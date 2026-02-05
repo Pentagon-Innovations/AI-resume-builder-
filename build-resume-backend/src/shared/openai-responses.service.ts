@@ -40,11 +40,42 @@ export class OpenAIResponsesService {
     }
   }
 
+  private extractContent(body: any): string {
+    if (!body) return '';
+
+    // Handle array response (seen in user logs)
+    if (Array.isArray(body)) {
+      console.log('[DEBUG] AI Response is an array, taking first element');
+      body = body[0];
+    }
+
+    // 1. Standard OpenAI format
+    if (body.choices?.[0]?.message?.content) {
+      return body.choices[0].message.content;
+    }
+
+    // 2. Anthropic-style format via OpenRouter (seen in user logs)
+    if (Array.isArray(body.content)) {
+      console.log('[DEBUG] AI Response has content array (Anthropic style)');
+      const textContent = body.content.find((c: any) => c.type === 'text');
+      if (textContent) return textContent.text;
+
+      // Fallback: if it's a simple array of strings/objects
+      if (typeof body.content[0] === 'string') return body.content[0];
+      if (body.content[0]?.text) return body.content[0].text;
+    }
+
+    // 3. Other common formats (output, response, result)
+    const fallback = body.output || body.response || body.result || body.content || '';
+    if (typeof fallback === 'string') return fallback;
+    if (typeof fallback === 'object') return JSON.stringify(fallback);
+
+    return '';
+  }
+
   private async generateOpenAIResponse(input: string, model: string): Promise<string> {
-    // Clean model name (remove 'openai/' prefix if present)
     const cleanModel = model.replace('openai/', '');
 
-    // Try /v1/responses endpoint first (as specified by user)
     return new Promise((resolve, reject) => {
       unirest.post(this.openaiBaseUrl)
         .headers({
@@ -58,16 +89,14 @@ export class OpenAIResponsesService {
         })
         .end((res: any) => {
           if (res.error || res.status >= 400) {
-            // If /v1/responses fails, try standard /v1/chat/completions endpoint
             console.warn('OpenAI /v1/responses endpoint failed, trying /v1/chat/completions:', res.body);
             return this.generateOpenAIChatCompletions(input, cleanModel)
               .then(resolve)
               .catch(reject);
           } else {
-            // OpenAI /v1/responses endpoint may return different structure
-            const content = res.body?.output || res.body?.response || res.body?.choices?.[0]?.message?.content || '';
+            const content = this.extractContent(res.body);
             if (!content) {
-              console.warn('No content in OpenAI /v1/responses, trying /v1/chat/completions');
+              console.warn('No content extracted from OpenAI /v1/responses, trying /v1/chat/completions');
               return this.generateOpenAIChatCompletions(input, cleanModel)
                 .then(resolve)
                 .catch(reject);
@@ -89,10 +118,7 @@ export class OpenAIResponsesService {
         .send({
           model: model,
           messages: [
-            {
-              role: 'user',
-              content: input,
-            },
+            { role: 'user', content: input },
           ],
         })
         .end((res: any) => {
@@ -100,7 +126,7 @@ export class OpenAIResponsesService {
             console.error('OpenAI Chat Completions API Error:', res.body);
             reject({ status: res.status, message: JSON.stringify(res.body) });
           } else {
-            const content = res.body?.choices?.[0]?.message?.content || '';
+            const content = this.extractContent(res.body);
             if (!content) {
               console.error('No content in OpenAI Chat Completions response:', res.body);
               reject(new Error('No content in OpenAI Chat Completions response'));
@@ -124,10 +150,7 @@ export class OpenAIResponsesService {
         .send({
           model,
           messages: [
-            {
-              role: 'user',
-              content: input,
-            },
+            { role: 'user', content: input },
           ],
         })
         .end((res: any) => {
@@ -135,7 +158,7 @@ export class OpenAIResponsesService {
             console.error('OpenRouter API Error:', res.body);
             reject({ status: res.status, message: JSON.stringify(res.body) });
           } else {
-            const content = res.body?.choices?.[0]?.message?.content || '';
+            const content = this.extractContent(res.body);
             if (!content) {
               console.error('No content in OpenRouter response:', res.body);
               reject(new Error('No content in OpenRouter response'));
