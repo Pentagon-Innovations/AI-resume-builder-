@@ -11,18 +11,21 @@ async function bootstrap() {
     app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     // Enable CORS with explicit production origins
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://resume-builder-frontend-seven-black.vercel.app',
+      'https://resume-builder-frontend-teal.vercel.app',
+      'https://resume-builder-frontend.vercel.app',
+    ];
+
     app.enableCors({
       origin: (origin, callback) => {
-        const allowedOrigins = [
-          'http://localhost:5173',
-          'https://resume-builder-frontend-teal.vercel.app',
-          'https://resume-builder-frontend.vercel.app',
-        ];
-        
-        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.indexOf(origin) !== -1) {
+
+        // Use a more robust check (regex or includes)
+        const isAllowed = allowedOrigins.some(o => origin === o || origin.endsWith('.vercel.app'));
+
+        if (isAllowed) {
           callback(null, true);
         } else {
           console.warn(`⚠️ CORS blocked origin: ${origin}`);
@@ -34,8 +37,10 @@ async function bootstrap() {
       allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'Origin'],
       exposedHeaders: ['Content-Disposition'],
       preflightContinue: false,
-      optionsSuccessStatus: 204,
+      optionsSuccessStatus: 200, // Changed to 200 for better compatibility
     });
+
+    console.log('✅ CORS enabled with origins:', allowedOrigins);
 
     app.setBaseViewsDir(join(__dirname, 'templates'));
     app.setViewEngine('hbs');
@@ -56,91 +61,37 @@ async function bootstrap() {
 
 // For Vercel serverless
 export default async (req: any, res: any) => {
-  // Handle CORS preflight requests explicitly
   const allowedOrigins = [
     'http://localhost:5173',
+    'https://resume-builder-frontend-seven-black.vercel.app',
     'https://resume-builder-frontend-teal.vercel.app',
     'https://resume-builder-frontend.vercel.app',
   ];
-  
+
   const origin = req.headers.origin;
-  const isAllowedOrigin = origin && allowedOrigins.includes(origin);
-  
-  console.log(`🔍 Request: ${req.method} ${req.url}, Origin: ${origin}, Allowed: ${isAllowedOrigin}`);
-  
-  // Set CORS headers for all responses
+  const isAllowedOrigin = origin && (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.includes('localhost'));
+
   if (isAllowedOrigin) {
     res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+    res.setHeader('Access-Control-Max-Age', '86400');
   }
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin');
-  res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
-  res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
-  
-  // Handle preflight OPTIONS request
+
+  // Handle preflight
   if (req.method === 'OPTIONS') {
-    console.log('✅ Handling CORS preflight request for:', req.url);
     res.status(200).end();
     return;
   }
-  
-  // Wrap response methods to ensure CORS headers persist
-  const originalSetHeader = res.setHeader.bind(res);
-  res.setHeader = function(name: string, value: any) {
-    // Don't override CORS headers if they're already set
-    if (name.toLowerCase().startsWith('access-control-')) {
-      const existing = res.getHeader(name);
-      if (existing) {
-        console.log(`⚠️ CORS header ${name} already set, keeping existing value`);
-        return res;
-      }
-    }
-    return originalSetHeader(name, value);
-  };
-  
-  // Ensure CORS headers are set before sending response
-  const originalEnd = res.end.bind(res);
-  const originalJson = res.json.bind(res);
-  const originalSend = res.send.bind(res);
-  
-  res.end = function(...args: any[]) {
-    if (isAllowedOrigin && !res.getHeader('Access-Control-Allow-Origin')) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    if (!res.getHeader('Access-Control-Allow-Credentials')) {
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    return originalEnd(...args);
-  };
-  
-  res.json = function(body: any) {
-    if (isAllowedOrigin && !res.getHeader('Access-Control-Allow-Origin')) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    if (!res.getHeader('Access-Control-Allow-Credentials')) {
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    return originalJson(body);
-  };
-  
-  res.send = function(body: any) {
-    if (isAllowedOrigin && !res.getHeader('Access-Control-Allow-Origin')) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    if (!res.getHeader('Access-Control-Allow-Credentials')) {
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    return originalSend(body);
-  };
-  
+
   try {
     const instance = await bootstrap();
     const server = instance.getHttpAdapter().getInstance();
     return server(req, res);
   } catch (error) {
     console.error('❌ Serverless handler error:', error);
-    // Ensure CORS headers are set even on error
     if (isAllowedOrigin) {
       res.setHeader('Access-Control-Allow-Origin', origin);
     }

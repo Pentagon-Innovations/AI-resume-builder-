@@ -3,7 +3,7 @@ import { OpenAIResponsesService } from '../shared/openai-responses.service';
 
 @Controller('test')
 export class TestController {
-  constructor(private openAIResponsesService: OpenAIResponsesService) {}
+  constructor(private openAIResponsesService: OpenAIResponsesService) { }
 
   @Get('openai')
   async testOpenAI() {
@@ -11,7 +11,6 @@ export class TestController {
       const testInput = 'Say "OpenRouter API is working!" in a friendly way.';
       const response = await this.openAIResponsesService.generateResponse(
         testInput,
-        'openai/gpt-4o',
       );
 
       return {

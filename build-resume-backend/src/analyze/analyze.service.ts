@@ -204,7 +204,7 @@ export class AnalyzeService {
       if (analysis.matchScore > 100) {
         analysis.matchScore = 100;
       }
-      
+
       console.log('[DEBUG] Final matchScore after all processing:', analysis.matchScore);
 
       // 5. High Match Score Logic (>80%)
@@ -393,7 +393,7 @@ export class AnalyzeService {
         console.log('[DEBUG] Using Cheerio for Generic Scraper (Production/Vercel)');
         return this.cheerioScrape(url);
       }
-      
+
       // Local development only - use system Chrome
       const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || undefined;
       const browser = await puppeteer.launch({
@@ -488,7 +488,7 @@ export class AnalyzeService {
   private async cheerioScrape(url: string): Promise<string> {
     return new Promise((resolve) => {
       console.log('[CheerioScrape] Attempting to scrape:', url);
-      
+
       unirest.get(url)
         .headers({
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -514,7 +514,7 @@ export class AnalyzeService {
 
           try {
             const $ = cheerio.load(res.body);
-            
+
             // LinkedIn-specific selectors
             if (url.includes('linkedin.com')) {
               const linkedinSelectors = [
@@ -524,7 +524,7 @@ export class AnalyzeService {
                 '[data-test-id="job-posting-description"]',
                 '.jobs-box__html-content',
               ];
-              
+
               for (const selector of linkedinSelectors) {
                 const text = $(selector).text();
                 if (text && text.length > 200) {
@@ -534,7 +534,7 @@ export class AnalyzeService {
                 }
               }
             }
-            
+
             // Generic selectors
             const genericSelectors = [
               'main',
@@ -545,7 +545,7 @@ export class AnalyzeService {
               '.jobsearch-jobDescriptionText',
               '[data-test="jobDescriptionText"]',
             ];
-            
+
             for (const selector of genericSelectors) {
               const text = $(selector).text();
               if (text && text.length > 200) {
@@ -554,7 +554,7 @@ export class AnalyzeService {
                 return;
               }
             }
-            
+
             // Last resort: all body text (limited)
             const bodyText = $('body').text();
             if (bodyText && bodyText.length > 200) {
@@ -562,7 +562,7 @@ export class AnalyzeService {
               resolve(bodyText.substring(0, 10000).trim());
               return;
             }
-            
+
             console.warn('[CheerioScrape] Could not extract sufficient content');
             resolve('');
           } catch (parseError: any) {
@@ -650,7 +650,7 @@ export class AnalyzeService {
   private async openRouterCall(prompt: string): Promise<string> {
     console.log('[DEBUG] Using OpenRouter API');
     try {
-      return await this.openAIResponsesService.generateResponse(prompt, 'openai/gpt-4o');
+      return await this.openAIResponsesService.generateResponse(prompt);
     } catch (error: any) {
       console.error('[DEBUG] OpenRouter API Error:', error);
       throw error;

@@ -6,7 +6,7 @@ const unirest = require('unirest');
 export class OpenAIResponsesService {
   private readonly baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
   private readonly openaiBaseUrl = 'https://api.openai.com/v1/responses';
-  private readonly defaultModel = 'openai/gpt-4o';
+  private readonly defaultModel = 'gpt-4.1-mini';
   private readonly apiKey: string;
   private readonly openaiApiKey: string | null;
   private readonly backendUrl: string;
@@ -16,7 +16,7 @@ export class OpenAIResponsesService {
     // Check for OpenAI API key first (preferred)
     const openaiApiKey = this.configService.get<string>('OPENAI_API_KEY');
     const openrouterApiKey = this.configService.get<string>('OPENROUTER_API_KEY');
-    
+
     if (openaiApiKey) {
       this.openaiApiKey = openaiApiKey;
       this.apiKey = openaiApiKey; // Use OpenAI key
@@ -28,7 +28,7 @@ export class OpenAIResponsesService {
     } else {
       throw new Error('Either OPENAI_API_KEY or OPENROUTER_API_KEY environment variable is required');
     }
-    
+
     this.backendUrl = this.configService.get<string>('BACKEND_URL') || 'https://resume-builder-backend-gold.vercel.app';
   }
 
@@ -42,8 +42,8 @@ export class OpenAIResponsesService {
 
   private async generateOpenAIResponse(input: string, model: string): Promise<string> {
     // Clean model name (remove 'openai/' prefix if present)
-    const cleanModel = model.replace('openai/', '').replace('gpt-4.1-mini', 'gpt-4o-mini');
-    
+    const cleanModel = model.replace('openai/', '');
+
     // Try /v1/responses endpoint first (as specified by user)
     return new Promise((resolve, reject) => {
       unirest.post(this.openaiBaseUrl)
@@ -151,7 +151,7 @@ export class OpenAIResponsesService {
     // Add instruction to return JSON
     const jsonPrompt = `${input}\n\nPlease respond with valid JSON only, no markdown formatting.`;
     const response = await this.generateResponse(jsonPrompt, model);
-    
+
     // Try to extract JSON from the response
     const cleaned = response
       .replace(/```json/gi, '')

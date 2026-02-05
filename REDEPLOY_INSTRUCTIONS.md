@@ -31,6 +31,7 @@
 
 4. **Add Environment Variables** (Click "Environment Variables"):
    ```
+   OPENAI_API_KEY = [Your OpenAI API Key]
    OPENROUTER_API_KEY = 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
    MONGODB_URI = mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/resumeDB?retryWrites=true&w=majority
    JWT_SECRET = [Generate a random secret string]
@@ -107,6 +108,7 @@
    ```
    https://resume-builder-backend-wheat.vercel.app/auth/google/callback
    ```
+   ⚠️ **Important**: Make sure this URL matches exactly (no trailing slash, correct protocol)
 4. Click **Save**
 
 ---
@@ -132,7 +134,8 @@
 ## 📝 Quick Reference
 
 ### Backend Environment Variables:
-- `OPENROUTER_API_KEY` ✅
+- `OPENAI_API_KEY` ✅ (preferred, uses direct OpenAI API)
+- `OPENROUTER_API_KEY` ✅ (fallback if OPENAI_API_KEY not set)
 - `MONGODB_URI` ✅
 - `JWT_SECRET` ✅
 - `JWT_REFRESH_SECRET` ✅
@@ -164,6 +167,6 @@
 - Check for trailing slashes (remove them)
 
 **API Errors?**
-- Verify `OPENROUTER_API_KEY` is set correctly
+- Verify `OPENAI_API_KEY` or `OPENROUTER_API_KEY` is set correctly
 - Check Vercel logs for detailed error messages
 

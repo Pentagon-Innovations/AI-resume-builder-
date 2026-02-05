@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/user.schema';
 import * as nodemailer from 'nodemailer';
@@ -11,6 +12,7 @@ export class AuthService {
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService,
+        private configService: ConfigService,
     ) { }
 
     async validateUser(email: string, pass: string): Promise<any> {
@@ -38,16 +40,27 @@ export class AuthService {
         const userId = String(userObj._id || userObj.id);
         
         const payload = { email: userObj.email, sub: userId };
-        const refreshSecret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET;
         
-        if (!refreshSecret) {
-            console.error('❌ JWT_REFRESH_SECRET and JWT_SECRET are both missing!');
-            throw new BadRequestException('JWT secret not configured');
+        // Get JWT secrets, with fallback defaults for development
+        const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'default-dev-secret-change-in-production';
+        const refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET') || jwtSecret;
+        
+        // Warn if using default secrets (not secure for production)
+        if (!this.configService.get<string>('JWT_SECRET')) {
+            console.warn('⚠️ WARNING: JWT_SECRET not configured, using default secret. This is NOT secure for production!');
+            console.warn('⚠️ Please set JWT_SECRET and JWT_REFRESH_SECRET in your environment variables.');
         }
         
+        // Access token uses the module's default secret (configured in auth.module.ts)
+        // Refresh token uses a potentially different secret
+        const accessToken = this.jwtService.sign(payload);
+        const refreshToken = refreshSecret === jwtSecret 
+            ? this.jwtService.sign(payload, { expiresIn: '7d' })
+            : this.jwtService.sign(payload, { expiresIn: '7d', secret: refreshSecret });
+        
         return {
-            access_token: this.jwtService.sign(payload),
-            refresh_token: this.jwtService.sign(payload, { expiresIn: '7d', secret: refreshSecret }),
+            access_token: accessToken,
+            refresh_token: refreshToken,
             user: {
                 _id: userId,
                 email: userObj.email,
