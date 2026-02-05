@@ -115,7 +115,7 @@ export class AnalyzeService {
       };
 
       try {
-        const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
+        const raw = await this.callWithRetry(() => this.aiCall(prompt));
         console.log('[DEBUG] OpenRouter Raw Response:', raw);
 
         if (!raw || (typeof raw === 'string' && raw.length < 5)) {
@@ -282,7 +282,7 @@ export class AnalyzeService {
         ${rawText}
       `;
 
-      const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
+      const raw = await this.callWithRetry(() => this.aiCall(prompt));
       console.log('[DEBUG] JD Structuring Raw Response:', raw);
 
       if (!raw || (typeof raw === 'string' && raw.length < 5)) {
@@ -635,7 +635,7 @@ export class AnalyzeService {
     `;
 
     try {
-      const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
+      const raw = await this.callWithRetry(() => this.aiCall(prompt));
       const cleaned = typeof raw === 'string' ? raw.trim() : JSON.stringify(raw);
       const jsonMatch = cleaned.replace(/```json/gi, '').replace(/```/g, '').trim().match(/\{[\s\S]*\}/);
       return JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
@@ -674,7 +674,7 @@ export class AnalyzeService {
         ${resumeText}
       `;
 
-      const raw = await this.callWithRetry(() => this.openRouterCall(prompt));
+      const raw = await this.callWithRetry(() => this.aiCall(prompt));
       const cleaned = typeof raw === 'string' ? raw.trim() : JSON.stringify(raw);
       const jsonMatch = cleaned.replace(/```json/gi, '').replace(/```/g, '').trim().match(/\{[\s\S]*\}/);
       return JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
@@ -684,12 +684,12 @@ export class AnalyzeService {
     }
   }
 
-  private async openRouterCall(prompt: string): Promise<string> {
-    console.log('[DEBUG] Using OpenRouter API');
+  private async aiCall(prompt: string): Promise<string> {
+    console.log('[DEBUG] Calling AI via OpenAIResponsesService');
     try {
       return await this.openAIResponsesService.generateResponse(prompt);
     } catch (error: any) {
-      console.error('[DEBUG] OpenRouter API Error:', error);
+      console.error('[DEBUG] AI Service Error:', error);
       throw error;
     }
   }

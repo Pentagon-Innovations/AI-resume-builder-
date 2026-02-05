@@ -22,10 +22,10 @@ export class PdfService {
 
   async generatePdf(resumeId: string): Promise<StreamableFile> {
     let browser: any = null;
-    
+
     try {
       console.log(`🔍 Generating PDF for resume ID: ${resumeId}`);
-      
+
       // Fetch resume data from MongoDB
       const resume = await this.resumeModel.findById(resumeId).lean();
       if (!resume) {
@@ -48,16 +48,28 @@ export class PdfService {
         resume.profilePhotoBase64 = '/default-profile.png';
       }
 
-      // Get template path
-      const templateType = `resume_template_${resume.templateType || 1}.hbs`;
-      const templatePath = path.join(
-        __dirname,
-        '..',
-        'templates',
-        templateType,
-      );
+      // Get template path with more robust resolution for Vercel
+      let templateType = `resume_template_${resume.templateType || 1}.hbs`;
 
-      console.log(`🔍 Looking for template at: ${templatePath}`);
+      // Try multiple potential paths for Vercel consistency
+      const potentialPaths = [
+        path.join(process.cwd(), 'dist', 'templates', templateType),
+        path.join(process.cwd(), 'build-resume-backend', 'dist', 'templates', templateType),
+        path.join(__dirname, '..', 'templates', templateType),
+        path.join(__dirname, '..', '..', 'templates', templateType)
+      ];
+
+      let templatePath = potentialPaths[0];
+      for (const p of potentialPaths) {
+        if (fs.existsSync(p)) {
+          templatePath = p;
+          break;
+        }
+      }
+
+      console.log(`🔍 Resolved template path: ${templatePath}`);
+      console.log(`🔍 Current Directory (__dirname): ${__dirname}`);
+      console.log(`🔍 Process Working Directory (cwd): ${process.cwd()}`);
 
       // Check if template exists
       if (!fs.existsSync(templatePath)) {
@@ -75,9 +87,9 @@ export class PdfService {
 
       // Launch Puppeteer with Vercel-optimized settings
       console.log('🚀 Launching Puppeteer...');
-      
+
       const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
-      
+
       let executablePath: string | undefined;
       let launchArgs: string[];
 
@@ -86,7 +98,7 @@ export class PdfService {
         // Configure Chromium for serverless environment
         // Note: @sparticuz/chromium doesn't have setGraphicsMode/setHeadlessMode methods
         // These are handled automatically in serverless environments
-        
+
         try {
           executablePath = await chromium.executablePath();
           // Use the args provided by chromium, but ensure we have the necessary ones
@@ -161,7 +173,7 @@ export class PdfService {
         name: error.name,
         resumeId,
       });
-      
+
       // Re-throw with more context
       throw new Error(`Failed to generate PDF: ${error.message}`);
     } finally {

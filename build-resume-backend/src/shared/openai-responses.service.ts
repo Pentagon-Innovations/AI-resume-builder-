@@ -6,7 +6,7 @@ const unirest = require('unirest');
 export class OpenAIResponsesService {
   private readonly baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
   private readonly openaiBaseUrl = 'https://api.openai.com/v1/responses';
-  private readonly defaultModel = 'gpt-4.1-mini';
+  private readonly defaultModel = 'gpt-4o-mini';
   private readonly apiKey: string;
   private readonly openaiApiKey: string | null;
   private readonly backendUrl: string;

@@ -136,4 +136,32 @@ export class ImproveResumeController {
       throw new Error(error.message || "Failed to autofill resume");
     }
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("improve-section")
+  async improveSection(
+    @Body("sectionName") sectionName: string,
+    @Body("sectionContent") sectionContent: string,
+    @Body("jdText") jdText: string,
+    @Request() req
+  ) {
+    const quota = await this.usersService.checkAndUpdateQuota(req.user.userId);
+    if (!quota.authorized) {
+      throw new ForbiddenException('Monthly AI limit reached. Please upgrade to Pro.');
+    }
+    return this.service.improveSection(sectionName, sectionContent, jdText);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("generate-content")
+  async generateContent(
+    @Body("prompt") prompt: string,
+    @Request() req
+  ) {
+    const quota = await this.usersService.checkAndUpdateQuota(req.user.userId);
+    if (!quota.authorized) {
+      throw new ForbiddenException('Monthly AI limit reached. Please upgrade to Pro.');
+    }
+    return this.service.generateContent(prompt);
+  }
 }

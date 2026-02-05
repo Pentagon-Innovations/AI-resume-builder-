@@ -93,6 +93,7 @@ const ParseResume = (data) => axiosClient.post('/analyze/parse-resume', data, {
 
 // Improve Resume
 const ImproveSection = (data) => axiosClient.post('/improve-resume/improve-section', data);
+const GenerateAIContent = (prompt) => axiosClient.post('/improve-resume/generate-content', { prompt });
 
 // PDF
 const GetPdf = (id) => axiosClient.get('/pdf/' + id, { responseType: 'blob' });
@@ -125,6 +126,7 @@ export default {
   ParseResume,
   FullAutoImprove,
   ImproveSection,
+  GenerateAIContent,
   GetPdf,
   GetProfilePhoto,
   CreateRazorpayOrder,
