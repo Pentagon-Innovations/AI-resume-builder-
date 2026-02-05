@@ -71,6 +71,8 @@ export default async (req: any, res: any) => {
   const origin = req.headers.origin;
   const isAllowedOrigin = origin && (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.includes('localhost'));
 
+  console.log(`[VERCEL] Incoming request: ${req.method} ${req.url}, Origin: ${origin}, Allowed: ${isAllowedOrigin}`);
+
   if (isAllowedOrigin) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -82,6 +84,7 @@ export default async (req: any, res: any) => {
 
   // Handle preflight
   if (req.method === 'OPTIONS') {
+    console.log('[VERCEL] Handling OPTIONS preflight');
     res.status(200).end();
     return;
   }
@@ -95,7 +98,7 @@ export default async (req: any, res: any) => {
     if (isAllowedOrigin) {
       res.setHeader('Access-Control-Allow-Origin', origin);
     }
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 };
 
