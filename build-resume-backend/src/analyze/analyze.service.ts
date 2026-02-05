@@ -299,8 +299,20 @@ export class AnalyzeService {
       const jsonToParse = jsonMatch ? jsonMatch[0] : cleaned;
 
       try {
-        const parsed = JSON.parse(jsonToParse);
+        let parsed = JSON.parse(jsonToParse);
         console.log('[DEBUG] Structured JD successfully parsed. Keys:', Object.keys(parsed));
+
+        // Defense: If we accidentally parsed the metadata object (with role: assistant)
+        // instead of the ACTUAL content, try to find the real content inside it.
+        if (parsed.role === 'assistant' && parsed.content) {
+          console.warn('[WARNING] Parsed metadata instead of content. Retrying on inner content...');
+          const innerText = this.openAIResponsesService.extractContent(parsed);
+          if (innerText && innerText !== 'assistant') {
+            const innerMatch = innerText.match(/\{[\s\S]*\}/);
+            if (innerMatch) parsed = JSON.parse(innerMatch[0]);
+          }
+        }
+
         return parsed;
       } catch (parseErr) {
         console.error('[ERROR] Failed to parse structured JD JSON:', parseErr);

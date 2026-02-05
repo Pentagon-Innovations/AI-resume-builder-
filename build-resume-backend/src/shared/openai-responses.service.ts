@@ -40,13 +40,17 @@ export class OpenAIResponsesService {
     }
   }
 
-  private extractContent(body: any): string {
+  public extractContent(body: any): string {
     if (!body) return '';
 
     // Handle array response (seen in user logs)
     if (Array.isArray(body)) {
-      console.log('[DEBUG] AI Response is an array, taking first element');
-      body = body[0];
+      console.log('[DEBUG] AI Response is an array, checking elements...');
+      for (const item of body) {
+        const text = this.extractContent(item);
+        if (text && text !== 'assistant') return text;
+      }
+      return '';
     }
 
     // 1. Standard OpenAI format
@@ -54,27 +58,23 @@ export class OpenAIResponsesService {
       return body.choices[0].message.content;
     }
 
-    // 2. Anthropic-style format via OpenRouter (seen in user logs)
+    // 2. Anthropic-style format via OpenRouter
     if (Array.isArray(body.content)) {
-      console.log('[DEBUG] AI Response has content array (Anthropic style)');
-      // Broad search for any text-like field
-      const textContent = body.content.find((c: any) =>
-        c.type === 'text' ||
-        c.type === 'output_text' ||
-        c.type?.includes('text') ||
-        c.text
-      );
-      if (textContent) return textContent.text || textContent.output_text || textContent.output || '';
-
-      // Fallback: if it's a simple array of strings/objects
-      if (typeof body.content[0] === 'string') return body.content[0];
-      if (body.content[0]?.text) return body.content[0].text;
+      console.log('[DEBUG] AI Response has content array, searching for text...');
+      for (const item of body.content) {
+        if (typeof item === 'string' && item.length > 0) return item;
+        const text = item.text || item.output_text || item.output || item.content;
+        if (text && typeof text === 'string') return text;
+      }
     }
 
-    // 3. Other common formats (output, response, result)
-    const fallback = body.output || body.response || body.result || body.content || '';
-    if (typeof fallback === 'string') return fallback;
-    if (typeof fallback === 'object') return JSON.stringify(fallback);
+    // 3. Direct content/output fields
+    const directContent = body.content || body.output || body.response || body.result || body.text;
+    if (typeof directContent === 'string') return directContent;
+    if (typeof directContent === 'object' && directContent !== null) {
+      // Recurse once if the content itself is an object
+      return this.extractContent(directContent);
+    }
 
     return '';
   }
@@ -82,36 +82,8 @@ export class OpenAIResponsesService {
   private async generateOpenAIResponse(input: string, model: string): Promise<string> {
     const cleanModel = model.replace('openai/', '');
 
-    return new Promise((resolve, reject) => {
-      unirest.post(this.openaiBaseUrl)
-        .headers({
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        })
-        .send({
-          model: cleanModel,
-          input: input,
-          store: true,
-        })
-        .end((res: any) => {
-          if (res.error || res.status >= 400) {
-            console.warn('OpenAI /v1/responses endpoint failed, trying /v1/chat/completions:', res.body);
-            return this.generateOpenAIChatCompletions(input, cleanModel)
-              .then(resolve)
-              .catch(reject);
-          } else {
-            const content = this.extractContent(res.body);
-            if (!content) {
-              console.warn('No content extracted from OpenAI /v1/responses, trying /v1/chat/completions');
-              return this.generateOpenAIChatCompletions(input, cleanModel)
-                .then(resolve)
-                .catch(reject);
-            } else {
-              resolve(content);
-            }
-          }
-        });
-    });
+    // For gpt-4.1-mini and standard Chat models, we should use Chat Completions
+    return this.generateOpenAIChatCompletions(input, cleanModel);
   }
 
   private async generateOpenAIChatCompletions(input: string, model: string): Promise<string> {
