@@ -61,7 +61,6 @@ async function bootstrap() {
 
 // For Vercel serverless
 export default async (req: any, res: any) => {
-  // Handle CORS preflight requests explicitly - MUST be first
   const allowedOrigins = [
     'http://localhost:5173',
     'https://resume-builder-frontend-seven-black.vercel.app',
@@ -70,84 +69,22 @@ export default async (req: any, res: any) => {
   ];
 
   const origin = req.headers.origin;
-  // Allow exact matches or any vercel.app subdomain (more robust for preview deployments)
-  const isAllowedOrigin = origin && (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app'));
+  const isAllowedOrigin = origin && (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.includes('localhost'));
 
-  console.log(`🔍 Request: ${req.method} ${req.url}, Origin: ${origin}, Allowed: ${isAllowedOrigin}`);
+  if (isAllowedOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+    res.setHeader('Access-Control-Max-Age', '86400');
+  }
 
-  // Handle preflight OPTIONS request FIRST - before any other processing
+  // Handle preflight
   if (req.method === 'OPTIONS') {
-    console.log('✅ Handling CORS preflight request for:', req.url);
-    if (isAllowedOrigin) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-      res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin');
-      res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
-      res.setHeader('Access-Control-Max-Age', '86400');
-    }
     res.status(200).end();
     return;
   }
-
-  // Set CORS headers for all other responses
-  if (isAllowedOrigin) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,X-Requested-With,Origin');
-  res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
-  res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
-
-  // Wrap response methods to ensure CORS headers persist
-  const originalSetHeader = res.setHeader.bind(res);
-  res.setHeader = function (name: string, value: any) {
-    // Don't override CORS headers if they're already set
-    if (name.toLowerCase().startsWith('access-control-')) {
-      const existing = res.getHeader(name);
-      if (existing) {
-        console.log(`⚠️ CORS header ${name} already set, keeping existing value`);
-        return res;
-      }
-    }
-    return originalSetHeader(name, value);
-  };
-
-  // Ensure CORS headers are set before sending response
-  const originalEnd = res.end.bind(res);
-  const originalJson = res.json.bind(res);
-  const originalSend = res.send.bind(res);
-
-  res.end = function (...args: any[]) {
-    if (isAllowedOrigin && !res.getHeader('Access-Control-Allow-Origin')) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    if (!res.getHeader('Access-Control-Allow-Credentials')) {
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    return originalEnd(...args);
-  };
-
-  res.json = function (body: any) {
-    if (isAllowedOrigin && !res.getHeader('Access-Control-Allow-Origin')) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    if (!res.getHeader('Access-Control-Allow-Credentials')) {
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    return originalJson(body);
-  };
-
-  res.send = function (body: any) {
-    if (isAllowedOrigin && !res.getHeader('Access-Control-Allow-Origin')) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    if (!res.getHeader('Access-Control-Allow-Credentials')) {
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    return originalSend(body);
-  };
 
   try {
     const instance = await bootstrap();
@@ -155,7 +92,6 @@ export default async (req: any, res: any) => {
     return server(req, res);
   } catch (error) {
     console.error('❌ Serverless handler error:', error);
-    // Ensure CORS headers are set even on error
     if (isAllowedOrigin) {
       res.setHeader('Access-Control-Allow-Origin', origin);
     }
