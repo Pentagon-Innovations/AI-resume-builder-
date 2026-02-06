@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { OpenAIResponsesService } from '../shared/openai-responses.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('test')
 export class TestController {
@@ -35,6 +36,15 @@ export class TestController {
       status: 'ok',
       service: 'Resume Builder Backend',
       timestamp: new Date().toISOString(),
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('auth')
+  testAuth(@Request() req) {
+    return {
+      message: 'Authentication is working!',
+      user: req.user,
     };
   }
 }

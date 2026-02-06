@@ -94,27 +94,14 @@ export class PdfService {
       let launchArgs: string[];
 
       if (isProduction) {
-        // Use serverless Chromium for Vercel
-        // Configure Chromium for serverless environment
-        // Note: @sparticuz/chromium doesn't have setGraphicsMode/setHeadlessMode methods
-        // These are handled automatically in serverless environments
-
         try {
+          // @ts-ignore - 123.0.1 has setGraphicsMode
+          if (typeof chromium.setGraphicsMode === 'function') {
+            await chromium.setGraphicsMode(false);
+          }
           executablePath = await chromium.executablePath();
-          // Use the args provided by chromium, but ensure we have the necessary ones
-          launchArgs = [
-            ...chromium.args,
-            '--disable-gpu',
-            '--disable-dev-shm-usage',
-            '--disable-software-rasterizer',
-            '--disable-extensions',
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-background-timer-throttling',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-renderer-backgrounding',
-          ];
-          console.log('🔍 Using serverless Chromium for Vercel');
+          launchArgs = chromium.args;
+          console.log('🔍 Using serverless Chromium (123.x) for Vercel');
           console.log('🔍 Executable path:', executablePath);
           console.log('🔍 Chromium args count:', launchArgs.length);
         } catch (chromiumError) {
