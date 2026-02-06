@@ -35,6 +35,13 @@ export const AIChatSession = {
           return text.substring(start, end + 1).trim();
         }
 
+        // 3. Falling back to HTML extraction if it looks like a list
+        const htmlStart = text.indexOf('<ul');
+        const htmlEnd = text.lastIndexOf('</ul>');
+        if (htmlStart !== -1 && htmlEnd !== -1 && htmlEnd > htmlStart) {
+          return text.substring(htmlStart, htmlEnd + 5).trim();
+        }
+
         return text.trim();
       };
 

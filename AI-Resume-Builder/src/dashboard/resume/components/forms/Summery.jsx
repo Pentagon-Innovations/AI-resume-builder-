@@ -44,11 +44,17 @@ function Summery({ enabledNext }) {
 
       // Parse the AI response
       let responseData;
+      const rawText = result.response.text();
       try {
-        responseData = JSON.parse(result.response.text());
+        responseData = JSON.parse(rawText);
       } catch (error) {
-        console.error('Failed to parse AI response:', error);
-        throw new Error('Invalid AI response format');
+        console.warn('Failed to parse AI response as JSON, trying fallback...', error);
+        // Fallback: If it's not JSON but looks like HTML list, maybe it's semi-useful?
+        // But the UI expects an array. Let's try to wrap the text in a single experience level.
+        responseData = [{
+          experience_level: "AI Generated",
+          summary: rawText.replace(/<[^>]*>?/gm, '').trim() // Strip tags for preview
+        }];
       }
 
       // Extract the relevant data from the response

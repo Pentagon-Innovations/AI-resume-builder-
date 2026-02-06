@@ -1,7 +1,7 @@
 import { Injectable, StreamableFile, BadRequestException } from '@nestjs/common';
 import puppeteer from 'puppeteer-core';
-// @ts-ignore - @sparticuz/chromium may not have type definitions
-import chromium from '@sparticuz/chromium';
+// @ts-ignore - @sparticuz/chromium-min may not have type definitions
+import chromium from '@sparticuz/chromium-min';
 import { setTimeout } from 'node:timers/promises';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -96,18 +96,14 @@ export class PdfService {
 
       if (isProduction) {
         try {
-          executablePath = await chromium.executablePath();
-          // Use the args provided by chromium, but ensure we have the necessary ones for stability
-          launchArgs = [
-            ...chromium.args,
-            '--disable-gpu',
-            '--disable-dev-shm-usage',
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-          ];
-          console.log(`🔍 Using serverless Chromium (131.x) for Vercel`);
+          // Use @sparticuz/chromium-min with a remote pack URL for stability on Node 20+/AL2023
+          const chromiumPackUrl = 'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar';
+          executablePath = await (chromium as any).executablePath(chromiumPackUrl);
+
+          launchArgs = [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'];
+          console.log(`🔍 Using serverless Chromium-min (131.x) with remote pack for Vercel`);
           console.log('🔍 Executable path:', executablePath);
-          console.log('🔍 Chromium args count:', launchArgs.length);
+          console.log(`🔍 Chromium args: ${JSON.stringify(launchArgs)}`);
         } catch (chromiumError) {
           console.error('❌ Failed to get Chromium executable:', chromiumError);
           throw new BadRequestException('PDF generation service unavailable. Please try again later.');

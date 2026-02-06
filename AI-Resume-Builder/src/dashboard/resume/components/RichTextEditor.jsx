@@ -45,19 +45,29 @@ function RichTextEditor({ onRichTextEditorChange, index, defaultValue }) {
 
     try {
       const result = await AIChatSession.sendMessage(prompt);
-      const responseText = await result.response.text();
-      const parsedResponse = JSON.parse(responseText);
+      const outputText = result.response.text();
 
-      // Extract bullet points and convert them to an HTML list
       let bulletHtml;
-      if (parsedResponse.bulletPoints && parsedResponse.bulletPoints.length) {
-        const bulletPoints = parsedResponse.bulletPoints
-          .map((point) => `<li>${point}</li>`)
-          .join('');
-        bulletHtml = `<ul>${bulletPoints}</ul>`;
-      }
-      else if (parsedResponse.bullet_points) {
-        bulletHtml = parsedResponse.bullet_points;
+
+      // If the response is already HTML (starts with <ul>), use it directly
+      if (outputText.trim().startsWith('<ul') || outputText.trim().startsWith('<ul>')) {
+        bulletHtml = outputText;
+      } else {
+        // Try to parse as JSON in case AI returned an object
+        try {
+          const parsedResponse = JSON.parse(outputText);
+          if (parsedResponse.bulletPoints && parsedResponse.bulletPoints.length) {
+            const bulletPoints = parsedResponse.bulletPoints
+              .map((point) => `<li>${point}</li>`)
+              .join('');
+            bulletHtml = `<ul>${bulletPoints}</ul>`;
+          } else if (parsedResponse.bullet_points) {
+            bulletHtml = parsedResponse.bullet_points;
+          }
+        } catch (parseError) {
+          // Fallback: wrap it in <ul>
+          bulletHtml = outputText.includes('<li>') ? outputText : `<ul>${outputText}</ul>`;
+        }
       }
 
       setValue(bulletHtml);

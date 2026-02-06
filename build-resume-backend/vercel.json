@@ -5,7 +5,8 @@
             "src": "src/main.ts",
             "use": "@vercel/node",
             "config": {
-                "runtime": "nodejs20.x"
+                "runtime": "nodejs24.x",
+                "memory": 3008
             }
         }
     ],
