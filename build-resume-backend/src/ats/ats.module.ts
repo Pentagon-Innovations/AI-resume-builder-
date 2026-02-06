@@ -5,6 +5,7 @@ import { ATSService } from './ats.service';
 import { JobSchema, ApplicationSchema } from './ats.schema';
 import { AnalyzeModule } from '../analyze/analyze.module';
 import { UsersModule } from '../users/users.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { UsersModule } from '../users/users.module';
         ]),
         AnalyzeModule,
         UsersModule,
+        AuthModule,
     ],
     controllers: [ATSController],
     providers: [ATSService],

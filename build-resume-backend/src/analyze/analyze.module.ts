@@ -3,9 +3,10 @@ import { AnalyzeController } from './analyze.controller';
 import { AnalyzeService } from './analyze.service';
 import { UsersModule } from '../users/users.module';
 import { OpenAIResponsesService } from '../shared/openai-responses.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, AuthModule],
   controllers: [AnalyzeController],
   providers: [AnalyzeService, OpenAIResponsesService],
   exports: [AnalyzeService],

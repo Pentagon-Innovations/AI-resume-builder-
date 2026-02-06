@@ -136,7 +136,7 @@ export class PdfService {
         defaultViewport: isProduction ? chromium.defaultViewport : { width: 1280, height: 720 },
         executablePath,
         headless: isProduction ? chromium.headless : true,
-      });
+      } as any);
       console.log('✅ Puppeteer launched');
 
       const page = await browser.newPage();
