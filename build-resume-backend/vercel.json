@@ -5,7 +5,7 @@
             "src": "src/main.ts",
             "use": "@vercel/node",
             "config": {
-                "runtime": "nodejs18.x"
+                "runtime": "nodejs20.x"
             }
         }
     ],

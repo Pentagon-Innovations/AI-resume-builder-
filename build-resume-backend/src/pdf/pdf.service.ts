@@ -96,20 +96,16 @@ export class PdfService {
 
       if (isProduction) {
         try {
-          // @ts-ignore - 123.0.1 has setGraphicsMode
-          if (typeof chromium.setGraphicsMode === 'function') {
-            await chromium.setGraphicsMode(false);
-          }
           executablePath = await chromium.executablePath();
           // Use the args provided by chromium, but ensure we have the necessary ones for stability
           launchArgs = [
             ...chromium.args,
-            '--single-process',
             '--disable-gpu',
             '--disable-dev-shm-usage',
-            '--no-zygote'
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
           ];
-          console.log('🔍 Using serverless Chromium (123.x) for Vercel');
+          console.log(`🔍 Using serverless Chromium (131.x) for Vercel`);
           console.log('🔍 Executable path:', executablePath);
           console.log('🔍 Chromium args count:', launchArgs.length);
         } catch (chromiumError) {
@@ -131,7 +127,7 @@ export class PdfService {
         defaultViewport: isProduction ? chromium.defaultViewport : { width: 1280, height: 720 },
         executablePath,
         headless: isProduction ? chromium.headless : true,
-      });
+      } as any);
       console.log('✅ Puppeteer launched');
 
       const page = await browser.newPage();
