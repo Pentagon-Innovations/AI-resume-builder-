@@ -9,11 +9,11 @@ import { MulterModule } from '@nestjs/platform-express';
   imports: [
     MulterModule.register({
       storage: undefined, // Uses memory storage by default
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max file size
+      limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max file size
     }),
     MongooseModule.forFeature([{ name: 'Resume', schema: ResumeSchema }]),
   ],
   controllers: [ResumeController],
   providers: [ResumeService],
 })
-export class ResumeModule {}
+export class ResumeModule { }

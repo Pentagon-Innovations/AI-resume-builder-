@@ -10,6 +10,11 @@ async function bootstrap() {
   if (!app) {
     app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+    // Increase body limits for large resumes and photos
+    const express = require('express');
+    app.use(express.json({ limit: '10mb' }));
+    app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
     // Enable CORS with explicit production origins
     const allowedOrigins = [
       'http://localhost:5173',
