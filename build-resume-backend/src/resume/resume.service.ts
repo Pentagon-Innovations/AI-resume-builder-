@@ -32,7 +32,8 @@ export class ResumeService {
   ) { }
 
   async createNewResume(data: Partial<Resume>): Promise<Resume> {
-    const newResume = new this.resumeModel(data);
+    const normalizedData = this.normalizeResumeData(data);
+    const newResume = new this.resumeModel(normalizedData);
     return newResume.save();
   }
 
@@ -45,7 +46,7 @@ export class ResumeService {
     data: UpdateResumeData,
     file?: Express.Multer.File, // Handle uploaded file correctly
   ): Promise<Resume | null> {
-    const updateData: any = { ...data };
+    const updateData: any = this.normalizeResumeData({ ...data });
 
     if (file) {
       updateData.profilePhoto = {
@@ -57,6 +58,47 @@ export class ResumeService {
     return this.resumeModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
+  }
+
+  /**
+   * Defensive normalization to prevent Mongoose validation errors
+   * from AI-generated or malformed client-side data.
+   */
+  private normalizeResumeData(data: any): any {
+    if (!data) return data;
+
+    // 1. Normalize Skills Rating (Mongoose max: 5)
+    if (data.skills && Array.isArray(data.skills)) {
+      data.skills = data.skills.map((skill: any) => {
+        if (typeof skill === 'object' && skill !== null) {
+          let rating = Number(skill.rating);
+          if (isNaN(rating)) rating = 5;
+
+          // Clamp to 1-5. If it's a 100-scale value (common AI hallucination), scale down.
+          if (rating > 5) {
+            rating = Math.max(1, Math.min(5, Math.round(rating / 20)));
+          } else {
+            rating = Math.max(1, Math.min(5, Math.round(rating)));
+          }
+
+          return { ...skill, rating };
+        }
+        return skill;
+      });
+    }
+
+    // 2. Normalize Property Names (description vs workSummery)
+    if (data.experience && Array.isArray(data.experience)) {
+      data.experience = data.experience.map((exp: any) => {
+        if (exp.workSummery && !exp.description) {
+          exp.description = exp.workSummery;
+          delete exp.workSummery;
+        }
+        return exp;
+      });
+    }
+
+    return data;
   }
 
   async getProfilePhoto(id: string) {

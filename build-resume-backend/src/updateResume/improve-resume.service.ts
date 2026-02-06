@@ -126,7 +126,7 @@ export class ImproveResumeService {
           "summery": "",
           "experience": [{ "title": "", "companyName": "", "city": "", "state": "", "startDate": "", "endDate": "", "currentlyWorking": false, "workSummery": "HTML list" }],
           "education": [{ "universityName": "", "degree": "", "major": "", "startDate": "", "endDate": "", "description": "" }],
-          "skills": [{ "name": "", "rating": 100 }]
+          "skills": [{ "name": "", "rating": 5 }]
         }
       `;
 
@@ -144,6 +144,22 @@ export class ImproveResumeService {
         parsedData.experience.forEach((exp: any) => {
           if (Array.isArray(exp.workSummery)) {
             exp.workSummery = '<ul>' + exp.workSummery.map(d => `<li>${d}</li>`).join('') + '</ul>';
+          }
+        });
+      }
+
+      // Normalize and Clamp Skills Rating (Mongoose schema max is 5)
+      if (parsedData.skills && Array.isArray(parsedData.skills)) {
+        parsedData.skills.forEach((skill: any) => {
+          if (typeof skill.rating === 'number') {
+            // Clamp between 1 and 5. If it's a 100-scale value, scale it down.
+            if (skill.rating > 5) {
+              skill.rating = Math.max(1, Math.min(5, Math.round(skill.rating / 20)));
+            } else {
+              skill.rating = Math.max(1, Math.min(5, Math.round(skill.rating)));
+            }
+          } else {
+            skill.rating = 5; // Default if missing or malformed
           }
         });
       }
@@ -168,11 +184,42 @@ export class ImproveResumeService {
         ? await this.extractTextFromPDF(buffer)
         : buffer.toString('utf8');
 
-      const prompt = `Extract info from resume to match JD: ${jd}.\nResume: ${resumeText}\nReturn JSON strictly.`;
+      const prompt = `
+        Refine this resume to match the Job Description.
+        Integrate keywords naturally.
+        - Job Description: ${jd}
+        - Resume: ${resumeText}
+
+        Return ONLY pure JSON:
+        {
+          "firstName": "", "lastName": "", "email": "", "phone": "", "address": "", "jobTitle": "",
+          "summery": "",
+          "experience": [{ "title": "", "companyName": "", "city": "", "state": "", "startDate": "", "endDate": "", "currentlyWorking": false, "workSummery": "HTML list" }],
+          "education": [{ "universityName": "", "degree": "", "major": "", "startDate": "", "endDate": "", "description": "" }],
+          "skills": [{ "name": "", "rating": 5 }]
+        }
+      `;
       const raw = await this.aiCall(prompt);
       const cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
       const match = cleaned.match(/\{[\s\S]*\}/);
-      return JSON.parse(match ? match[0] : cleaned);
+      const parsedData = JSON.parse(match ? match[0] : cleaned);
+
+      // Normalize Skills Rating
+      if (parsedData.skills && Array.isArray(parsedData.skills)) {
+        parsedData.skills.forEach((skill: any) => {
+          if (typeof skill.rating === 'number') {
+            if (skill.rating > 5) {
+              skill.rating = Math.max(1, Math.min(5, Math.round(skill.rating / 20)));
+            } else {
+              skill.rating = Math.max(1, Math.min(5, Math.round(skill.rating)));
+            }
+          } else {
+            skill.rating = 5;
+          }
+        });
+      }
+
+      return parsedData;
     } catch (err) {
       console.error('Autofill Embeddings Error:', err);
       throw err;
