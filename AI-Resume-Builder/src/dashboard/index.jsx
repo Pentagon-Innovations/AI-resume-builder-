@@ -3,7 +3,7 @@ import AddResume from './components/AddResume'
 import Header from '@/components/custom/Header'
 import GlobalApi from 'service/GlobalApi'
 import { useAuth } from './../context/AuthContext'
-import { LoaderCircle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import ResumeCardItem from './components/ResumeCardItem';
 
 function Dashboard() {
@@ -85,7 +85,7 @@ function Dashboard() {
     <div className='p-10 md:px-20 lg:px-32'>
       {isAutoCreating && (
         <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
-          <LoaderCircle className="h-12 w-12 text-primary animate-spin mb-4" />
+          <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
           <h2 className="text-xl font-bold text-gray-800">Finalizing your AI-improved resume...</h2>
           <p className="text-gray-600">You'll be in the editor in a moment.</p>
         </div>

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
-import { LoaderCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import GlobalApi from 'service/GlobalApi';
@@ -164,7 +164,7 @@ function Education() {
           </Button>
         </div>
         <Button disabled={loading} onClick={() => onSave()}>
-          {loading ? <LoaderCircle className="animate-spin" /> : "Save"}
+          {loading ? <Loader2 className="animate-spin" /> : "Save"}
         </Button>
       </div>
     </div>

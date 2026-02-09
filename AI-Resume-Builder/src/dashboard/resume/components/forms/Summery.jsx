@@ -4,7 +4,7 @@ import { ResumeInfoContext } from '@/context/ResumeInfoContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import GlobalApi from 'service/GlobalApi';
-import { Brain, LoaderCircle } from 'lucide-react';
+import { Brain, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { AIChatSession } from 'service/AIModal';
 
@@ -128,7 +128,7 @@ function Summery({ enabledNext }) {
               <Button variant="outline" onClick={() => improveSummaryWithAI()}
                 disabled={isImproving}
                 type="button" size="sm" className="border-green-600 text-green-600 flex gap-2">
-                {isImproving ? <LoaderCircle className='h-4 w-4 animate-spin' /> : <Brain className='h-4 w-4' />}
+                {isImproving ? <Loader2 className='h-4 w-4 animate-spin' /> : <Brain className='h-4 w-4' />}
                 Improve with AI
               </Button>
               <Button variant="outline" onClick={() => generateSummaryFromAI()}
@@ -144,7 +144,7 @@ function Summery({ enabledNext }) {
           <div className='mt-2 flex justify-end'>
             <Button type="submit"
               disabled={loading}>
-              {loading ? <LoaderCircle className='animate-spin' /> : 'Save'}
+              {loading ? <Loader2 className='animate-spin' /> : 'Save'}
             </Button>
           </div>
         </form>

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ResumeInfoContext } from '@/context/ResumeInfoContext'
-import { LoaderCircle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import GlobalApi from 'service/GlobalApi';
@@ -136,7 +136,7 @@ function PersonalDetail({ enabledNext }) {
                 <div className='mt-3 flex justify-end'>
                     <Button type="submit"
                         disabled={loading}>
-                        {loading ? <LoaderCircle className='animate-spin' /> : 'Save'}
+                        {loading ? <Loader2 className='animate-spin' /> : 'Save'}
                     </Button>
                 </div>
             </form>

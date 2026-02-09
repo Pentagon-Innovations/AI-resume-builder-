@@ -6,7 +6,7 @@ import { ResumeInfoContext } from '@/context/ResumeInfoContext'
 import { useParams } from 'react-router-dom'
 import GlobalApi from 'service/GlobalApi'
 import { toast } from 'sonner'
-import { LoaderCircle } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
 const formField = {
@@ -156,7 +156,7 @@ function Experience() {
 
                     </div>
                     <Button disabled={loading} onClick={() => onSave()}>
-                        {loading ? <LoaderCircle className='animate-spin' /> : 'Save'}
+                        {loading ? <Loader2 className='animate-spin' /> : 'Save'}
                     </Button>
                 </div>
             </div>

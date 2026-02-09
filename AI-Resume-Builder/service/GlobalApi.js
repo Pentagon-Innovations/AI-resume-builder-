@@ -18,10 +18,22 @@ const axiosClient = axios.create({
   },
 });
 
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('[GlobalApi] Response Error:', error.response?.status, error.response?.data);
+    return Promise.reject(error);
+  }
+);
+
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
+  console.log(`[GlobalApi] Request: ${config.method.toUpperCase()} ${config.url}`);
   if (token && token !== 'null' && token !== 'undefined') {
     config.headers.Authorization = `Bearer ${token}`;
+    console.log('[GlobalApi] Token attached');
+  } else {
+    console.warn('[GlobalApi] No token found in localStorage');
   }
   return config;
 });
