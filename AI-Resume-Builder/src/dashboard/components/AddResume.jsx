@@ -51,6 +51,13 @@ function AddResume() {
 
     const onAutofill = async () => {
         if (!file || !jobDescription) return;
+
+        // File size check (4MB limit for Vercel serverless)
+        if (file.size > 4 * 1024 * 1024) {
+            alert("File is too large. Please upload a file smaller than 4MB.");
+            return;
+        }
+
         setLoading(true);
 
         const formData = new FormData();

@@ -8,7 +8,7 @@ import { Brain, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { AIChatSession } from 'service/AIModal';
 
-const prompt = "Job Title: {jobTitle} , Depends on job title give me list of  summery for 3 experience level, Mid Level and Freasher level in 3 -4 lines in array format, With summery and experience_level Field in JSON Format"
+const prompt = "Job Title: {jobTitle} , Depends on job title give me list of  summary for 3 experience level, Mid Level and Freasher level in 3 -4 lines in array format, With summary and experience_level Field in JSON Format"
 function Summery({ enabledNext }) {
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
   const [summery, setSummery] = useState();
@@ -155,10 +155,10 @@ function Summery({ enabledNext }) {
         <h2 className='font-bold text-lg'>Suggestions</h2>
         {aiGeneratedSummeryList?.map((item, index) => (
           <div key={index}
-            onClick={() => setSummery(item?.summary)}
+            onClick={() => setSummery(item?.summary || item?.summery)}
             className='p-5 shadow-lg my-4 rounded-lg cursor-pointer'>
             <h2 className='font-bold my-1 text-primary'>Level: {item?.experience_level}</h2>
-            <p>{item?.summary}</p>
+            <p>{item?.summary || item?.summery}</p>
           </div>
         ))}
       </div>}

@@ -45,7 +45,8 @@ const GetUserResumes = (userEmail) =>
 const UpdateResumeDetail = (id, data, isMultipart = false) =>
   axiosClient.put('/resumes/' + id, data, {
     headers: {
-      'Content-Type': isMultipart ? 'multipart/form-data' : 'application/json',
+      // Let axios set the content type for multipart/form-data to include usage of boundary
+      'Content-Type': isMultipart ? undefined : 'application/json',
     },
   });
 
@@ -58,14 +59,14 @@ const DeleteResumeById = (id) =>
 const AutofillResume = (data) =>
   axiosClient.post('/improve-resume/autofill', data, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      // 'Content-Type': 'multipart/form-data', // Let Axios set this
     },
   });
 
 const FullAutoImprove = (data) =>
   axiosClient.post('/improve-resume/full-auto-improve', data, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      // 'Content-Type': 'multipart/form-data',
     },
   });
 
@@ -77,18 +78,18 @@ const UpdateJob = (id, data) => axiosClient.patch('/ats/jobs/' + id, data);
 const DeleteJob = (id) => axiosClient.delete('/ats/jobs/' + id);
 const ScreenResumes = (jobId, data) =>
   axiosClient.post(`/ats/jobs/${jobId}/screen`, data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    // headers: { 'Content-Type': 'multipart/form-data' }
   });
 const GetRankedCandidates = (jobId) => axiosClient.get(`/ats/jobs/${jobId}/candidates`);
 const GetAllCandidates = () => axiosClient.get('/ats/candidates');
 
 // Analyze
 const AnalyzeResume = (data) => axiosClient.post('/analyze', data, {
-  headers: { 'Content-Type': 'multipart/form-data' }
+  // headers: { 'Content-Type': 'multipart/form-data' }
 });
 const GenerateJD = (data) => axiosClient.post('/analyze/generate-jd', data);
 const ParseResume = (data) => axiosClient.post('/analyze/parse-resume', data, {
-  headers: { 'Content-Type': 'multipart/form-data' }
+  // headers: { 'Content-Type': 'multipart/form-data' }
 });
 
 // Improve Resume

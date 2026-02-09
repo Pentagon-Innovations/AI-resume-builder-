@@ -7,6 +7,8 @@ function DownLoadResumePreview() {
   const { resumeInfo } = useContext(ResumeInfoContext);
   const [pdfUrl, setPdfUrl] = useState('');
   const { resumeId } = useParams()
+  const [error, setError] = useState(null);
+
   // Fetch PDF on component mount
   useEffect(() => {
     const fetchPdf = async () => {
@@ -16,6 +18,7 @@ function DownLoadResumePreview() {
         setPdfUrl(pdfUrl);
       } catch (error) {
         console.error('Error fetching PDF:', error);
+        setError("Failed to load PDF preview. Please try downloading.");
       }
     };
 
@@ -27,6 +30,12 @@ function DownLoadResumePreview() {
 
 
       {/* PDF Preview */}
+      {error && (
+        <div className="flex flex-col items-center justify-center p-10 h-full">
+          <p className="text-red-500 mb-4">{error}</p>
+        </div>
+      )}
+
       {pdfUrl && (
         <div className="pdf-preview mt-8">
           <iframe

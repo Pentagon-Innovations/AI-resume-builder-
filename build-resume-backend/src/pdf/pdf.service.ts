@@ -1,7 +1,7 @@
 import { Injectable, StreamableFile, BadRequestException } from '@nestjs/common';
 import puppeteer from 'puppeteer-core';
-// @ts-ignore - @sparticuz/chromium-min may not have type definitions
-import chromium from '@sparticuz/chromium-min';
+// @ts-ignore - @sparticuz/chromium may not have type definitions
+import chromium from '@sparticuz/chromium';
 import { setTimeout } from 'node:timers/promises';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -96,12 +96,20 @@ export class PdfService {
 
       if (isProduction) {
         try {
-          // Use @sparticuz/chromium-min with a remote pack URL for stability on Node 20+/AL2023
-          const chromiumPackUrl = 'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar';
-          executablePath = await (chromium as any).executablePath(chromiumPackUrl);
+          executablePath = await chromium.executablePath();
 
-          launchArgs = [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'];
-          console.log(`🔍 Using serverless Chromium-min (131.x) with remote pack for Vercel`);
+          // Optimized args for Vercel/AWS Lambda
+          launchArgs = [
+            ...chromium.args,
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--disable-software-rasterizer',
+            '--single-process', // Sometimes helps in low-memory envs
+            '--no-zygote',
+          ];
+          console.log(`🔍 Using serverless Chromium (131.x) for Vercel (Node 22)`);
           console.log('🔍 Executable path:', executablePath);
           console.log(`🔍 Chromium args: ${JSON.stringify(launchArgs)}`);
         } catch (chromiumError) {

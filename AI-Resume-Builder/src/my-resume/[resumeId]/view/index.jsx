@@ -22,8 +22,25 @@ function ViewResume() {
         })
     }
 
-    const HandleDownload = () => {
-        window.print();
+    const [loading, setLoading] = useState(false);
+
+    const HandleDownload = async () => {
+        setLoading(true);
+        try {
+            const resp = await GlobalApi.GetPdf(resumeId);
+            const url = window.URL.createObjectURL(new Blob([resp.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${resumeInfo?.firstName}_${resumeInfo?.lastName}_Resume.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Error downloading PDF:", error);
+            // You might want to show a toast here
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -36,19 +53,21 @@ function ViewResume() {
                         Congrats! Your Ultimate AI generates Resume is ready ! </h2>
                     <p className='text-center text-gray-400'>Now you are ready to download your resume and you can share unique
                         resume url with your friends and family </p>
-                    {/*<div className='flex justify-between px-44 my-10'>
-                <Button onClick={HandleDownload}>Download</Button>
-               
-                <RWebShare
-        data={{
-          text: "Hello Everyone, This is my resume please open url to see it",
-          url: import.meta.env.VITE_BASE_URL+"/my-resume/"+resumeId+"/view",
-          title: resumeInfo?.firstName+" "+resumeInfo?.lastName+" resume",
-        }}
-        onClick={() => console.log("shared successfully!")}
-      > <Button>Share</Button>
-      </RWebShare>
-            </div>*/}
+                    <div className='flex justify-between px-44 my-10'>
+                        <Button onClick={HandleDownload} disabled={loading}>
+                            {loading ? "Generating..." : "Download"}
+                        </Button>
+
+                        <RWebShare
+                            data={{
+                                text: "Hello Everyone, This is my resume please open url to see it",
+                                url: import.meta.env.VITE_BASE_URL + "/my-resume/" + resumeId + "/view",
+                                title: resumeInfo?.firstName + " " + resumeInfo?.lastName + " resume",
+                            }}
+                            onClick={() => console.log("shared successfully!")}
+                        > <Button>Share</Button>
+                        </RWebShare>
+                    </div>
                 </div>
 
             </div>

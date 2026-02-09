@@ -39,6 +39,12 @@ function PersonalDetail({ enabledNext }) {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // File size validation (4MB)
+            if (file.size > 4 * 1024 * 1024) {
+                toast("File is too large. Max size is 4MB.");
+                return;
+            }
+
             setProfilePhoto(file);
             // Optionally, you can also update the resumeInfo context with the file
             setResumeInfo({
