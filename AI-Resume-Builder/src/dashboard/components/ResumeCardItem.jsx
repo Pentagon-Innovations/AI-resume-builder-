@@ -1,4 +1,4 @@
-import { Loader2, MoreVertical, Notebook } from 'lucide-react'
+import { EllipsisVertical, Loader2, Notebook } from 'lucide-react'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -80,7 +80,7 @@ function ResumeCardItem({ resume, refreshData }) {
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <MoreVertical className='h-4 w-4 cursor-pointer' />
+            <EllipsisVertical className='h-4 w-4 cursor-pointer' />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
 

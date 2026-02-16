@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, CheckCircle, XCircle, AlertCircle, RefreshCw, FileText } from 'lucide-react';
+import { Play, CircleCheck, CircleX, CircleAlert, RefreshCw, FileText } from 'lucide-react';
 import GlobalApi from '../../service/GlobalApi';
 
 const TestDashboard = () => {
@@ -113,11 +113,11 @@ const TestDashboard = () => {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'passed':
-                return <CheckCircle className="w-5 h-5 text-green-500" />;
+                return <CircleCheck className="w-5 h-5 text-green-500" />;
             case 'failed':
-                return <XCircle className="w-5 h-5 text-red-500" />;
+                return <CircleX className="w-5 h-5 text-red-500" />;
             case 'skipped':
-                return <AlertCircle className="w-5 h-5 text-yellow-500" />;
+                return <CircleAlert className="w-5 h-5 text-yellow-500" />;
             default:
                 return null;
         }
@@ -174,8 +174,8 @@ const TestDashboard = () => {
                                 key={module.id}
                                 onClick={() => setSelectedModule(module.id)}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${selectedModule === module.id
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
                             >
                                 <module.icon className="w-4 h-4" />
@@ -226,8 +226,8 @@ const TestDashboard = () => {
                                             {suite.tests.length} tests
                                         </span>
                                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${suite.status === 'passed' ? 'bg-green-100 text-green-800' :
-                                                suite.status === 'failed' ? 'bg-red-100 text-red-800' :
-                                                    'bg-yellow-100 text-yellow-800'
+                                            suite.status === 'failed' ? 'bg-red-100 text-red-800' :
+                                                'bg-yellow-100 text-yellow-800'
                                             }`}>
                                             {suite.status.toUpperCase()}
                                         </span>

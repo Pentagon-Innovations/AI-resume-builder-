@@ -7,8 +7,8 @@ import {
     ArrowLeft,
     Upload,
     FileText,
-    CheckCircle2,
-    XCircle,
+    CircleCheckBig,
+    CircleX,
     Loader2,
     Search,
     Filter,
@@ -162,8 +162,8 @@ function JobDetails() {
                                         <div className="flex items-center gap-2">
                                             <div className="w-16 h-2 bg-gray-100 rounded-full overflow-hidden">
                                                 <div
-                                                    className={`h - full ${cand.score > 75 ? 'bg-green-500' : cand.score > 50 ? 'bg-yellow-500' : 'bg-red-500'} `}
-                                                    style={{ width: `${cand.score}% ` }}
+                                                    className={`h-full ${cand.score > 75 ? 'bg-green-500' : cand.score > 50 ? 'bg-yellow-500' : 'bg-red-500'} `}
+                                                    style={{ width: `${cand.score}%` }}
                                                 />
                                             </div>
                                             <span className="font-bold">{cand.score}%</span>

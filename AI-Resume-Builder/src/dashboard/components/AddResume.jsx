@@ -1,4 +1,4 @@
-import { Loader2, PlusSquare } from 'lucide-react'
+import { Loader2, SquarePlus } from 'lucide-react'
 import { useState } from 'react'
 import {
     Dialog,
@@ -76,7 +76,7 @@ function AddResume() {
                 // Once we have the parsed data, create the resume
                 const uuid = uuidv4();
                 const payload = {
-                    title: `Autofilled - ${new Date().toLocaleDateString()}`,
+                    title: `Autofilled - ${new Date().toLocaleDateString()} `,
                     resumeId: uuid,
                     userEmail: user?.email,
                     userName: user?.firstName + ' ' + (user?.lastName || ''),
@@ -108,7 +108,7 @@ function AddResume() {
         cursor-pointer border-dashed'
                 onClick={() => setOpenDialog(true)}
             >
-                <PlusSquare />
+                <SquarePlus />
             </div>
 
             <Dialog open={openDialog} onOpenChange={(open) => {
@@ -131,13 +131,13 @@ function AddResume() {
                     <div className="w-full mt-4">
                         <div className="flex w-full grid-cols-2 bg-slate-100 p-1 rounded-md">
                             <button
-                                className={`flex-1 p-2 text-sm rounded-md transition-all ${activeTab === 'empty' ? 'bg-white shadow' : ''}`}
+                                className={`flex - 1 p - 2 text - sm rounded - md transition - all ${activeTab === 'empty' ? 'bg-white shadow' : ''} `}
                                 onClick={() => setActiveTab('empty')}
                             >
                                 Start from Scratch
                             </button>
                             <button
-                                className={`flex-1 p-2 text-sm rounded-md transition-all ${activeTab === 'autofill' ? 'bg-white shadow' : ''}`}
+                                className={`flex - 1 p - 2 text - sm rounded - md transition - all ${activeTab === 'autofill' ? 'bg-white shadow' : ''} `}
                                 onClick={() => setActiveTab('autofill')}
                             >
                                 Autofill with AI
