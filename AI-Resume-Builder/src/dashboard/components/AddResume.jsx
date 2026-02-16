@@ -78,8 +78,8 @@ function AddResume() {
                 const payload = {
                     title: `Autofilled - ${new Date().toLocaleDateString()}`,
                     resumeId: uuid,
-                    userEmail: user?.primaryEmailAddress?.emailAddress,
-                    userName: user?.fullName,
+                    userEmail: user?.email,
+                    userName: user?.firstName + ' ' + (user?.lastName || ''),
                     ...resp.data // Spread the AI-generated content
                 };
 

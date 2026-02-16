@@ -26,13 +26,21 @@ export class ResumeController {
   @Post()
   async createNewResume(@Body() data: any, @Request() req) {
     console.log(`[RESUME] Create called by user: ${req.user?.userId || 'unknown'}`);
+
+    // Hardening: Force userEmail from verified JWT for security/consistency
+    if (req.user?.email) {
+      data.userEmail = req.user.email;
+    }
+
     return this.resumeService.createNewResume(data);
   }
 
   @Get()
   async getUserResumes(@Query('userEmail') userEmail: string, @Request() req) {
     console.log(`[RESUME] GetUserResumes called by user: ${req.user?.userId || 'unknown'}`);
-    return this.resumeService.getUserResumes(userEmail);
+    // Security: Use email from verified token if available, fallback to query param
+    const emailToUse = req.user?.email || userEmail;
+    return this.resumeService.getUserResumes(emailToUse);
   }
 
   @Put(':id')
