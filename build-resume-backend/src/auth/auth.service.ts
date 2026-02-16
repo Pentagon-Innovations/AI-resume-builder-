@@ -26,38 +26,39 @@ export class AuthService {
 
     async login(user: any) {
         if (!user || !user.email || !user._id) {
-            console.error('❌ Invalid user data for login:', { 
-                hasUser: !!user, 
-                hasEmail: !!user?.email, 
+            console.error('❌ Invalid user data for login:', {
+                hasUser: !!user,
+                hasEmail: !!user?.email,
                 hasId: !!user?._id,
-                userType: typeof user 
+                userType: typeof user
             });
             throw new BadRequestException('Invalid user data for login');
         }
-        
+
         // Convert Mongoose document to plain object if needed
         const userObj = user.toObject ? user.toObject() : user;
         const userId = String(userObj._id || userObj.id);
-        
+
         const payload = { email: userObj.email, sub: userId };
-        
+
         // Get JWT secrets, with fallback defaults for development
         const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'default-dev-secret-change-in-production';
         const refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET') || jwtSecret;
-        
+
+        console.log(`[AUTH] AuthService.login: Generating tokens for user ${userId} using JWT_SECRET (prefix: ${jwtSecret.substring(0, 4)}...)`);
+
         // Warn if using default secrets (not secure for production)
         if (!this.configService.get<string>('JWT_SECRET')) {
             console.warn('⚠️ WARNING: JWT_SECRET not configured, using default secret. This is NOT secure for production!');
-            console.warn('⚠️ Please set JWT_SECRET and JWT_REFRESH_SECRET in your environment variables.');
         }
-        
+
         // Access token uses the module's default secret (configured in auth.module.ts)
         // Refresh token uses a potentially different secret
         const accessToken = this.jwtService.sign(payload);
-        const refreshToken = refreshSecret === jwtSecret 
+        const refreshToken = refreshSecret === jwtSecret
             ? this.jwtService.sign(payload, { expiresIn: '7d' })
             : this.jwtService.sign(payload, { expiresIn: '7d', secret: refreshSecret });
-        
+
         return {
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -131,11 +132,11 @@ export class AuthService {
                     lastName: profile.name?.familyName || '',
                     [provider + 'Id']: profile.id,
                 };
-                
+
                 if (profile.photos?.[0]?.value) {
                     userData.picture = profile.photos[0].value;
                 }
-                
+
                 user = await this.usersService.create(userData);
             }
         }
