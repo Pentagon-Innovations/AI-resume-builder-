@@ -15,22 +15,19 @@ async function bootstrap() {
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-    // Enable CORS with explicit production origins
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'https://resume-builder-frontend-seven-black.vercel.app',
-      'https://resume-builder-frontend-teal.vercel.app',
-      'https://resume-builder-frontend.vercel.app',
-    ];
+    // Consolidate CORS origin verification
+    const isAllowedOrigin = (origin: string): boolean => {
+      if (!origin) return true;
+      const normalized = origin.toLowerCase().trim().replace(/\/+$/, '');
+      const isLocal = normalized === 'http://localhost:5173' || normalized === 'http://localhost:3000';
+      const isVercel = normalized.endsWith('.vercel.app');
+      const isDomain = normalized.includes('resume-builder-frontend'); // Safety match
+      return isLocal || isVercel || isDomain;
+    };
 
     app.enableCors({
       origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-
-        // Use a more robust check (regex or includes)
-        const isAllowed = allowedOrigins.some(o => origin === o || origin.endsWith('.vercel.app'));
-
-        if (isAllowed) {
+        if (isAllowedOrigin(origin)) {
           callback(null, true);
         } else {
           console.warn(`⚠️ CORS blocked origin: ${origin}`);
@@ -39,13 +36,13 @@ async function bootstrap() {
       },
       methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
       credentials: true,
-      allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'Origin'],
-      exposedHeaders: ['Content-Disposition'],
+      allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'Origin', 'Range'],
+      exposedHeaders: ['Content-Disposition', 'Content-Range', 'Content-Length', 'Accept-Ranges'],
       preflightContinue: false,
-      optionsSuccessStatus: 200, // Changed to 200 for better compatibility
+      optionsSuccessStatus: 200,
     });
 
-    console.log('✅ CORS enabled with origins:', allowedOrigins);
+    console.log('✅ CORS enabled with robust origin matching');
 
     app.setBaseViewsDir(join(__dirname, 'templates'));
     app.setViewEngine('hbs');
@@ -68,15 +65,20 @@ async function bootstrap() {
 export default async (req: any, res: any) => {
   const origin = (req.headers.origin || '').toString();
 
-  // Robust check: allow localhost or anything ending in .vercel.app
-  const isAllowedOrigin =
-    origin.includes('localhost') ||
-    origin.endsWith('.vercel.app') ||
-    origin.includes('resume-builder-frontend'); // Broad match for safety
+  // Consolidate CORS origin verification
+  const isAllowedOrigin = (origin: string): boolean => {
+    if (!origin) return true;
+    const normalized = origin.toLowerCase().trim().replace(/\/+$/, '');
+    const isLocal = normalized === 'http://localhost:5173' || normalized === 'http://localhost:3000';
+    const isVercel = normalized.endsWith('.vercel.app');
+    const isDomain = normalized.includes('resume-builder-frontend'); // Safety match
+    return isLocal || isVercel || isDomain;
+  };
 
-  console.log(`[VERCEL] Incoming: ${req.method} ${req.url}, Origin: ${origin}, Allowed: ${isAllowedOrigin}`);
+  const allowed = isAllowedOrigin(origin);
+  console.log(`[VERCEL] Incoming: ${req.method} ${req.url}, Origin: ${origin}, Allowed: ${allowed}`);
 
-  if (isAllowedOrigin) {
+  if (allowed && origin) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');

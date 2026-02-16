@@ -14,6 +14,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any) {
+        if (!payload || !payload.sub) {
+            console.error('[AUTH] JwtStrategy Validation FAILED: Payload missing "sub"', payload);
+        } else {
+            console.log('[AUTH] JwtStrategy Validation SUCCESS for user:', payload.sub);
+        }
         return { userId: payload.sub, email: payload.email };
     }
 }
