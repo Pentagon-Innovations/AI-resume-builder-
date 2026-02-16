@@ -45,7 +45,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         console.log('  - Resolved Backend URL:', backendUrl);
         console.log('  - Callback URL:', callbackURL);
         console.log('  - Client ID:', clientID ? `${clientID.substring(0, 20)}...` : 'NOT SET');
-        console.log('  - Client Secret Length:', clientSecret ? clientSecret.length : 0);
+        console.log('  - Client Secret Stats:', clientSecret
+            ? `Length: ${clientSecret.length}, Prefix: ${clientSecret.substring(0, 3)}, Suffix: ${clientSecret.substring(clientSecret.length - 3)}`
+            : 'NOT SET'
+        );
 
         super({
             clientID,
