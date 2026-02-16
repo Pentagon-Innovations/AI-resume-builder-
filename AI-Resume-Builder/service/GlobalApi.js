@@ -31,9 +31,9 @@ axiosClient.interceptors.request.use((config) => {
   console.log(`[GlobalApi] Request: ${config.method.toUpperCase()} ${config.url}`);
   if (token && token !== 'null' && token !== 'undefined') {
     config.headers.Authorization = `Bearer ${token}`;
-    console.log('[GlobalApi] Token attached');
+    console.log(`[GlobalApi] Token attached (prefix: ${token.substring(0, 10)}...)`);
   } else {
-    console.warn('[GlobalApi] No token found in localStorage');
+    console.warn('[GlobalApi] No token found in localStorage or token is invalid');
   }
   return config;
 });

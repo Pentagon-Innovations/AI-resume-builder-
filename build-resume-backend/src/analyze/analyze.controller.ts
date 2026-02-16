@@ -11,6 +11,7 @@ import { UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UsersService } from '../users/users.service';
 
+@UseGuards(JwtAuthGuard)
 @Controller('analyze')
 export class AnalyzeController {
   constructor(

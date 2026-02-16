@@ -57,6 +57,7 @@ export class ImproveResumeController {
     return res.send(improvedPdf);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post("full-auto-improve")
   @UseInterceptors(FileInterceptor("resume"))
   async fullAutoImprove(

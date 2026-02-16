@@ -1,4 +1,4 @@
-import { Loader2Icon, MoreVertical, Notebook } from 'lucide-react'
+import { Loader2, MoreVertical, Notebook } from 'lucide-react'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -106,7 +106,7 @@ function ResumeCardItem({ resume, refreshData }) {
               <AlertDialogCancel onClick={() => setOpenAlert(false)}>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={onDelete}
                 disabled={loading}>
-                {loading ? <Loader2Icon className='animate-spin' /> : 'Delete'}
+                {loading ? <Loader2 className='animate-spin' /> : 'Delete'}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

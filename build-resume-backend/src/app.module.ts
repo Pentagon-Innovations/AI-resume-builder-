@@ -21,7 +21,13 @@ import { AppService } from './app.service';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        const uri = configService.get<string>('MONGODB_URI') || 'mongodb://localhost:27017/resumeDB';
+        const rawUri = configService.get<string>('MONGODB_URI');
+        const uri = rawUri || 'mongodb://localhost:27017/resumeDB';
+
+        console.log(`[DB] Connecting to MONGODB_URI: ${uri?.substring(0, 20)}...`);
+        if (!rawUri) {
+          console.warn('[DB] WARNING: MONGODB_URI is not set, falling back to localhost. This will FAIL on Vercel!');
+        }
 
         return {
           uri,
