@@ -1,0 +1,738 @@
+﻿
+> build-resume-backend@0.0.1 test
+> jest --no-cache
+
+node.exe : PASS 
+src/app.controller.spec.ts 
+(12.012 s)
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : 
+    NotSpecified: (PASS src/  
+  app.co...c.ts (12.012 s):   
+ String) [], RemoteExcepti    
+on
+    + FullyQualifiedErrorId : 
+    NativeCommandError
+ 
+PASS src/resume/resume.service
+.spec.ts (14.697 s)
+PASS src/users/users.service.s
+pec.ts (14.705 s)
+PASS src/updateResume/improve-
+resume.service.spec.ts 
+(15.007 s)
+  ΓùÅ Console
+
+    console.log
+      [DEBUG] Generating 
+arbitrary content via AI...
+
+      at ImproveResumeService.
+generateContent (updateResume/
+improve-resume.service.ts:64:1
+3)
+
+    console.log
+      --- FULL AUTO-IMPROVE 
+STARTING ---
+
+      at ImproveResumeService.
+fullAutoImprove (updateResume/
+improve-resume.service.ts:98:1
+3)
+
+PASS 
+src/auth/auth.service.spec.ts 
+(15.052 s)
+PASS src/auth/auth.controller.
+spec.ts (15.078 s)
+  ΓùÅ Console
+
+    console.log
+      ≡ƒöì Google OAuth 
+Callback - Request received
+
+      at AuthController.google
+AuthRedirect (auth/auth.contro
+ller.ts:47:21)
+
+    console.log
+      ≡ƒöì User object: 
+exists { userId: 
+'507f1f77bcf86cd799439011', 
+email: 'google@example.com' }
+
+      at AuthController.google
+AuthRedirect (auth/auth.contro
+ller.ts:48:21)
+
+    console.log
+      Γ£à Google OAuth 
+Success - Redirecting to: http
+://localhost:5173/auth/callbac
+k?token=jwt-token&refresh_toke
+n=refresh-token&email=google%4
+0example.com&firstName=Google&
+lastName=User
+
+      at AuthController.google
+AuthRedirect (auth/auth.contro
+ller.ts:102:21)
+
+    console.log
+      Γ£à Frontend URL used: 
+http://localhost:5173
+
+      at AuthController.google
+AuthRedirect (auth/auth.contro
+ller.ts:103:21)
+
+    console.log
+      Γ£à LinkedIn OAuth 
+Success - Redirecting to: http
+://localhost:5173/auth/callbac
+k?token=jwt-token&refresh_toke
+n=refresh-token&email=linkedin
+%40example.com&firstName=Linke
+dIn&lastName=User
+
+      at AuthController.linked
+inAuthRedirect (auth/auth.cont
+roller.ts:199:21)
+
+[31m[Nest] 41468  - 
+[39m15/02/2026, 10:51:21 am 
+[31m  ERROR[39m 
+[38;5;3m[BillingService] 
+[39m[31mRazorpay keys are 
+missing in .env file[39m
+PASS src/billing/billing.servi
+ce.spec.ts (15.201 s)
+FAIL src/analyze/analyze.servi
+ce.spec.ts (15.536 s)
+  ΓùÅ Console
+
+    console.log
+      --- STARTING ANALYSIS 
+---
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:19:13)
+
+    console.log
+      Job URL:
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:20:13)
+
+    console.log
+      JD Text (first 50 
+chars): Looking for Node.js 
+developer with 5 years experie
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:21:13)
+
+    console.log
+      [DEBUG] Extracting TXT: 
+resume.txt
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:40:17)
+
+    console.log
+      [DEBUG] Final Resume 
+Text Length: 17
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:44:15)
+
+    console.log
+      [DEBUG] Resume Text 
+(Start): mock file content
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:46:17)
+
+    console.warn
+      [WARNING] Resume text 
+is very short. Analysis might 
+be inaccurate.
+
+    [0m [90m 48 |[39m
+     [90m 49 |[39m       
+[36mif[39m (resumeText[33m?
+[39m[33m.[39mlength 
+[33m<[39m [35m50[39m) {
+    [31m[1m>[22m[39m[90m 
+50 |[39m         console[33m
+.[39mwarn([32m'[WARNING] 
+Resume text is very short. 
+Analysis might be 
+inaccurate.'[39m)[33m;[39m
+     [90m    |[39m          
+       [31m[1m^[22m[39m
+     [90m 51 |[39m       }
+     [90m 52 |[39m
+     [90m 53 |[39m       
+[90m// 2. JD 
+Handling[39m[0m
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:50:17)
+      at Object.<anonymous> (a
+nalyze/analyze.service.spec.ts
+:129:42)
+
+    console.log
+      Calling OpenRouter for 
+analysis...
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:77:15)
+
+    console.log
+      [DEBUG] Calling AI via 
+OpenAIResponsesService
+
+      at 
+AnalyzeService.aiCall (analyze
+/analyze.service.ts:690:13)
+
+    console.log
+      [DEBUG] OpenRouter Raw 
+Response: {"matchScore":85,"ma
+tchedSkills":["Node.js","JavaS
+cript"],"missingSkills":["Reac
+t"],"matchedKeywords":["develo
+per","experience"],"missingKey
+words":["senior"]}
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:119:17)
+
+    console.log
+      [DEBUG] Cleaned 
+Response (Start): {"matchScore
+":85,"matchedSkills":["Node.js
+","JavaScript"],"missingSkills
+":["React"],"matchedKeywords":
+["developer","experience"],"mi
+ssingKeywords":["senior"]}
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:130:17)
+
+    console.log
+      [DEBUG] Parsed 
+Analysis: {
+        "matchScore": 85,
+        "matchedSkills": [
+          "Node.js",
+          "JavaScript"
+        ],
+        "missingSkills": [
+          "React"
+        ],
+        "matchedKeywords": [
+          "developer",
+          "experience"
+        ],
+        "missingKeywords": [
+          "senior"
+        ]
+      }
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:145:17)
+
+    console.log
+      [DEBUG] Final Mapped 
+Analysis: {
+        "matchScore": 85,
+        "missingSkills": [
+          "React"
+        ],
+        "missingKeywords": [
+          "senior"
+        ],
+        "resumeImprovements": 
+[],
+        "interviewTopics": [],
+        "interviewQuestions": 
+[]
+      }
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:164:17)
+
+    console.log
+      [DEBUG] Match Score: 85
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:165:17)
+
+    console.log
+      Calculating embedding 
+similarity...
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:174:15)
+
+    console.log
+      Embedding Score: 0
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:177:17)
+
+    console.warn
+      [DEBUG] Embedding score 
+invalid or 0, using LLM score 
+only
+
+    [0m [90m 189 |[39m     
+      }
+     [90m 190 |[39m         
+} [36melse[39m {
+    [31m[1m>[22m[39m[90m 
+191 |[39m           console[
+33m.[39mwarn([32m'[DEBUG] 
+Embedding score invalid or 0, 
+using LLM score 
+only'[39m)[33m;[39m
+     [90m     |[39m         
+          [31m[1m^[22m[39m
+     [90m 192 |[39m         
+}
+     [90m 193 |[39m       } 
+[36mcatch[39m (e) {
+     [90m 194 |[39m         
+console[33m.[39merror([32m'
+Embedding calculation 
+failed:'[39m[33m,[39m 
+e)[33m;[39m[0m
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:191:19)
+      at Object.<anonymous> (a
+nalyze/analyze.service.spec.ts
+:129:28)
+
+    console.log
+      [DEBUG] Final 
+matchScore after all 
+processing: 85
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:207:15)
+
+    console.log
+      [BONUS] High Match 
+Score detected (>80%). 
+Generating specialized 
+content...
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:211:17)
+
+    console.log
+      [DEBUG] Calling AI via 
+OpenAIResponsesService
+
+      at 
+AnalyzeService.aiCall (analyze
+/analyze.service.ts:690:13)
+
+    console.log
+      Final Score: 85
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:221:15)
+
+    console.log
+      --- ANALYSIS COMPLETE 
+---
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:222:15)
+
+    console.log
+      --- STARTING ANALYSIS 
+---
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:19:13)
+
+    console.log
+      Job URL:
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:20:13)
+
+    console.log
+      JD Text (first 50 
+chars): Looking for an 
+experienced software engineer 
+with
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:21:13)
+
+    console.log
+      [DEBUG] Extracting 
+DOCX: resume.docx
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:31:17)
+
+    console.log
+      [DEBUG] Final Resume 
+Text Length: 24
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:44:15)
+
+    console.log
+      [DEBUG] Resume Text 
+(Start): Mocked DOCX text 
+content
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:46:17)
+
+    console.warn
+      [WARNING] Resume text 
+is very short. Analysis might 
+be inaccurate.
+
+    [0m [90m 48 |[39m
+     [90m 49 |[39m       
+[36mif[39m (resumeText[33m?
+[39m[33m.[39mlength 
+[33m<[39m [35m50[39m) {
+    [31m[1m>[22m[39m[90m 
+50 |[39m         console[33m
+.[39mwarn([32m'[WARNING] 
+Resume text is very short. 
+Analysis might be 
+inaccurate.'[39m)[33m;[39m
+     [90m    |[39m          
+       [31m[1m^[22m[39m
+     [90m 51 |[39m       }
+     [90m 52 |[39m
+     [90m 53 |[39m       
+[90m// 2. JD 
+Handling[39m[0m
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:50:17)
+      at Object.<anonymous> (a
+nalyze/analyze.service.spec.ts
+:144:28)
+
+    console.log
+      Calling OpenRouter for 
+analysis...
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:77:15)
+
+    console.log
+      [DEBUG] Calling AI via 
+OpenAIResponsesService
+
+      at 
+AnalyzeService.aiCall (analyze
+/analyze.service.ts:690:13)
+
+    console.log
+      [DEBUG] OpenRouter Raw 
+Response: {"matchScore":75,"ma
+tchedSkills":[],"missingSkills
+":[]}
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:119:17)
+
+    console.log
+      [DEBUG] Cleaned 
+Response (Start): {"matchScore
+":75,"matchedSkills":[],"missi
+ngSkills":[]}
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:130:17)
+
+    console.log
+      [DEBUG] Parsed 
+Analysis: {
+        "matchScore": 75,
+        "matchedSkills": [],
+        "missingSkills": []
+      }
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:145:17)
+
+    console.log
+      [DEBUG] Final Mapped 
+Analysis: {
+        "matchScore": 75,
+        "missingSkills": [],
+        "missingKeywords": [],
+        "resumeImprovements": 
+[],
+        "interviewTopics": [],
+        "interviewQuestions": 
+[]
+      }
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:164:17)
+
+    console.log
+      [DEBUG] Match Score: 75
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:165:17)
+
+    console.log
+      Calculating embedding 
+similarity...
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:174:15)
+
+    console.log
+      Embedding Score: 0
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:177:17)
+
+    console.warn
+      [DEBUG] Embedding score 
+invalid or 0, using LLM score 
+only
+
+    [0m [90m 189 |[39m     
+      }
+     [90m 190 |[39m         
+} [36melse[39m {
+    [31m[1m>[22m[39m[90m 
+191 |[39m           console[
+33m.[39mwarn([32m'[DEBUG] 
+Embedding score invalid or 0, 
+using LLM score 
+only'[39m)[33m;[39m
+     [90m     |[39m         
+          [31m[1m^[22m[39m
+     [90m 192 |[39m         
+}
+     [90m 193 |[39m       } 
+[36mcatch[39m (e) {
+     [90m 194 |[39m         
+console[33m.[39merror([32m'
+Embedding calculation 
+failed:'[39m[33m,[39m 
+e)[33m;[39m[0m
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:191:19)
+      at Object.<anonymous> (a
+nalyze/analyze.service.spec.ts
+:144:28)
+
+    console.log
+      [DEBUG] Final 
+matchScore after all 
+processing: 75
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:207:15)
+
+    console.log
+      Final Score: 75
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:221:15)
+
+    console.log
+      --- ANALYSIS COMPLETE 
+---
+
+      at 
+AnalyzeService.analyze (analyz
+e/analyze.service.ts:222:15)
+
+    console.log
+      Generating JD for URL: 
+https://example.com/job
+
+      at 
+AnalyzeService.generateJD (ana
+lyze/analyze.service.ts:249:15
+)
+
+    console.log
+      Raw text length: 0
+
+      at 
+AnalyzeService.generateJD (ana
+lyze/analyze.service.ts:251:15
+)
+
+    console.warn
+      Scraping returned too 
+little content.
+
+    [0m [90m 252 |[39m
+     [90m 253 |[39m       
+[36mif[39m 
+([33m![39mrawText 
+[33m||[39m 
+rawText[33m.[39mlength 
+[33m<[39m [35m50[39m) {
+    [31m[1m>[22m[39m[90m 
+254 |[39m         console[33
+m.[39mwarn([32m'Scraping 
+returned too little 
+content.'[39m)[33m;[39m
+     [90m     |[39m         
+        [31m[1m^[22m[39m
+     [90m 255 |[39m         
+[36mreturn[39m { 
+error[33m:[39m [32m'Could 
+not extract sufficient JD 
+text from this URL.'[39m 
+}[33m;[39m
+     [90m 256 |[39m       }
+     [90m 257 |[39m[0m
+
+      at 
+AnalyzeService.generateJD (ana
+lyze/analyze.service.ts:254:17
+)
+      at Object.<anonymous> (a
+nalyze/analyze.service.spec.ts
+:163:28)
+
+    console.log
+      [DEBUG] Calling AI via 
+OpenAIResponsesService
+
+      at 
+AnalyzeService.aiCall (analyze
+/analyze.service.ts:690:13)
+
+  ΓùÅ AnalyzeService ΓÇ║ 
+generateJD ΓÇ║ should 
+generate JD from URL
+
+    
+expect(received).toBeDefined()
+
+    Received: undefined
+
+    [0m [90m 164 |[39m
+     [90m 165 |[39m         
+    expect(result)[33m.[39mt
+oBeDefined()[33m;[39m
+    [31m[1m>[22m[39m[90m 
+166 |[39m             expect(
+result[33m.[39mdescription)
+[33m.[39mtoBeDefined()[33m;
+[39m
+     [90m     |[39m         
+                              
+ [31m[1m^[22m[39m
+     [90m 167 |[39m         
+})[33m;[39m
+     [90m 168 |[39m     
+})[33m;[39m
+     [90m 169 |[39m[0m
+
+      at Object.<anonymous> (a
+nalyze/analyze.service.spec.ts
+:166:40)
+
+PASS 
+src/pdf/pdf.service.spec.ts 
+(16.308 s)
+PASS 
+src/ats/ats.service.spec.ts 
+(16.735 s)
+  ΓùÅ Console
+
+    console.log
+      [DEBUG] Saving 
+Application for Jane Smith: { 
+score: 0, questions: 0, 
+skills: 1 }
+
+      at 
+ATSService.screenResumes 
+(ats/ats.service.ts:56:25)
+
+    console.log
+      [DEBUG] Saving 
+Application for Jane Smith: { 
+score: 0, questions: 0, 
+skills: 1 }
+
+      at 
+ATSService.screenResumes 
+(ats/ats.service.ts:56:25)
+
+
+Test Suites: 1 failed, 9 
+passed, 10 total
+Tests:       1 failed, 58 
+passed, 59 total
+Snapshots:   0 total
+Time:        18.612 s
+Ran all test suites.

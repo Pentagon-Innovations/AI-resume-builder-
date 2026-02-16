@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OpenAIResponsesService } from '../shared/openai-responses.service';
 const unirest = require("unirest");
+const fs = require('fs');
+const mammoth = require('mammoth');
+const pdf = require('pdf-parse');
 
 // ❗ FIX: Correct pdfkit import
 const PDFDocument = require('pdfkit');
@@ -97,20 +100,29 @@ export class ImproveResumeService {
   async fullAutoImprove(resumeFile: Express.Multer.File, jdText: string, missingSkills: string[], missingKeywords: string[]) {
     console.log('--- FULL AUTO-IMPROVE STARTING ---');
     try {
-      const fs = require('fs');
-      const mammoth = require('mammoth');
       const buffer = resumeFile.buffer || (resumeFile.path ? fs.readFileSync(resumeFile.path) : null);
 
-      if (!buffer) throw new Error('File buffer is empty');
+      if (!buffer) {
+        console.error('[SERVICE] fullAutoImprove: Buffer is empty');
+        throw new Error('File buffer is empty');
+      }
 
+      console.log('[SERVICE] fullAutoImprove: Extracting text from file type:', resumeFile.mimetype);
       let resumeText = '';
-      if (resumeFile.mimetype === 'application/pdf') {
+      if (resumeFile.mimetype === 'application/pdf' || resumeFile.originalname?.endsWith('.pdf')) {
+        console.log('[SERVICE] fullAutoImprove: Using PDF parser');
         resumeText = await this.extractTextFromPDF(buffer);
       } else if (resumeFile.mimetype.includes('word') || resumeFile.originalname?.endsWith('.docx')) {
+        console.log('[SERVICE] fullAutoImprove: Using Mammoth parser');
         const result = await mammoth.extractRawText({ buffer });
         resumeText = result.value;
       } else {
+        console.log('[SERVICE] fullAutoImprove: Using toString(utf8) fallback');
         resumeText = buffer.toString('utf8');
+      }
+
+      if (!resumeText || resumeText.trim().length < 10) {
+        console.warn('[SERVICE] fullAutoImprove: Extracted text is suspicious or empty');
       }
 
       const prompt = `
@@ -130,14 +142,26 @@ export class ImproveResumeService {
         }
       `;
 
+      console.log('[SERVICE] fullAutoImprove: Sending to AI...');
       const raw = await this.callWithRetry(() => this.aiCall(prompt));
       let cleaned = typeof raw === 'string' ? raw.trim() : JSON.stringify(raw);
+      console.log('[SERVICE] fullAutoImprove: AI Response length:', cleaned.length);
+
       cleaned = cleaned.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
 
       const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error("AI failed to return JSON");
+      if (!jsonMatch) {
+        console.error('[SERVICE] fullAutoImprove: AI failed to return JSON. Response preview:', cleaned.substring(0, 100));
+        throw new Error("AI failed to return JSON content");
+      }
 
-      let parsedData = JSON.parse(jsonMatch[0]);
+      let parsedData;
+      try {
+        parsedData = JSON.parse(jsonMatch[0]);
+      } catch (parseError: any) {
+        console.error('[SERVICE] fullAutoImprove: JSON parse error:', parseError.message);
+        throw new Error("Failed to parse AI response as valid JSON");
+      }
 
       // Normalize experience data
       if (parsedData.experience) {
@@ -176,7 +200,6 @@ export class ImproveResumeService {
    */
   async autofillWithEmbeddings(file: Express.Multer.File, jd: string) {
     try {
-      const fs = require('fs');
       const buffer = file.buffer || (file.path ? fs.readFileSync(file.path) : null);
       if (!buffer) throw new Error('File buffer is empty');
 
@@ -228,15 +251,27 @@ export class ImproveResumeService {
 
   // Helper: PDF text extraction
   private async extractTextFromPDF(buffer: Buffer): Promise<string> {
-    const { PdfReader } = require('pdfreader');
-    return new Promise((resolve, reject) => {
-      let t = '';
-      new PdfReader().parseBuffer(buffer, (err: any, item: any) => {
-        if (err) reject(err);
-        else if (!item) resolve(t);
-        else if (item.text) t += item.text + ' ';
-      });
-    });
+    try {
+      const data = await pdf(buffer);
+      console.log('[SERVICE] PDF extracted successfully, length:', data.text?.length || 0);
+      return data.text || '';
+    } catch (err: any) {
+      console.error('[SERVICE] PDF extraction error:', err.message);
+      // Fallback to pdfreader if pdf-parse fails for some reason
+      try {
+        const { PdfReader } = require('pdfreader');
+        return new Promise((resolve, reject) => {
+          let t = '';
+          new PdfReader().parseBuffer(buffer, (err2: any, item: any) => {
+            if (err2) reject(err2);
+            else if (!item) resolve(t);
+            else if (item.text) t += item.text + ' ';
+          });
+        });
+      } catch (fallbackErr) {
+        throw new Error(`PDF parsing failed: ${err.message}`);
+      }
+    }
   }
 
   // Helper: PDF Building

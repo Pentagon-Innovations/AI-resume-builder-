@@ -12,6 +12,7 @@ import { Response } from "express";
 import { UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UsersService } from '../users/users.service';
+import { BadRequestException, InternalServerErrorException } from "@nestjs/common";
 
 @Controller("improve-resume")
 export class ImproveResumeController {
@@ -43,6 +44,9 @@ export class ImproveResumeController {
 
     // Send buffer to service for improving
     const improvedPdf = await this.service.improve(resumeBuffer);
+
+    // Increment usage
+    await this.usersService.incrementQuotaUsage(req.user.userId);
 
     // Return the improved PDF file
     res.set({
@@ -76,39 +80,58 @@ export class ImproveResumeController {
     console.log("Missing Keywords (Raw):", missingKeywords);
 
     if (!file) {
-      throw new Error("Resume file is required");
+      console.error("[CONTROLLER] fullAutoImprove Error: Missing resume file");
+      throw new BadRequestException("Resume file is required");
     }
     if (!jobDescription) {
-      throw new Error("Job description is required");
+      console.error("[CONTROLLER] fullAutoImprove Error: Missing job description");
+      throw new BadRequestException("Job description is required");
     }
 
     let skills = [];
     let keywords = [];
 
     try {
-      skills = missingSkills ? JSON.parse(missingSkills) : [];
+      skills = typeof missingSkills === 'string' ? JSON.parse(missingSkills) : (missingSkills || []);
     } catch (e) {
       console.error("Error parsing missingSkills:", e.message);
       skills = [];
     }
 
     try {
-      keywords = missingKeywords ? JSON.parse(missingKeywords) : [];
+      keywords = typeof missingKeywords === 'string' ? JSON.parse(missingKeywords) : (missingKeywords || []);
     } catch (e) {
       console.error("Error parsing missingKeywords:", e.message);
       keywords = [];
     }
 
     try {
-      return await this.service.fullAutoImprove(file, jobDescription, skills, keywords);
-    } catch (error: any) {
-      console.error("[CONTROLLER] fullAutoImprove FAILED:", error);
-      console.error(error.stack);
-      // Determine if it's a 400 or 500
-      if (error.message.includes("buffer is empty") || error.message.includes("Resume file")) {
-        throw new Error(error.message); // Will likely be 500 unless we throw HttpException
+      console.log("[CONTROLLER] Calling service.fullAutoImprove...");
+      const result = await this.service.fullAutoImprove(file, jobDescription, skills, keywords);
+
+      if (req.user && req.user.userId) {
+        console.log("[CONTROLLER] Incrementing quota for user:", req.user.userId);
+        await this.usersService.incrementQuotaUsage(req.user.userId);
       }
-      throw new Error(error.message || "Failed to improve resume automatically");
+
+      console.log("[CONTROLLER] fullAutoImprove SUCCESS");
+      return result;
+    } catch (error: any) {
+      console.error("[CONTROLLER] fullAutoImprove FAILED:", error.message);
+      console.error(error.stack);
+
+      // Map common errors to appropriate HTTP exceptions
+      if (error.message.includes("buffer is empty") || error.message.includes("Resume file")) {
+        throw new BadRequestException(error.message);
+      }
+
+      // If it's already an HttpException, rethrow it
+      if ((error as any).getResponse) {
+        throw error;
+      }
+
+      console.error("[CONTROLLER] fullAutoImprove CRITICAL ERROR:", error.message);
+      throw new InternalServerErrorException(`Auto-improvement failed: ${error.message}`);
     }
   }
 
@@ -131,7 +154,9 @@ export class ImproveResumeController {
       throw new Error("Job description is required");
     }
     try {
-      return await this.service.autofillWithEmbeddings(file, jobDescription);
+      const result = await this.service.autofillWithEmbeddings(file, jobDescription);
+      await this.usersService.incrementQuotaUsage(req.user.userId);
+      return result;
     } catch (error: any) {
       throw new Error(error.message || "Failed to autofill resume");
     }
@@ -149,7 +174,9 @@ export class ImproveResumeController {
     if (!quota.authorized) {
       throw new ForbiddenException('Monthly AI limit reached. Please upgrade to Pro.');
     }
-    return this.service.improveSection(sectionName, sectionContent, jdText);
+    const result = await this.service.improveSection(sectionName, sectionContent, jdText);
+    await this.usersService.incrementQuotaUsage(req.user.userId);
+    return result;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -162,6 +189,8 @@ export class ImproveResumeController {
     if (!quota.authorized) {
       throw new ForbiddenException('Monthly AI limit reached. Please upgrade to Pro.');
     }
-    return this.service.generateContent(prompt);
+    const result = await this.service.generateContent(prompt);
+    await this.usersService.incrementQuotaUsage(req.user.userId);
+    return result;
   }
 }

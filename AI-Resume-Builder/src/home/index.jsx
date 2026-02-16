@@ -2,7 +2,7 @@
 
 import Header from "@/components/custom/Header";
 import AnalysisResult from "@/components/analysis/AnalysisResult";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GlobalApi from "service/GlobalApi";
 
 export default function Home() {
@@ -13,6 +13,19 @@ export default function Home() {
   const [isFetchingJD, setIsFetchingJD] = useState(false);
   const [result, setResult] = useState(null);
   const [structuredJD, setStructuredJD] = useState(null);
+  const [userQuota, setUserQuota] = useState({ runs: 0, max: 5 });
+
+  useEffect(() => {
+    // Fetch user quota
+    GlobalApi.GetUserProfile().then(resp => {
+      if (resp.data) {
+        setUserQuota({
+          runs: resp.data.aiRunsThisMonth,
+          max: resp.data.maxAiRuns
+        });
+      }
+    }).catch(err => console.error("Failed to fetch quota:", err));
+  }, []);
 
   const handleFetchJD = async () => {
     const urlToFetch = jobUrl || (jobDescription.startsWith("http") ? jobDescription : "");
@@ -86,7 +99,7 @@ export default function Home() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Upload Resume</h2>
               <span className="text-xs px-3 py-1 rounded-md bg-purple-100 text-purple-700 font-medium">
-                Quota: 2/5
+                Quota: {userQuota.runs}/{userQuota.max}
               </span>
             </div>
 
@@ -175,7 +188,7 @@ export default function Home() {
           >
             {loading ? "🔍 Analyzing Match..." : "Analyze Match →"}
           </button>
-          <p className="text-gray-500 text-sm mt-4 font-medium">Ready to analyze? 3 uploads remaining today.</p>
+          <p className="text-gray-500 text-sm mt-4 font-medium">Ready to analyze? {Math.max(0, userQuota.max - userQuota.runs)} uploads remaining today.</p>
         </div>
       </section>
 

@@ -46,13 +46,35 @@ export class UsersService {
 
     async checkAndUpdateQuota(userId: string): Promise<{ authorized: boolean; remaining: number }> {
         const user = await this.userModel.findById(userId);
-
-        // TEMPORARY GLOBAL BYPASS to unblock testing
         if (!user) {
-            console.log('[DEBUG] Quota check bypass: User not found', userId);
-        } else {
-            console.log(`[DEBUG] User Quota Check: ID=${userId}, Role=${user.role}, Plan=${user.plan}, Runs=${user.aiRunsThisMonth}/${user.maxAiRuns}`);
+            return { authorized: false, remaining: 0 };
         }
-        return { authorized: true, remaining: 1000 };
+
+        const now = new Date();
+        const lastReset = user.lastQuotaReset ? new Date(user.lastQuotaReset) : new Date(0);
+
+        // Reset quota if it's a new month
+        if (
+            now.getMonth() !== lastReset.getMonth() ||
+            now.getFullYear() !== lastReset.getFullYear()
+        ) {
+            user.aiRunsThisMonth = 0;
+            user.lastQuotaReset = now;
+            await user.save();
+        }
+
+        const remaining = user.maxAiRuns - user.aiRunsThisMonth;
+
+        if (remaining <= 0) {
+            return { authorized: false, remaining: 0 };
+        }
+
+        return { authorized: true, remaining };
+    }
+
+    async incrementQuotaUsage(userId: string): Promise<void> {
+        await this.userModel.findByIdAndUpdate(userId, {
+            $inc: { aiRunsThisMonth: 1 }
+        });
     }
 }

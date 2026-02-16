@@ -8,9 +8,10 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ATSModule } from './ats/ats.module';
 import { BillingModule } from './billing/billing.module';
-import { TestModule } from './test/test.module';
-
+import { TestModule } from './test-api/test.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const uri = configService.get<string>('MONGODB_URI') || 'mongodb://localhost:27017/resumeDB';
-        
+
         return {
           uri,
           // Serverless-optimized connection options
@@ -49,5 +50,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     BillingModule,
     TestModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule { }

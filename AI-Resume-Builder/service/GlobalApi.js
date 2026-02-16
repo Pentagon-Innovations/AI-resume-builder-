@@ -71,14 +71,14 @@ const DeleteResumeById = (id) =>
 const AutofillResume = (data) =>
   axiosClient.post('/improve-resume/autofill', data, {
     headers: {
-      // 'Content-Type': 'multipart/form-data', // Let Axios set this
+      'Content-Type': undefined, // Let browser set multipart/form-data with boundary
     },
   });
 
 const FullAutoImprove = (data) =>
   axiosClient.post('/improve-resume/full-auto-improve', data, {
     headers: {
-      // 'Content-Type': 'multipart/form-data',
+      'Content-Type': undefined,
     },
   });
 
@@ -115,6 +115,7 @@ const GetProfilePhoto = (id) => axiosClient.get('/resumes/' + id + '/photo', { r
 // Billing
 const CreateRazorpayOrder = (data) => axiosClient.post('/billing/razorpay/order', data);
 const VerifyRazorpayPayment = (data) => axiosClient.post('/billing/razorpay/verify', data);
+const GetUserProfile = () => axiosClient.get('/users/me');
 
 export default {
   CreateNewResume,
@@ -148,5 +149,7 @@ export default {
   Login,
   ForgotPassword,
   ResetPassword,
+  ResetPassword,
+  GetUserProfile,
   BASE_URL,
 };

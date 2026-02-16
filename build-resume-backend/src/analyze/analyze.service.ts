@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { readFileSync } from 'fs';
 import { ConfigService } from '@nestjs/config';
-import { PdfReader } from 'pdfreader';
+// import { PdfReader } from 'pdfreader'; // MOVED INLINE
 import puppeteer from 'puppeteer-core';
 import { OpenAIResponsesService } from '../shared/openai-responses.service';
 const unirest = require("unirest")
@@ -164,6 +164,7 @@ export class AnalyzeService {
         console.log('[DEBUG] Final Mapped Analysis:', JSON.stringify(analysis, null, 2));
         console.log('[DEBUG] Match Score:', analysis.matchScore);
       } catch (err: any) {
+        console.error('[ANALYSIS-FLOW-ERROR]', err?.message || err);
         console.error('[ERROR] OpenRouter Analysis Failed or Parse Error:', err);
         console.error('[ERROR] Error Stack:', err.stack);
         // Don't throw - return analysis with default values so user still gets some feedback
@@ -334,7 +335,8 @@ export class AnalyzeService {
   }
 
   // Extract text using pdfreader
-  async extractTextFromPDF(buffer: Buffer): Promise<string> {
+  private async extractTextFromPDF(buffer: Buffer): Promise<string> {
+    const { PdfReader } = require('pdfreader');
     return new Promise((resolve, reject) => {
       let finalText = '';
       new PdfReader().parseBuffer(buffer, (err, item) => {
@@ -400,21 +402,27 @@ export class AnalyzeService {
           '.show-more-less-html__markup',
           '.jobs-description-content__text',
           '.description__text',
-          'main'
+          '[data-test-id="job-posting-description"]',
+          '.jobs-box__html-content',
+          '.main-content',
+          'main',
+          'article'
         ];
         for (const sel of selectors) {
           const el = document.querySelector(sel);
-          if (el && (el as HTMLElement).innerText.length > 200) {
+          if (el && (el as HTMLElement).innerText.trim().length > 100) {
             return (el as HTMLElement).innerText;
           }
         }
         return document.body.innerText; // Fallback to all text
       });
 
+      console.log('[DEBUG-SCRAPE] Scraped LinkedIn text length:', jd?.length || 0);
+
       await browser.close();
       return jd?.trim() || '';
     } catch (e) {
-      console.error('LinkedIn JD Error:', e);
+      console.error('[DEBUG-SCRAPE] LinkedIn JD Error:', e.message);
       return '';
     }
   }
@@ -444,7 +452,14 @@ export class AnalyzeService {
         // Try selectors first
         for (const sel of selectors) {
           const el = document.querySelector(sel);
-          if (el && (el as HTMLElement).innerText.length > 200) return (el as HTMLElement).innerText;
+          if (el && (el as HTMLElement).innerText.trim().length > 100) return (el as HTMLElement).innerText;
+        }
+
+        // Expanded generic searches
+        const commonSelectors = ['main', 'article', '.job-description', '#job-description', '.description', '#description', 'section'];
+        for (const sel of commonSelectors) {
+          const el = document.querySelector(sel);
+          if (el && (el as HTMLElement).innerText.trim().length > 200) return (el as HTMLElement).innerText;
         }
 
         // If no selector matched, try to find the largest text block
@@ -526,15 +541,23 @@ export class AnalyzeService {
 
       unirest.get(url)
         .headers({
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.5',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+          'Accept-Language': 'en-US,en;q=0.9',
           'Accept-Encoding': 'gzip, deflate, br',
+          'DNT': '1',
           'Connection': 'keep-alive',
           'Upgrade-Insecure-Requests': '1',
+          'Sec-Fetch-Dest': 'document',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-Site': 'none',
+          'Sec-Fetch-User': '?1',
+          'Cache-Control': 'max-age=0',
         })
         .timeout(15000) // Increased timeout to 15 seconds
         .end((res: any) => {
+          console.log('[CheerioScrape] Response Status:', res.status);
+
           if (res.error) {
             console.error('[CheerioScrape] Error or Timeout:', res.error);
             resolve('');
@@ -546,6 +569,9 @@ export class AnalyzeService {
             resolve('');
             return;
           }
+
+          const bodySnippet = typeof res.body === 'string' ? res.body.substring(0, 500) : 'Non-string body';
+          console.log('[CheerioScrape] Body Snippet:', bodySnippet);
 
           try {
             const $ = cheerio.load(res.body);
@@ -579,22 +605,42 @@ export class AnalyzeService {
               '#jobsearch-jobDescriptionText',
               '.jobsearch-jobDescriptionText',
               '[data-test="jobDescriptionText"]',
+              '.description',
+              '#description',
+              '.job-details',
+              '.posting-description',
+              'section',
             ];
 
             for (const selector of genericSelectors) {
-              const text = $(selector).text();
-              if (text && text.length > 200) {
+              const text = $(selector).text().trim();
+              if (text && text.length > 100) {
                 console.log(`[CheerioScrape] Found content with selector: ${selector}, length: ${text.length}`);
-                resolve(text.trim());
+                resolve(text);
                 return;
               }
             }
 
-            // Last resort: all body text (limited)
-            const bodyText = $('body').text();
+            // Last resort: find the element with the most text density or just largest text block
+            let bestText = '';
+            $('div, section, article').each((_, el) => {
+              const t = $(el).text().trim();
+              if (t.length > bestText.length) {
+                bestText = t;
+              }
+            });
+
+            if (bestText.length > 200) {
+              console.log(`[CheerioScrape] Using densest text block, length: ${bestText.length}`);
+              resolve(bestText.substring(0, 15000));
+              return;
+            }
+
+            // Absolute body text fallback
+            const bodyText = $('body').text().trim();
             if (bodyText && bodyText.length > 200) {
               console.log(`[CheerioScrape] Using body text, length: ${bodyText.length}`);
-              resolve(bodyText.substring(0, 10000).trim());
+              resolve(bodyText.substring(0, 10000));
               return;
             }
 
