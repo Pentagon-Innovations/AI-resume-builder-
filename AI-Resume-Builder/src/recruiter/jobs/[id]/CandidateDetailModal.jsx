@@ -6,7 +6,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "../../../components/ui/dialog";
-import { CheckCircle, AlertCircle, HelpCircle, Lightbulb, Edit2, Check, X } from 'lucide-react';
+import { AlertTriangle, HelpCircle, Lightbulb, Edit2, Check, X } from 'lucide-react';
 import GlobalApi from 'service/GlobalApi';
 
 function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
@@ -79,7 +79,7 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                         {/* Missing Skills */}
                         <div className="space-y-3">
                             <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                                <AlertCircle className="w-4 h-4 mr-2 text-red-500" />
+                                <AlertTriangle className="w-4 h-4 mr-2 text-red-500" />
                                 Missing Skills
                             </h4>
                             <div className="flex flex-wrap gap-2">
@@ -98,7 +98,7 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                         {/* Missing Keywords */}
                         <div className="space-y-3">
                             <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                                <CheckCircle className="w-4 h-4 mr-2 text-indigo-500" />
+                                <Check className="w-4 h-4 mr-2 text-indigo-500" />
                                 Missing Keywords
                             </h4>
                             <div className="flex flex-wrap gap-2">

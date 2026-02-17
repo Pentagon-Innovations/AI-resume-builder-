@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, CheckCircle, XCircle, AlertCircle, RefreshCw, FileText } from 'lucide-react';
+import { Play, Check, X, AlertTriangle, RefreshCw, FileText } from 'lucide-react';
 import GlobalApi from '../../service/GlobalApi';
 
 const TestDashboard = () => {
@@ -9,14 +9,14 @@ const TestDashboard = () => {
 
     const testModules = [
         { id: 'all', name: 'All Tests', icon: FileText },
-        { id: 'auth', name: 'Authentication', icon: CheckCircle },
-        { id: 'users', name: 'Users', icon: CheckCircle },
-        { id: 'billing', name: 'Billing', icon: CheckCircle },
-        { id: 'resume', name: 'Resume', icon: CheckCircle },
-        { id: 'pdf', name: 'PDF Generation', icon: CheckCircle },
-        { id: 'ats', name: 'ATS', icon: CheckCircle },
-        { id: 'analyze', name: 'Resume Analysis', icon: CheckCircle },
-        { id: 'improve', name: 'Resume Improvement', icon: CheckCircle },
+        { id: 'auth', name: 'Authentication', icon: Check },
+        { id: 'users', name: 'Users', icon: Check },
+        { id: 'billing', name: 'Billing', icon: Check },
+        { id: 'resume', name: 'Resume', icon: Check },
+        { id: 'pdf', name: 'PDF Generation', icon: Check },
+        { id: 'ats', name: 'ATS', icon: Check },
+        { id: 'analyze', name: 'Resume Analysis', icon: Check },
+        { id: 'improve', name: 'Resume Improvement', icon: Check },
     ];
 
     const mockTestResults = {
@@ -113,11 +113,11 @@ const TestDashboard = () => {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'passed':
-                return <CheckCircle className="w-5 h-5 text-green-500" />;
+                return <Check className="w-5 h-5 text-green-500" />;
             case 'failed':
-                return <XCircle className="w-5 h-5 text-red-500" />;
+                return <X className="w-5 h-5 text-red-500" />;
             case 'skipped':
-                return <AlertCircle className="w-5 h-5 text-yellow-500" />;
+                return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
             default:
                 return null;
         }

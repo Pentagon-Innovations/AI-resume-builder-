@@ -1,4 +1,4 @@
-import { Loader2, SquarePlus } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { useState } from 'react'
 import {
     Dialog,
@@ -108,7 +108,7 @@ function AddResume() {
         cursor-pointer border-dashed'
                 onClick={() => setOpenDialog(true)}
             >
-                <SquarePlus />
+                <Plus />
             </div>
 
             <Dialog open={openDialog} onOpenChange={(open) => {
