@@ -6,7 +6,8 @@ import {
     DialogTitle,
     DialogDescription,
 } from "../../../components/ui/dialog";
-import { AlertTriangle, HelpCircle, Lightbulb, Edit2, Check, X } from 'lucide-react';
+import { Button } from '@/components/ui/button'
+import { Check, AlertTriangle, User, Mail, Calendar, Phone, MapPin, Briefcase, FileText, Download, ExternalLink, Globe, Layout, Search, Star, MessageSquare, Clock, Shield, Target, Award, HelpCircle, Lightbulb, Edit2, X } from 'lucide-react'
 import GlobalApi from 'service/GlobalApi';
 
 function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {

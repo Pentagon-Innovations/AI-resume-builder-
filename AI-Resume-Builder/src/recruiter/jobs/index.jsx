@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import GlobalApi from 'service/GlobalApi';
 import { Button } from '../../components/ui/button';
-import { Plus, Search, MapPin, Building2, ChevronRight, Briefcase } from 'lucide-react';
+import { Plus, Search, MapPin, Building, ChevronRight, Briefcase } from 'lucide-react';
 
 function RecruiterJobs() {
     const [jobs, setJobs] = useState([]);
@@ -92,7 +92,7 @@ function RecruiterJobs() {
                                     <h3 className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition">{job.title}</h3>
                                     <div className="flex items-center gap-4 text-sm text-gray-500">
                                         <span className="flex items-center gap-1">
-                                            <Building2 className="w-4 h-4" />
+                                            <Building className="w-4 h-4" />
                                             {job.company}
                                         </span>
                                         <span className="flex items-center gap-1">

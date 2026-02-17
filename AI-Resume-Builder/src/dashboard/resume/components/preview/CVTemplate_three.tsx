@@ -44,7 +44,7 @@ interface ResumeProps {
   resumeInfo: ResumeInfo;
 }
 
-const CVTemplate_three: React.FC<ResumeProps> = ({ resumeInfo }) => {
+const CVTemplate_three = ({ resumeInfo }: ResumeProps) => {
   const {
     firstName,
     lastName,

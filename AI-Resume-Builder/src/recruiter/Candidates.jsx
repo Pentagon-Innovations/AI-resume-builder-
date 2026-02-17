@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GlobalApi from 'service/GlobalApi';
 import { Button } from '../components/ui/button';
-import { Search, MapPin, Building2, User, Mail, Calendar, Trash2 } from 'lucide-react';
+import { Search, MapPin, Building, User, Mail, Calendar, Trash2 } from 'lucide-react';
 import CandidateDetailModal from './jobs/[id]/CandidateDetailModal';
 
 function Candidates() {

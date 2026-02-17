@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Check, X, AlertTriangle, RefreshCw, FileText } from 'lucide-react';
-import GlobalApi from '../../service/GlobalApi';
+import { useNavigate } from 'react-router-dom';
+import { Shield, Check, X, AlertTriangle, Loader2, Beaker, Zap, Database, Globe } from 'lucide-react';
+import GlobalApi from 'service/GlobalApi';
 
 const TestDashboard = () => {
     const [testResults, setTestResults] = useState(null);
@@ -8,15 +9,12 @@ const TestDashboard = () => {
     const [selectedModule, setSelectedModule] = useState('all');
 
     const testModules = [
-        { id: 'all', name: 'All Tests', icon: FileText },
-        { id: 'auth', name: 'Authentication', icon: Check },
-        { id: 'users', name: 'Users', icon: Check },
-        { id: 'billing', name: 'Billing', icon: Check },
-        { id: 'resume', name: 'Resume', icon: Check },
-        { id: 'pdf', name: 'PDF Generation', icon: Check },
-        { id: 'ats', name: 'ATS', icon: Check },
-        { id: 'analyze', name: 'Resume Analysis', icon: Check },
-        { id: 'improve', name: 'Resume Improvement', icon: Check },
+        { id: 'all', name: 'All Tests', icon: Beaker },
+        { id: 'auth', name: 'Auth & Contexts', status: 'pass', icon: Shield },
+        { id: 'api', name: 'API (Strapi)', status: 'pass', icon: Globe },
+        { id: 'templates', name: 'Resume Templates', status: 'pass', icon: Zap },
+        { id: 'recruiter', name: 'Recruiter CRM', status: 'fail', icon: Database },
+        { id: 'ai', name: 'AI Integration', status: 'warn', icon: AlertTriangle },
     ];
 
     const mockTestResults = {

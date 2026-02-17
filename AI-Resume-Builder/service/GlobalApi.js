@@ -138,7 +138,6 @@ export default {
   AnalyzeResume,
   GenerateJD,
   ParseResume,
-  FullAutoImprove,
   ImproveSection,
   GenerateAIContent,
   GetPdf,
