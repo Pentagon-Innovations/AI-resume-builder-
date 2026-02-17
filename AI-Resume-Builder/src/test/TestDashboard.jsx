@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, CircleCheck, CircleX, CircleAlert, RefreshCw, FileText } from 'lucide-react';
+import { Play, CheckCircle, XCircle, AlertCircle, RefreshCw, FileText } from 'lucide-react';
 import GlobalApi from '../../service/GlobalApi';
 
 const TestDashboard = () => {
@@ -113,11 +113,11 @@ const TestDashboard = () => {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'passed':
-                return <CircleCheck className="w-5 h-5 text-green-500" />;
+                return <CheckCircle className="w-5 h-5 text-green-500" />;
             case 'failed':
-                return <CircleX className="w-5 h-5 text-red-500" />;
+                return <XCircle className="w-5 h-5 text-red-500" />;
             case 'skipped':
-                return <CircleAlert className="w-5 h-5 text-yellow-500" />;
+                return <AlertCircle className="w-5 h-5 text-yellow-500" />;
             default:
                 return null;
         }
