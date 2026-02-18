@@ -19,6 +19,9 @@ function Header() {
                 <Link to={'/recruiter/dashboard'} className="text-sm font-medium text-gray-500 hover:text-indigo-600 transition">
                     For Employers
                 </Link>
+                <Link to={'/analysis'} className="text-sm font-medium text-gray-500 hover:text-indigo-600 transition">
+                    Analysis
+                </Link>
                 <Link to={'/pricing'} className="text-sm font-bold text-indigo-600 hover:text-indigo-700 transition flex items-center gap-1">
                     <HiSparkles className="w-4 h-4" /> Upgrade to Pro
                 </Link>

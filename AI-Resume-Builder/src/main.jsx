@@ -23,6 +23,7 @@ import EditJob from './recruiter/jobs/edit.jsx';
 import Candidates from './recruiter/Candidates.jsx';
 import TestOpenAI from './pages/TestOpenAI.jsx';
 import TestDashboard from './test/TestDashboard.jsx';
+import AnalysisPage from './pages/AnalysisPage.jsx';
 
 const ProtectedRoute = ({ children }) => {
   const { token, loading } = useAuth();
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
             <EditResume />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: '/analysis',
+        element: <AnalysisPage />,
       },
     ],
   },
