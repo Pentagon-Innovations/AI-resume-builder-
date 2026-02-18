@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.scss';
+import ErrorBoundary from './components/custom/ErrorBoundary.jsx';
 import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom';
 import SignInPage from './auth/sign-in/index.jsx';
 import SignUpPage from './auth/sign-up/index.jsx';
@@ -135,8 +136,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </ErrorBoundary>
   </React.StrictMode>,
 );
