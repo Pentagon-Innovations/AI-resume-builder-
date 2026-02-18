@@ -5,12 +5,12 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Button } from '@/components/ui/button'
-import { LayoutGrid } from 'lucide-react'
+import { HiSquares2X2, HiLockClosed } from "react-icons/hi2"
 import { ResumeInfoContext } from '@/context/ResumeInfoContext'
 import GlobalApi from 'service/GlobalApi'
 import { useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { Lock } from 'lucide-react'
+
 import { useAuth } from '@/context/AuthContext'
 
 function Template() {
@@ -70,7 +70,7 @@ function Template() {
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant="outline" size="sm"
-                    className="flex gap-2" > <LayoutGrid /> Template</Button>
+                    className="flex gap-2" > <HiSquares2X2 /> Template</Button>
             </PopoverTrigger>
             <PopoverContent>
                 <h2 className='mb-2 text-sm font-bold'>Select Template</h2>
@@ -86,7 +86,7 @@ function Template() {
                         >
                             {item.isPremium && user?.plan !== 'pro' && (
                                 <div className='absolute top-2 right-2'>
-                                    <Lock className='w-4 h-4 text-gray-400' />
+                                    <HiLockClosed className='w-4 h-4 text-gray-400' />
                                 </div>
                             )}
                             <div className='h-20 w-full rounded-md mb-2'

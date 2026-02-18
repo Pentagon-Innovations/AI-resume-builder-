@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, Zap, Shield, Sparkles } from 'lucide-react';
+import { HiCheck, HiBolt, HiShieldCheck, HiSparkles } from "react-icons/hi2";
 import GlobalApi from 'service/GlobalApi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -101,7 +101,7 @@ function Pricing() {
 
                     <ul className="space-y-4 mb-8 flex-1">
                         <li className="flex items-start gap-3 text-gray-600">
-                            <Check className="w-5 h-5 text-green-500 shrink-0" />
+                            <HiCheck className="w-5 h-5 text-green-500 shrink-0" />
                             <span>5 AI Analysis Runs / month</span>
                         </li>
                         <li className="flex items-start gap-3 text-gray-600">
@@ -126,7 +126,7 @@ function Pricing() {
                 {/* Pro Plan */}
                 <div className="bg-white rounded-2xl shadow-xl border-2 border-indigo-500 p-8 flex flex-col relative scale-105">
                     <div className="absolute top-0 right-8 -translate-y-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
-                        <Sparkles className="w-3 h-3" /> MOST POPULAR
+                        <HiSparkles className="w-3 h-3" /> MOST POPULAR
                     </div>
 
                     <div className="mb-8">
@@ -140,7 +140,7 @@ function Pricing() {
 
                     <ul className="space-y-4 mb-8 flex-1">
                         <li className="flex items-start gap-3 text-gray-800 font-medium">
-                            <Check className="w-5 h-5 text-indigo-500 shrink-0" />
+                            <HiCheck className="w-5 h-5 text-indigo-500 shrink-0" />
                             <span>Unlimited AI Analysis & Feedback</span>
                         </li>
                         <li className="flex items-start gap-3 text-gray-800 font-medium">

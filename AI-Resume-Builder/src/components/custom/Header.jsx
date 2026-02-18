@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '../ui/button'
 import { Link } from 'react-router-dom'
-import { Sparkles } from 'lucide-react';
+import { HiSparkles } from "react-icons/hi2";
 import { AuthProvider, useAuth } from '../../context/AuthContext.jsx';
 
 function Header() {
@@ -20,7 +20,7 @@ function Header() {
                     For Employers
                 </Link>
                 <Link to={'/pricing'} className="text-sm font-bold text-indigo-600 hover:text-indigo-700 transition flex items-center gap-1">
-                    <Sparkles className="w-4 h-4" /> Upgrade to Pro
+                    <HiSparkles className="w-4 h-4" /> Upgrade to Pro
                 </Link>
             </div>
             {isSignedIn ?

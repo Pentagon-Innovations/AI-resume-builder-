@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react'
 import PersonalDetail from './forms/PersonalDetail'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, ArrowRight, Home } from 'lucide-react'
+import { HiArrowLeft, HiArrowRight, HiHome } from "react-icons/hi2"
 import Summery from './forms/Summery';
 import Experience from './forms/Experience';
 import Education from './forms/Education';
@@ -19,7 +19,7 @@ function FormSection() {
       <div className='flex justify-between items-center'>
         <div className='flex gap-5'>
           <Link to={"/dashboard"}>
-            <Button><Home /></Button>
+            <Button><HiHome /></Button>
           </Link>
 
           <Template />
@@ -28,13 +28,13 @@ function FormSection() {
         <div className='flex gap-2'>
           {activeFormIndex > 1
             && <Button size="sm"
-              onClick={() => setActiveFormIndex(activeFormIndex - 1)}> <ArrowLeft /> </Button>}
+              onClick={() => setActiveFormIndex(activeFormIndex - 1)}> <HiArrowLeft /> </Button>}
           <Button
             disabled={!enableNext}
             className="flex gap-2" size="sm"
             onClick={() => setActiveFormIndex(activeFormIndex + 1)}
           > Next
-            <ArrowRight /> </Button>
+            <HiArrowRight /> </Button>
         </div>
       </div>
       {/* Personal Detail  */}

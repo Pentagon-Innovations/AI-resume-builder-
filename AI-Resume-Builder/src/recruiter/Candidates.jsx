@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GlobalApi from 'service/GlobalApi';
 import { Button } from '../components/ui/button';
-import { Search, MapPin, Building, User, Mail, Calendar, Trash2 } from 'lucide-react';
+import { HiMagnifyingGlass, HiMapPin, HiBuildingOffice2, HiUser, HiEnvelope, HiCalendarDays, HiTrash } from "react-icons/hi2"
 import CandidateDetailModal from './jobs/[id]/CandidateDetailModal';
 
 function Candidates() {
@@ -56,7 +56,7 @@ function Candidates() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-100 flex items-center gap-4 bg-gray-50">
                     <div className="relative flex-1">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <HiMagnifyingGlass className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
                             type="text"
                             placeholder="Search by name, email or job..."
@@ -119,7 +119,7 @@ function Candidates() {
                                                 className="text-red-500 hover:text-red-600 border-gray-200"
                                                 onClick={() => handleDelete(cand._id)}
                                             >
-                                                <Trash2 className="w-4 h-4" />
+                                                <HiTrash className="w-4 h-4" />
                                             </Button>
                                         </div>
                                     </td>

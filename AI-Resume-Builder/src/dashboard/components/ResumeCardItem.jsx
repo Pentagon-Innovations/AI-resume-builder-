@@ -1,4 +1,4 @@
-import { MoreVertical, Loader2, Notebook } from 'lucide-react'
+import { HiEllipsisVertical, HiArrowPath } from "react-icons/hi2"
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -80,7 +80,7 @@ function ResumeCardItem({ resume, refreshData }) {
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <MoreVertical className='h-4 w-4 cursor-pointer' />
+            <HiEllipsisVertical className='h-4 w-4 cursor-pointer' />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
 
@@ -106,7 +106,7 @@ function ResumeCardItem({ resume, refreshData }) {
               <AlertDialogCancel onClick={() => setOpenAlert(false)}>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={onDelete}
                 disabled={loading}>
-                {loading ? <Loader2 className='animate-spin' /> : 'Delete'}
+                {loading ? <HiArrowPath className='animate-spin' /> : 'Delete'}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

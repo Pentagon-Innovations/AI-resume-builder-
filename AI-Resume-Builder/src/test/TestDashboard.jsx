@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Check, X, AlertTriangle, Loader2, Beaker, Zap, Database, Globe, RefreshCw, Play, FileText } from 'lucide-react';
+import { HiShieldCheck, HiCheck, HiXMark, HiExclamationTriangle, HiArrowPath, HiBeaker, HiBolt, HiCircleStack, HiGlobeAlt, HiPlay, HiDocumentText } from "react-icons/hi2";
 import GlobalApi from 'service/GlobalApi';
 
 const TestDashboard = () => {
@@ -9,12 +9,12 @@ const TestDashboard = () => {
     const [selectedModule, setSelectedModule] = useState('all');
 
     const testModules = [
-        { id: 'all', name: 'All Tests', icon: Beaker },
-        { id: 'auth', name: 'Auth & Contexts', status: 'pass', icon: Shield },
-        { id: 'api', name: 'API (Strapi)', status: 'pass', icon: Globe },
-        { id: 'templates', name: 'Resume Templates', status: 'pass', icon: Zap },
-        { id: 'recruiter', name: 'Recruiter CRM', status: 'fail', icon: Database },
-        { id: 'ai', name: 'AI Integration', status: 'warn', icon: AlertTriangle },
+        { id: 'all', name: 'All Tests', icon: HiBeaker },
+        { id: 'auth', name: 'Auth & Contexts', status: 'pass', icon: HiShieldCheck },
+        { id: 'api', name: 'API (Strapi)', status: 'pass', icon: HiGlobeAlt },
+        { id: 'templates', name: 'Resume Templates', status: 'pass', icon: HiBolt },
+        { id: 'recruiter', name: 'Recruiter CRM', status: 'fail', icon: HiCircleStack },
+        { id: 'ai', name: 'AI Integration', status: 'warn', icon: HiExclamationTriangle },
     ];
 
     const mockTestResults = {
@@ -111,11 +111,11 @@ const TestDashboard = () => {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'passed':
-                return <Check className="w-5 h-5 text-green-500" />;
+                return <HiCheck className="w-5 h-5 text-green-500" />;
             case 'failed':
-                return <X className="w-5 h-5 text-red-500" />;
+                return <HiXMark className="w-5 h-5 text-red-500" />;
             case 'skipped':
-                return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+                return <HiExclamationTriangle className="w-5 h-5 text-yellow-500" />;
             default:
                 return null;
         }
@@ -151,12 +151,12 @@ const TestDashboard = () => {
                         >
                             {loading ? (
                                 <>
-                                    <RefreshCw className="w-5 h-5 animate-spin" />
+                                    <HiArrowPath className="w-5 h-5 animate-spin" />
                                     Running Tests...
                                 </>
                             ) : (
                                 <>
-                                    <Play className="w-5 h-5" />
+                                    <HiPlay className="w-5 h-5" />
                                     Run Tests
                                 </>
                             )}
@@ -252,7 +252,7 @@ const TestDashboard = () => {
                 {/* Empty State */}
                 {!testResults && !loading && (
                     <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                        <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                        <HiDocumentText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                         <h3 className="text-xl font-semibold text-gray-900 mb-2">No Test Results Yet</h3>
                         <p className="text-gray-600 mb-6">Click "Run Tests" to execute the test suite</p>
                     </div>

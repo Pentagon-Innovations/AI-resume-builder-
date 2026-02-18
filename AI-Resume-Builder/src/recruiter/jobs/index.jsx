@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import GlobalApi from 'service/GlobalApi';
 import { Button } from '../../components/ui/button';
-import { Plus, Search, MapPin, Building, ChevronRight, Briefcase } from 'lucide-react';
+import { HiPlus, HiMagnifyingGlass, HiMapPin, HiBuildingOffice2, HiChevronRight, HiBriefcase } from "react-icons/hi2"
 
 function RecruiterJobs() {
     const [jobs, setJobs] = useState([]);
@@ -55,7 +55,7 @@ function RecruiterJobs() {
                 </div>
                 <Link to="/recruiter/jobs/create">
                     <Button className="bg-indigo-600 hover:bg-indigo-700">
-                        <Plus className="w-5 h-5 mr-2" />
+                        <HiPlus className="w-5 h-5 mr-2" />
                         Post New Job
                     </Button>
                 </Link>
@@ -64,7 +64,7 @@ function RecruiterJobs() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-100 flex items-center gap-4 bg-gray-50">
                     <div className="relative flex-1">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <HiMagnifyingGlass className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
                             type="text"
                             placeholder="Search jobs..."
@@ -78,7 +78,7 @@ function RecruiterJobs() {
                         <div className="p-8 text-center text-gray-500">Loading jobs...</div>
                     ) : jobs.length === 0 ? (
                         <div className="p-12 text-center">
-                            <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                            <HiBriefcase className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                             <h3 className="text-lg font-medium text-gray-900">No jobs posted yet</h3>
                             <p className="text-gray-500 mb-6">Create your first job opening to start screening resumes.</p>
                             <Link to="/recruiter/jobs/create">
@@ -92,11 +92,11 @@ function RecruiterJobs() {
                                     <h3 className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition">{job.title}</h3>
                                     <div className="flex items-center gap-4 text-sm text-gray-500">
                                         <span className="flex items-center gap-1">
-                                            <Building className="w-4 h-4" />
+                                            <HiBuildingOffice2 className="w-4 h-4" />
                                             {job.company}
                                         </span>
                                         <span className="flex items-center gap-1">
-                                            <MapPin className="w-4 h-4" />
+                                            <HiMapPin className="w-4 h-4" />
                                             {job.location || 'Remote'}
                                         </span>
                                     </div>
@@ -128,7 +128,7 @@ function RecruiterJobs() {
                                         </Button>
                                     </div>
 
-                                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition" />
+                                    <HiChevronRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition" />
                                 </div>
                             </div>
                         </Link>

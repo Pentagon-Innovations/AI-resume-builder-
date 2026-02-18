@@ -6,7 +6,7 @@ import { ResumeInfoContext } from '@/context/ResumeInfoContext'
 import { useParams } from 'react-router-dom'
 import GlobalApi from 'service/GlobalApi'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { HiArrowPath } from "react-icons/hi2"
 import { formatDate } from '@/lib/utils'
 
 const formField = {
@@ -156,7 +156,7 @@ function Experience() {
 
                     </div>
                     <Button disabled={loading} onClick={() => onSave()}>
-                        {loading ? <Loader2 className='animate-spin' /> : 'Save'}
+                        {loading ? <HiArrowPath className='animate-spin' /> : 'Save'}
                     </Button>
                 </div>
             </div>

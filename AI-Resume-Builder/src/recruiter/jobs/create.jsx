@@ -4,7 +4,7 @@ import GlobalApi from 'service/GlobalApi';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { HiArrowLeft, HiArrowPath } from "react-icons/hi2"
 
 function CreateJob() {
     const navigate = useNavigate();
@@ -38,7 +38,7 @@ function CreateJob() {
     return (
         <div className="max-w-3xl mx-auto space-y-6">
             <button onClick={() => navigate(-1)} className="flex items-center text-sm text-gray-500 hover:text-indigo-600">
-                <ArrowLeft className="w-4 h-4 mr-1" />
+                <HiArrowLeft className="w-4 h-4 mr-1" />
                 Back to Jobs
             </button>
 
@@ -92,7 +92,7 @@ function CreateJob() {
                 <div className="flex justify-end gap-4 pt-4">
                     <Button variant="ghost" onClick={() => navigate('/recruiter/jobs')}>Cancel</Button>
                     <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={loading}>
-                        {loading ? <Loader2 className="animate-spin mr-2" /> : null}
+                        {loading ? <HiArrowPath className="animate-spin mr-2" /> : null}
                         Create Job Opening
                     </Button>
                 </div>

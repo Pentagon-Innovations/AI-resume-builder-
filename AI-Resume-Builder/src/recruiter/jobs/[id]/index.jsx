@@ -4,16 +4,16 @@ import GlobalApi from 'service/GlobalApi';
 import { Button } from '@/components/ui/button';
 import { Input } from "../../../components/ui/input";
 import {
-    ArrowLeft,
-    Upload,
-    FileText,
-    Check,
-    X,
-    Loader2,
-    Search,
-    Filter,
-    Download
-} from 'lucide-react';
+    HiArrowLeft,
+    HiArrowUpOnSquare,
+    HiDocumentText,
+    HiCheck,
+    HiXMark,
+    HiArrowPath,
+    HiMagnifyingGlass,
+    HiFunnel,
+    HiArrowDownOnSquare
+} from 'react-icons/hi2';
 import CandidateDetailModal from './CandidateDetailModal';
 
 function JobDetails() {
@@ -84,7 +84,7 @@ function JobDetails() {
             <div className="flex justify-between items-start">
                 <div className="space-y-1">
                     <button onClick={() => navigate('/recruiter/jobs')} className="flex items-center text-sm text-gray-500 hover:text-indigo-600 mb-2">
-                        <ArrowLeft className="w-4 h-4 mr-1" />
+                        <HiArrowLeft className="w-4 h-4 mr-1" />
                         Back to Jobs
                     </button>
                     <h1 className="text-3xl font-bold text-gray-900">{job?.title}</h1>
@@ -104,7 +104,7 @@ function JobDetails() {
                         className="bg-indigo-600 hover:bg-indigo-700"
                         disabled={screening}
                     >
-                        {screening ? <Loader2 className="animate-spin mr-2" /> : <Upload className="w-4 h-4 mr-2" />}
+                        {screening ? <HiArrowPath className="animate-spin mr-2" /> : <HiArrowUpOnSquare className="w-4 h-4 mr-2" />}
                         Bulk Upload Resumes
                     </Button>
                     <Button
@@ -132,7 +132,7 @@ function JobDetails() {
                     <h3 className="font-semibold text-gray-900">Ranked Candidates ({candidates.length})</h3>
                     <div className="flex gap-2">
                         <div className="relative">
-                            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <HiMagnifyingGlass className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input type="text" placeholder="Filter candidates..." className="pl-9 pr-4 py-1.5 border border-gray-200 rounded-lg text-sm" />
                         </div>
                     </div>

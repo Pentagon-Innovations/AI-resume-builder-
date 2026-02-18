@@ -4,7 +4,7 @@ import GlobalApi from 'service/GlobalApi';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
-import { ArrowLeft, Loader2, Save } from 'lucide-react';
+import { HiArrowLeft, HiArrowPath, HiCheck } from "react-icons/hi2"
 
 function EditJob() {
     const { id } = useParams();
@@ -60,7 +60,7 @@ function EditJob() {
     return (
         <div className="max-w-3xl mx-auto space-y-6">
             <button onClick={() => navigate(-1)} className="flex items-center text-sm text-gray-500 hover:text-indigo-600 transition">
-                <ArrowLeft className="w-4 h-4 mr-1" />
+                <HiArrowLeft className="w-4 h-4 mr-1" />
                 Back
             </button>
 
@@ -114,7 +114,7 @@ function EditJob() {
                 <div className="flex justify-end gap-4 pt-4 border-t">
                     <Button variant="ghost" onClick={() => navigate('/recruiter/jobs')}>Cancel</Button>
                     <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={saving}>
-                        {saving ? <Loader2 className="animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                        {saving ? <HiArrowPath className="animate-spin mr-2" /> : <HiCheck className="w-4 h-4 mr-2" />}
                         Save Changes
                     </Button>
                 </div>

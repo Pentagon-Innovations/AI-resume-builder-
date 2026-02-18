@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
-import { Brain, Loader2 } from 'lucide-react';
+import { HiSparkles, HiArrowPath } from "react-icons/hi2";
 import { useContext, useState, useEffect } from 'react';
 import {
   BtnBold,
@@ -104,10 +104,10 @@ function RichTextEditor({ onRichTextEditorChange, index, defaultValue }) {
           className="flex gap-2 border-primary text-primary"
         >
           {loading ? (
-            <Loader2 className="animate-spin" />
+            <HiArrowPath className="animate-spin" />
           ) : (
             <>
-              <Brain className="h-4 w-4" /> Generate from AI
+              <HiSparkles className="h-4 w-4" /> Generate from AI
             </>
           )}
         </Button>

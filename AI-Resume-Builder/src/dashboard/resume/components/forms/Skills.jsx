@@ -4,7 +4,7 @@ import { Rating } from '@smastrom/react-rating'
 
 import '@smastrom/react-rating/style.css'
 import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
+import { HiArrowPath } from "react-icons/hi2"
 import { ResumeInfoContext } from '@/context/ResumeInfoContext'
 import GlobalApi from 'service/GlobalApi'
 import { useParams } from 'react-router-dom'
@@ -95,7 +95,7 @@ function Skills() {
 
                 </div>
                 <Button disabled={loading} onClick={() => onSave()}>
-                    {loading ? <Loader2 className='animate-spin' /> : 'Save'}
+                    {loading ? <HiArrowPath className='animate-spin' /> : 'Save'}
                 </Button>
             </div>
         </div>

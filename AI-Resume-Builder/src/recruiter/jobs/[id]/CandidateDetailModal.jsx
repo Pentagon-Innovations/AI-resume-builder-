@@ -7,7 +7,7 @@ import {
     DialogDescription,
 } from "../../../components/ui/dialog";
 import { Button } from '@/components/ui/button'
-import { Check, AlertTriangle, User, Mail, Calendar, Phone, MapPin, Briefcase, FileText, Download, ExternalLink, Globe, Layout, Search, Star, MessageSquare, Clock, Shield, Target, Award, HelpCircle, Lightbulb, Edit2, X } from 'lucide-react'
+import { HiCheck, HiExclamationTriangle, HiUser, HiEnvelope, HiCalendarDays, HiPhone, HiMapPin, HiBriefcase, HiDocumentText, HiArrowDownOnSquare, HiArrowTopRightOnSquare, HiGlobeAlt, HiSquares2X2, HiMagnifyingGlass, HiStar, HiChatBubbleLeft, HiClock, HiShieldCheck, HiViewfinderCircle, HiTrophy, HiQuestionMarkCircle, HiLightBulb, HiPencil, HiXMark } from "react-icons/hi2"
 import GlobalApi from 'service/GlobalApi';
 
 function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
@@ -44,8 +44,8 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                                         className="text-2xl font-bold text-gray-900 border-b border-indigo-600 focus:outline-none bg-transparent w-full"
                                         autoFocus
                                     />
-                                    <button onClick={handleSaveName} className="p-1 text-green-600 hover:bg-green-50 rounded"><Check className="w-5 h-5" /></button>
-                                    <button onClick={() => setIsEditing(false)} className="p-1 text-red-600 hover:bg-red-50 rounded"><X className="w-5 h-5" /></button>
+                                    <button onClick={handleSaveName} className="p-1 text-green-600 hover:bg-green-50 rounded"><HiCheck className="w-5 h-5" /></button>
+                                    <button onClick={() => setIsEditing(false)} className="p-1 text-red-600 hover:bg-red-50 rounded"><HiXMark className="w-5 h-5" /></button>
                                 </div>
                             ) : (
                                 <div className="group flex items-center gap-2">
@@ -54,7 +54,7 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                                         onClick={() => setIsEditing(true)}
                                         className="p-1 text-gray-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition"
                                     >
-                                        <Edit2 className="w-4 h-4" />
+                                        <HiPencil className="w-4 h-4" />
                                     </button>
                                 </div>
                             )}
@@ -80,7 +80,7 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                         {/* Missing Skills */}
                         <div className="space-y-3">
                             <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                                <AlertTriangle className="w-4 h-4 mr-2 text-red-500" />
+                                <HiExclamationTriangle className="w-4 h-4 mr-2 text-red-500" />
                                 Missing Skills
                             </h4>
                             <div className="flex flex-wrap gap-2">
@@ -99,7 +99,7 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                         {/* Missing Keywords */}
                         <div className="space-y-3">
                             <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                                <Check className="w-4 h-4 mr-2 text-indigo-500" />
+                                <HiCheck className="w-4 h-4 mr-2 text-indigo-500" />
                                 Missing Keywords
                             </h4>
                             <div className="flex flex-wrap gap-2">
@@ -119,7 +119,7 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                     {/* Match Analysis / Improvements */}
                     <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
                         <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                            <Lightbulb className="w-4 h-4 mr-2 text-yellow-600" />
+                            <HiLightBulb className="w-4 h-4 mr-2 text-yellow-600" />
                             AI Match Analysis & Improvements
                         </h4>
                         <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
@@ -130,7 +130,7 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                     {/* Interview Questions */}
                     <div className="space-y-3">
                         <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                            <HelpCircle className="w-4 h-4 mr-2 text-green-600" />
+                            <HiQuestionMarkCircle className="w-4 h-4 mr-2 text-green-600" />
                             Recommended Interview Questions
                         </h4>
                         <div className="space-y-2">

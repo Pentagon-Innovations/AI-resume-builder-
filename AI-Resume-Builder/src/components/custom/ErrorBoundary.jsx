@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { HiExclamationTriangle, HiArrowPath, HiHome } from "react-icons/hi2";
 
 class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -35,7 +35,7 @@ class ErrorBoundary extends React.Component {
                     <div className="max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
                         <div className="bg-red-50 p-6 flex justify-center">
                             <div className="h-20 w-20 bg-red-100 rounded-full flex items-center justify-center animate-pulse">
-                                <AlertTriangle className="h-10 w-10 text-red-600" />
+                                <HiExclamationTriangle className="h-10 w-10 text-red-600" />
                             </div>
                         </div>
                         <div className="p-6 text-center">
@@ -60,11 +60,11 @@ class ErrorBoundary extends React.Component {
 
                             <div className="flex gap-3 justify-center">
                                 <Button onClick={this.handleHome} variant="outline" className="flex items-center gap-2">
-                                    <Home className="h-4 w-4" />
+                                    <HiHome className="h-4 w-4" />
                                     Home
                                 </Button>
                                 <Button onClick={this.handleReload} className="bg-indigo-600 hover:bg-indigo-700 flex items-center gap-2">
-                                    <RefreshCw className="h-4 w-4" />
+                                    <HiArrowPath className="h-4 w-4" />
                                     Reload Page
                                 </Button>
                             </div>

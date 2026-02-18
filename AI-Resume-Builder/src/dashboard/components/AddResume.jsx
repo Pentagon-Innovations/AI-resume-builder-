@@ -1,4 +1,4 @@
-import { Loader2, Plus } from 'lucide-react'
+import { HiArrowPath, HiPlus } from "react-icons/hi2"
 import { useState } from 'react'
 import {
     Dialog,
@@ -108,7 +108,7 @@ function AddResume() {
         cursor-pointer border-dashed'
                 onClick={() => setOpenDialog(true)}
             >
-                <Plus />
+                <HiPlus />
             </div>
 
             <Dialog open={openDialog} onOpenChange={(open) => {
@@ -157,7 +157,7 @@ function AddResume() {
                                     <Button
                                         disabled={!resumeTitle || loading}
                                         onClick={() => onCreate()}>
-                                        {loading ? <Loader2 className='animate-spin' /> : 'Create'}
+                                        {loading ? <HiArrowPath className='animate-spin' /> : 'Create'}
                                     </Button>
                                 </div>
                             </div>
@@ -184,7 +184,7 @@ function AddResume() {
                                     <Button
                                         disabled={!file || !jobDescription || loading}
                                         onClick={onAutofill}>
-                                        {loading ? <Loader2 className='animate-spin' /> : 'Generate & Create'}
+                                        {loading ? <HiArrowPath className='animate-spin' /> : 'Generate & Create'}
                                     </Button>
                                 </div>
                             </div>
