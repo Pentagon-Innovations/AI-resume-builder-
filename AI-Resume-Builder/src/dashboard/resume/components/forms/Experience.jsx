@@ -134,9 +134,23 @@ function Experience() {
                                 <div>
                                     <label className='text-xs'>End Date</label>
                                     <Input type="date" name="endDate"
+                                        disabled={item?.currentlyWorking}
                                         onChange={(event) => handleChange(index, event)}
-                                        value={formatDate(item?.endDate)}
+                                        value={item?.currentlyWorking ? '' : formatDate(item?.endDate)}
                                     />
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <input type="checkbox"
+                                            name="currentlyWorking"
+                                            checked={item?.currentlyWorking || false}
+                                            onChange={(e) => {
+                                                const newEntries = experinceList.slice();
+                                                newEntries[index].currentlyWorking = e.target.checked;
+                                                newEntries[index].endDate = e.target.checked ? 'Present' : '';
+                                                setExperinceList(newEntries);
+                                            }}
+                                        />
+                                        <label className="text-xs">Currently Working</label>
+                                    </div>
                                 </div>
                                 <div className='col-span-2'>
                                     {/* Work Summery  */}

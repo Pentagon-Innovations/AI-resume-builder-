@@ -9,7 +9,7 @@ import * as handlebars from 'handlebars';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Resume } from '../resume/resume.schema';
-import { getImageSrc } from '../helpers/handlebars-helpers'; // Import helper
+import { getImageSrc, formatDate } from '../helpers/handlebars-helpers'; // Import helpers
 
 @Injectable()
 export class PdfService {
@@ -18,6 +18,7 @@ export class PdfService {
   ) {
     // Register the helper within this service
     handlebars.registerHelper('getImageSrc', getImageSrc);
+    handlebars.registerHelper('formatDate', formatDate);
   }
 
   async generatePdf(resumeId: string): Promise<StreamableFile> {

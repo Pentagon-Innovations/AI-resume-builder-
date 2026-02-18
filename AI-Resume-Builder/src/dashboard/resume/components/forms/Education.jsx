@@ -128,9 +128,23 @@ function Education() {
                   <Input
                     type="date"
                     name="endDate"
+                    disabled={item?.currentlyWorking}
                     onChange={(e) => handleChange(e, index)}
-                    value={formatDate(item?.endDate)}
+                    value={item?.currentlyWorking ? '' : formatDate(item?.endDate)}
                   />
+                  <div className="flex items-center gap-2 mt-2">
+                    <input type="checkbox"
+                      name="currentlyWorking"
+                      checked={item?.currentlyWorking || false}
+                      onChange={(e) => {
+                        const newEntries = educationalList.slice();
+                        newEntries[index].currentlyWorking = e.target.checked;
+                        newEntries[index].endDate = e.target.checked ? 'Present' : '';
+                        setEducationalList(newEntries);
+                      }}
+                    />
+                    <label className="text-xs">Currently Studying</label>
+                  </div>
                 </div>
                 <div className="col-span-2">
                   <label>Description</label>
