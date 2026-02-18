@@ -29,7 +29,7 @@ function RecruiterLayout() {
                         Dashboard
                     </Link>
                     <Link to="/recruiter/jobs" className="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-800 transition">
-                        <Briefcase className="w-5 h-5" />
+                        <HiBriefcase className="w-5 h-5" />
                         My Jobs
                     </Link>
                     <Link to="/recruiter/candidates" className="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-800 transition text-sm">
