@@ -99,6 +99,7 @@ export class PdfService {
           executablePath = await chromium.executablePath();
 
           // Optimized args for Vercel/AWS Lambda
+          launchArgs = [
             ...chromium.args,
             '--no-sandbox',
             '--disable-setuid-sandbox',
