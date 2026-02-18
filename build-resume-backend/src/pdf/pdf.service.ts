@@ -49,7 +49,8 @@ export class PdfService {
       }
 
       // Get template path with more robust resolution for Vercel
-      let templateType = `resume_template_${resume.templateType || 1}.hbs`;
+      const selectedTemplate = (resume.templateType !== undefined && resume.templateType !== null) ? resume.templateType : 1;
+      let templateType = `resume_template_${selectedTemplate}.hbs`;
 
       // Try multiple potential paths for Vercel consistency
       const potentialPaths = [
@@ -108,7 +109,7 @@ export class PdfService {
             '--disable-software-rasterizer',
             '--disable-extensions',
           ];
-          console.log(`🔍 Using serverless Chromium (131.x) for Vercel (Node 22)`);
+          console.log(`🔍 Using serverless Chromium for Vercel`);
           console.log('🔍 Executable path:', executablePath);
           console.log(`🔍 Chromium args: ${JSON.stringify(launchArgs)}`);
         } catch (chromiumError) {

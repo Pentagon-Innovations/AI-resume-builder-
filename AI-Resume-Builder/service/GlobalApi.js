@@ -90,7 +90,9 @@ const UpdateJob = (id, data) => axiosClient.patch('/ats/jobs/' + id, data);
 const DeleteJob = (id) => axiosClient.delete('/ats/jobs/' + id);
 const ScreenResumes = (jobId, data) =>
   axiosClient.post(`/ats/jobs/${jobId}/screen`, data, {
-    // headers: { 'Content-Type': 'multipart/form-data' }
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   });
 const GetRankedCandidates = (jobId) => axiosClient.get(`/ats/jobs/${jobId}/candidates`);
 const GetAllCandidates = () => axiosClient.get('/ats/candidates');

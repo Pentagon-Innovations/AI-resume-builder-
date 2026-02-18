@@ -29,24 +29,40 @@ export class ATSService {
         const job = await this.getJob(jobId);
         if (!job) throw new BadRequestException('Job not found');
 
+        if (!files || !Array.isArray(files) || files.length === 0) {
+            console.warn('[WARNING] No files provided for screening.');
+            return [];
+        }
+
         const results: any[] = [];
         for (const file of files) {
             try {
                 // Reuse existing analyze logic
                 // The analyze method in AnalyzeService expects (file, jd, jobUrl)
+                console.log(`[DEBUG] Analyzing file: ${file.originalname}`);
                 const analysis = await this.analyzeService.analyze(file, job.description, '');
+
+                if (!analysis || analysis.error) {
+                    console.error(`[ERROR] Analysis failed for ${file.originalname}:`, analysis?.error);
+                    continue; // Skip this file and continue with others
+                }
 
                 // Extract candidate info from resume if possible (simple extraction for now)
                 // In a real system, we'd use the parseResumeToJson method
-                const parsedResume = await this.analyzeService.parseResumeToJson(file);
+                let parsedResume: any = {};
+                try {
+                    parsedResume = await this.analyzeService.parseResumeToJson(file);
+                } catch (parseErr) {
+                    console.warn(`[WARNING] Resume parsing failed for ${file.originalname}, using fallback name:`, parseErr);
+                }
 
                 const application = new this.applicationModel({
                     jobId: jobId,
-                    candidateName: parsedResume.personalInfo?.name || file.originalname,
-                    candidateEmail: parsedResume.personalInfo?.email || 'N/A',
+                    candidateName: parsedResume?.personalInfo?.name || file.originalname,
+                    candidateEmail: parsedResume?.personalInfo?.email || 'N/A',
                     resumeText: '...', // We don't want to store full text in DB for now to save space, or we could.
                     score: analysis.matchScore || 0,
-                    matchAnalysis: analysis.resumeImprovements?.join('\n') || '',
+                    matchAnalysis: Array.isArray(analysis.resumeImprovements) ? analysis.resumeImprovements.join('\n') : '',
                     missingSkills: analysis.missingSkills || [],
                     missingKeywords: analysis.missingKeywords || [],
                     interviewQuestions: analysis.interviewQuestions || [],
@@ -62,7 +78,8 @@ export class ATSService {
                 await application.save();
                 results.push(application);
             } catch (err) {
-                console.error(`Failed to screen file ${file.originalname}:`, err);
+                console.error(`[CRITICAL] Failed to process file ${file.originalname}:`, err);
+                // Don't throw, let other files process
             }
         }
 

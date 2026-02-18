@@ -105,11 +105,11 @@ function Pricing() {
                             <span>5 AI Analysis Runs / month</span>
                         </li>
                         <li className="flex items-start gap-3 text-gray-600">
-                            <Check className="w-5 h-5 text-green-500 shrink-0" />
+                            <HiCheck className="w-5 h-5 text-green-500 shrink-0" />
                             <span>Basic Resume Templates Only</span>
                         </li>
                         <li className="flex items-start gap-3 text-gray-600">
-                            <Check className="w-5 h-5 text-green-500 shrink-0" />
+                            <HiCheck className="w-5 h-5 text-green-500 shrink-0" />
                             <span>JD Keyword Matching</span>
                         </li>
                     </ul>
@@ -144,15 +144,15 @@ function Pricing() {
                             <span>Unlimited AI Analysis & Feedback</span>
                         </li>
                         <li className="flex items-start gap-3 text-gray-800 font-medium">
-                            <Check className="w-5 h-5 text-indigo-500 shrink-0" />
+                            <HiCheck className="w-5 h-5 text-indigo-500 shrink-0" />
                             <span>Access to All Premium Templates</span>
                         </li>
                         <li className="flex items-start gap-3 text-gray-800 font-medium">
-                            <Check className="w-5 h-5 text-indigo-500 shrink-0" />
+                            <HiCheck className="w-5 h-5 text-indigo-500 shrink-0" />
                             <span>Bulk Screening (for Employers)</span>
                         </li>
                         <li className="flex items-start gap-3 text-gray-800 font-medium">
-                            <Check className="w-5 h-5 text-indigo-500 shrink-0" />
+                            <HiCheck className="w-5 h-5 text-indigo-500 shrink-0" />
                             <span>Direct PDF Downloads & Editing</span>
                         </li>
                     </ul>

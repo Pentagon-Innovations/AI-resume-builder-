@@ -1,4 +1,4 @@
-import { HiArrowPath, HiPlus } from "react-icons/hi2"
+import { HiArrowPath, HiPlus, HiDocumentPlus, HiSparkles } from "react-icons/hi2"
 import { useState } from 'react'
 import {
     Dialog,
@@ -108,7 +108,7 @@ function AddResume() {
         cursor-pointer border-dashed'
                 onClick={() => setOpenDialog(true)}
             >
-                <HiPlus />
+                <HiPlus className="w-8 h-8 text-gray-400" />
             </div>
 
             <Dialog open={openDialog} onOpenChange={(open) => {
@@ -120,40 +120,45 @@ function AddResume() {
                     setFile(null);
                 }
             }}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
-                        <DialogTitle>Create New Resume</DialogTitle>
+                        <DialogTitle className="text-xl font-bold">Create New Resume</DialogTitle>
                         <DialogDescription>
-                            Choose how you want to create your resume
+                            Choose your preferred method to start creating your resume.
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="w-full mt-4">
-                        <div className="flex w-full grid-cols-2 bg-slate-100 p-1 rounded-md">
-                            <button
-                                className={`flex - 1 p - 2 text - sm rounded - md transition - all ${activeTab === 'empty' ? 'bg-white shadow' : ''} `}
+                        <div className="grid grid-cols-2 gap-4 mb-5">
+                            <div
+                                className={`p-4 border rounded-xl cursor-pointer transition-all flex flex-col items-center gap-2 hover:border-primary
+                                ${activeTab === 'empty' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'bg-slate-50 border-gray-200 hover:bg-slate-100'}`}
                                 onClick={() => setActiveTab('empty')}
                             >
-                                Start from Scratch
-                            </button>
-                            <button
-                                className={`flex - 1 p - 2 text - sm rounded - md transition - all ${activeTab === 'autofill' ? 'bg-white shadow' : ''} `}
+                                <HiDocumentPlus className={`w-8 h-8 ${activeTab === 'empty' ? 'text-primary' : 'text-gray-400'}`} />
+                                <span className={`text-sm font-semibold ${activeTab === 'empty' ? 'text-primary' : 'text-gray-600'}`}>Start From Scratch</span>
+                            </div>
+                            <div
+                                className={`p-4 border rounded-xl cursor-pointer transition-all flex flex-col items-center gap-2 hover:border-primary
+                                ${activeTab === 'autofill' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'bg-slate-50 border-gray-200 hover:bg-slate-100'}`}
                                 onClick={() => setActiveTab('autofill')}
                             >
-                                Autofill with AI
-                            </button>
+                                <HiSparkles className={`w-8 h-8 ${activeTab === 'autofill' ? 'text-primary' : 'text-gray-400'}`} />
+                                <span className={`text-sm font-semibold ${activeTab === 'autofill' ? 'text-primary' : 'text-gray-600'}`}>Autofill with AI</span>
+                            </div>
                         </div>
 
                         {/* Empty Resume Tab */}
-                        {activeTab === 'empty' && (
-                            <div className="mt-4">
-                                <p className="mt-2 text-sm text-gray-600">Add a title for your new resume</p>
-                                <Input className="my-2"
-                                    placeholder="Ex. Full Stack Resume"
+                        {activeTab === 'empty' ? (
+                            <div className="space-y-3 animate-in fade-in zoom-in-95 duration-300">
+                                <label className="text-sm font-medium text-slate-700">Resume Title</label>
+                                <Input
+                                    placeholder="e.g. Full Stack Developer Resume"
                                     onChange={(e) => setResumeTitle(e.target.value)}
+                                    className="focus-visible:ring-primary"
                                 />
-                                <div className='flex justify-end gap-5 mt-4'>
-                                    <Button onClick={() => setOpenDialog(false)} variant="ghost">Cancel</Button>
+                                <div className='flex justify-end gap-3 mt-4'>
+                                    <Button onClick={() => setOpenDialog(false)} variant="outline">Cancel</Button>
                                     <Button
                                         disabled={!resumeTitle || loading}
                                         onClick={() => onCreate()}>
@@ -161,34 +166,36 @@ function AddResume() {
                                     </Button>
                                 </div>
                             </div>
-                        )}
+                        ) : null}
 
                         {/* Autofill Tab */}
-                        {activeTab === 'autofill' && (
-                            <div className="space-y-4 mt-4">
-                                <div>
-                                    <p className="text-sm font-medium mb-1">Upload Current Resume (PDF/DOCX)</p>
-                                    <Input type="file" onChange={(e) => setFile(e.target.files[0])} accept=".pdf,.docx,.txt" />
+                        {activeTab === 'autofill' ? (
+                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium text-slate-700">Upload Current Resume (PDF/DOCX)</label>
+                                    <Input type="file" onChange={(e) => setFile(e.target.files[0])} accept=".pdf,.docx,.txt" className="cursor-pointer file:text-primary file:font-medium" />
                                 </div>
-                                <div>
-                                    <p className="text-sm font-medium mb-1">Target Job Description</p>
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium text-slate-700">Target Job Description</label>
                                     <Textarea
-                                        placeholder="Paste the job description here..."
+                                        placeholder="Paste the job description here for tailored results..."
                                         value={jobDescription}
                                         onChange={(e) => setJobDescription(e.target.value)}
-                                        className="h-32"
+                                        className="h-24 resize-none focus-visible:ring-primary"
                                     />
                                 </div>
-                                <div className='flex justify-end gap-5'>
-                                    <Button onClick={() => setOpenDialog(false)} variant="ghost">Cancel</Button>
+                                <div className='flex justify-end gap-3 mt-4'>
+                                    <Button onClick={() => setOpenDialog(false)} variant="outline">Cancel</Button>
                                     <Button
                                         disabled={!file || !jobDescription || loading}
-                                        onClick={onAutofill}>
-                                        {loading ? <HiArrowPath className='animate-spin' /> : 'Generate & Create'}
+                                        onClick={onAutofill}
+                                        className="bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white"
+                                    >
+                                        {loading ? <HiArrowPath className='animate-spin' /> : <div className="flex items-center gap-2"><HiSparkles /> Generate</div>}
                                     </Button>
                                 </div>
                             </div>
-                        )}
+                        ) : null}
                     </div>
                 </DialogContent>
             </Dialog>
