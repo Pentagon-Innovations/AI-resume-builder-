@@ -64,18 +64,7 @@ const CVTemplate_three = ({ resumeInfo }: ResumeProps) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
-  const getImageSrc = (bufferData: any) => {
-    if (!bufferData || !bufferData.data) return "default-profile.png"; // Fallback image
 
-    // Convert Buffer data array to a Uint8Array
-    const uint8Array = new Uint8Array(bufferData.data);
-
-    // Create a Blob from Uint8Array
-    const blob = new Blob([uint8Array], { type: bufferData.contentType });
-
-    // Generate a URL for the blob
-    return URL.createObjectURL(blob);
-  };
 
 
 
@@ -84,7 +73,11 @@ const CVTemplate_three = ({ resumeInfo }: ResumeProps) => {
       <div className="resume">
         {/* Left Column */}
         <div className="left-column">
-          <img src={getImageSrc(profilePhoto)} alt="Profile Picture" className="profile-pic" />
+          <img src={typeof resumeInfo?.profilePhoto === 'string' ? resumeInfo?.profilePhoto : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/+$/, "") + '/resumes/' + resumeInfo?.resumeId + '/photo'}
+            alt="Profile Picture"
+            className="profile-pic"
+            onError={(e) => e.currentTarget.style.display = 'none'}
+          />
           <h2>{`${firstName} ${lastName}`}</h2>
           <p>{jobTitle}</p>
           <hr />

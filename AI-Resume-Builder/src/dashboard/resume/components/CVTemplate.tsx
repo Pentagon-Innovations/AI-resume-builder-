@@ -39,10 +39,11 @@ const CVTemplate = ({ resumeInfo }) => {
 
             <div className='flex justify-center my-4'>
               {/* Display Profile Photo */}
-              <img src={(import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/+$/, "") + '/resumes/' + resumeInfo?.resumeId + '/photo'}
+              {/* Display Profile Photo */}
+              <img src={typeof resumeInfo?.profilePhoto === 'string' ? resumeInfo?.profilePhoto : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/+$/, "") + '/resumes/' + resumeInfo?.resumeId + '/photo'}
                 alt='profile'
                 className='h-[100px] w-[100px] rounded-full object-cover'
-                onError={(e) => e.target.style.display = 'none'} // Hide if no photo
+                onError={(e) => e.currentTarget.style.display = 'none'} // Hide if no photo
               />
             </div>
             <div className="flex justify-between">

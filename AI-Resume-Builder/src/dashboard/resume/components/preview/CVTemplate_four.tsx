@@ -15,18 +15,7 @@ const CVTemplate_four = ({ resumeInfo }) => {
     profilePhoto
   } = resumeInfo;
 
-  const getImageSrc = (bufferData: any) => {
-    if (!bufferData || !bufferData.data) return "default-profile.png"; // Fallback image
 
-    // Convert Buffer data array to a Uint8Array
-    const uint8Array = new Uint8Array(bufferData.data);
-
-    // Create a Blob from Uint8Array
-    const blob = new Blob([uint8Array], { type: "image/png" });
-
-    // Generate a URL for the blob
-    return URL.createObjectURL(blob);
-  };
 
   return (
     <div className="cv-template-four">
@@ -74,7 +63,11 @@ const CVTemplate_four = ({ resumeInfo }) => {
 
           {/* Right Column */}
           <div className="w-1/3 bg-gray-200 p-6 rounded-lg">
-            <img src={getImageSrc(profilePhoto?.data)} alt="Profile" className="w-32 h-32 mx-auto rounded-full border-4 border-gray-400" />
+            <img src={typeof resumeInfo?.profilePhoto === 'string' ? resumeInfo?.profilePhoto : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/+$/, "") + '/resumes/' + resumeInfo?.resumeId + '/photo'}
+              alt="Profile"
+              className="w-32 h-32 mx-auto rounded-full border-4 border-gray-400 object-cover"
+              onError={(e) => e.currentTarget.style.display = 'none'}
+            />
 
             {/* Personal Information */}
             <div className="mt-6">

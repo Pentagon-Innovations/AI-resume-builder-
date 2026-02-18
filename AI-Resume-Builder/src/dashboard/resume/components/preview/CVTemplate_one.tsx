@@ -26,7 +26,13 @@ const CVTemplate_one = ({ resumeInfo }) => {
                 <h2>{jobTitle}</h2>
               </div>
               <div className="yui-u">
+                {/* Profile Photo */}
                 <div className="contact-info">
+                  <img src={typeof resumeInfo?.profilePhoto === 'string' ? resumeInfo?.profilePhoto : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/+$/, "") + '/resumes/' + resumeInfo?.resumeId + '/photo'}
+                    alt='profile'
+                    className='h-[100px] w-[100px] rounded-full object-cover inline-block mb-2'
+                    onError={(e) => e.currentTarget.style.display = 'none'}
+                  />
                   <h3><a href={`mailto:${email}`}>{email}</a></h3>
                   <h3>{phone}</h3>
                   <h3>{address}</h3>

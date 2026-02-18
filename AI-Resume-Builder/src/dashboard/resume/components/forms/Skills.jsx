@@ -58,7 +58,10 @@ function Skills() {
 
     useEffect(() => {
         if (resumeInfo?.skills?.length > 0) {
-            setSkillsList(resumeInfo.skills);
+            // Fix: Prevent infinite loop by checking if data actually changed
+            if (JSON.stringify(resumeInfo.skills) !== JSON.stringify(skillsList)) {
+                setSkillsList(resumeInfo.skills);
+            }
         }
     }, [resumeInfo]);
 
