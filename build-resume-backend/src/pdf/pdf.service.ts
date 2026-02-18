@@ -99,15 +99,13 @@ export class PdfService {
           executablePath = await chromium.executablePath();
 
           // Optimized args for Vercel/AWS Lambda
-          launchArgs = [
             ...chromium.args,
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
             '--disable-gpu',
             '--disable-software-rasterizer',
-            '--single-process', // Sometimes helps in low-memory envs
-            '--no-zygote',
+            '--disable-extensions',
           ];
           console.log(`🔍 Using serverless Chromium (131.x) for Vercel (Node 22)`);
           console.log('🔍 Executable path:', executablePath);
