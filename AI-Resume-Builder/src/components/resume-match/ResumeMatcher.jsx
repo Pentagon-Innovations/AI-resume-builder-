@@ -87,34 +87,7 @@ export default function ResumeMatcher() {
     }
   }
 
-  async function handleParseAndEdit() {
-    if (!file) {
-      setError("Please upload a resume first.");
-      return;
-    }
-    setError(null);
-    setIsParsing(true);
 
-    try {
-      const form = new FormData();
-      form.append("resume", file);
-
-      const resp = await GlobalApi.ParseResume(form);
-      const parsedData = resp.data;
-      console.log("Parsed Resume Data:", parsedData);
-
-      // Store in session or local storage for the editor
-      localStorage.setItem("parsedResume", JSON.stringify(parsedData));
-
-      // Redirect to a new resume creation page or editor
-      // For this demo, we'll alert and log
-      window.location.href = "/dashboard"; // Redirecting to dashboard where they can see 'Add Resume'
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsParsing(false);
-    }
-  }
 
   function clearAll() {
     setFile(null);
@@ -223,13 +196,7 @@ export default function ResumeMatcher() {
             {isLoading ? "🔍 Analyzing..." : "Analyze Match →"}
           </button>
 
-          <button
-            onClick={handleParseAndEdit}
-            className={`px-6 py-3 rounded-lg text-indigo-600 border border-indigo-200 font-bold text-sm bg-white hover:bg-indigo-50 transition-all ${isParsing ? "opacity-70" : ""}`}
-            disabled={isParsing || isLoading}
-          >
-            {isParsing ? "⚙️ Parsing..." : "Edit Resume with AI"}
-          </button>
+
         </div>
       </div>
 
