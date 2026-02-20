@@ -8,7 +8,6 @@ import GlobalApi from "service/GlobalApi";
 export default function Home() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
-  const [jobUrl, setJobUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [isFetchingJD, setIsFetchingJD] = useState(false);
   const [result, setResult] = useState(null);
@@ -28,7 +27,7 @@ export default function Home() {
   }, []);
 
   const handleFetchJD = async () => {
-    const urlToFetch = jobUrl || (jobDescription.startsWith("http") ? jobDescription : "");
+    const urlToFetch = jobDescription.startsWith("http") ? jobDescription : "";
     if (!urlToFetch) {
       alert("Please enter a valid LinkedIn or Job URL.");
       return;
@@ -55,7 +54,7 @@ export default function Home() {
   };
 
   const handleAnalyze = async () => {
-    if (!selectedFile || (!jobDescription && !jobUrl)) {
+    if (!selectedFile || !jobDescription) {
       alert("Please upload a resume and add job description or URL.");
       return;
     }
@@ -65,8 +64,7 @@ export default function Home() {
     const formData = new FormData();
     formData.append("resume", selectedFile);
     formData.append("jobDescription", jobDescription);
-    // Use jobUrl state or check if description is a URL
-    const finalJobUrl = jobUrl || (jobDescription.startsWith("http") ? jobDescription : "");
+    const finalJobUrl = jobDescription.startsWith("http") ? jobDescription : "";
     formData.append("jobUrl", finalJobUrl);
 
     try {
@@ -145,7 +143,7 @@ export default function Home() {
           <div className="border rounded-2xl bg-white p-8 shadow-sm hover:shadow-md transition">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold text-gray-900">Job Description</h2>
-              {(jobUrl || jobDescription.startsWith("http")) && (
+              {jobDescription.startsWith("http") && (
                 <button
                   onClick={handleFetchJD}
                   disabled={isFetchingJD}
@@ -161,14 +159,6 @@ export default function Home() {
               placeholder="Paste JD here or Paste LinkedIn URL below..."
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
-            />
-
-            <input
-              type="text"
-              className="mt-5 w-full p-4 rounded-xl border bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-sm transition"
-              placeholder="Paste LinkedIn Job URL here (optional)"
-              value={jobUrl}
-              onChange={(e) => setJobUrl(e.target.value)}
             />
 
             {structuredJD && (structuredJD.role !== 'Unknown Role' || structuredJD.company !== 'Unknown Company') && (

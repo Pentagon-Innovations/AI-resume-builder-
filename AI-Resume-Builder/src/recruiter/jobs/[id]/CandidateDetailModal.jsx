@@ -127,24 +127,6 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                         </div>
                     </div>
 
-                    {/* Interview Questions */}
-                    <div className="space-y-3">
-                        <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                            <HiQuestionMarkCircle className="w-4 h-4 mr-2 text-green-600" />
-                            Recommended Interview Questions
-                        </h4>
-                        <div className="space-y-2">
-                            {candidate.interviewQuestions?.length > 0 ? (
-                                candidate.interviewQuestions.map((q, i) => (
-                                    <div key={i} className="p-3 bg-white border border-gray-100 rounded-lg text-sm text-gray-700 shadow-sm">
-                                        <span className="font-bold text-indigo-600 mr-2">Q{i + 1}:</span> {q}
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-xs text-gray-500 italic">No specific interview questions generated.</p>
-                            )}
-                        </div>
-                    </div>
                 </div>
 
                 <div className="pt-4 border-t flex justify-end gap-3 bg-white">

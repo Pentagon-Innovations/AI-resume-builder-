@@ -22,6 +22,20 @@ axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error('[GlobalApi] Response Error:', error.response?.status, error.response?.data);
+
+    // Handle 401 Unauthorized (Session Expired/Invalid)
+    if (error.response?.status === 401) {
+      console.warn('[GlobalApi] 401 Caught - Clearing session and redirecting to login');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('refresh_token');
+
+      // Only redirect if not already on an auth page to avoid loops
+      if (!window.location.pathname.includes('/auth/')) {
+        window.location.href = '/auth/sign-in?error=session_expired';
+      }
+    }
+
     return Promise.reject(error);
   }
 );

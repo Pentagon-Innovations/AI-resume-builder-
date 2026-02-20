@@ -1,11 +1,172 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body } from '@nestjs/common';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { OpenAIResponsesService } from '../shared/openai-responses.service';
+import { ConfigService } from '@nestjs/config';
 
 const execAsync = promisify(exec);
 
 @Controller('test')
 export class TestController {
+    constructor(
+        private readonly openAIResponsesService: OpenAIResponsesService,
+        private readonly configService: ConfigService
+    ) { }
+
+    @Get('openai')
+    async testOpenAI() {
+        try {
+            const testInput = 'Say "OpenRouter API is working!" in a friendly way.';
+            const response = await this.openAIResponsesService.generateResponse(testInput);
+
+            return {
+                success: true,
+                message: 'AI connectivity test successful',
+                response: response,
+                timestamp: new Date().toISOString(),
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                message: 'AI connectivity test failed',
+                error: error.message || 'Unknown error',
+                timestamp: new Date().toISOString(),
+            };
+        }
+    }
+
+    @Post('openai')
+    async testOpenAIWithInput(@Body() body: { prompt: string; model?: string }) {
+        try {
+            const { prompt, model } = body;
+            if (!prompt) {
+                return { success: false, message: 'Prompt is required' };
+            }
+
+            console.log(`[TEST] AI Test called with prompt: "${prompt.substring(0, 50)}..."`);
+            const response = await this.openAIResponsesService.generateResponse(prompt, model);
+
+            return {
+                success: true,
+                response: response,
+                timestamp: new Date().toISOString(),
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                message: 'AI prompt test failed',
+                error: error.message || 'Unknown error',
+                details: error,
+                timestamp: new Date().toISOString(),
+            };
+        }
+    }
+
+    @Post('openai-raw')
+    async testOpenAIRaw(@Body() body: { apiKey?: string; prompt: string; model?: string }) {
+        try {
+            const { apiKey, prompt, model = 'gpt-4o-mini' } = body;
+            if (!prompt) {
+                return { success: false, message: 'Prompt is required' };
+            }
+
+            // Use provided key or fall back to project key
+            const keyToUse = apiKey || this.configService.get<string>('OPENAI_API_KEY') || this.configService.get<string>('OPENROUTER_API_KEY');
+
+            if (!keyToUse) {
+                return { success: false, message: 'No API key provided and no project key configured' };
+            }
+
+            const unirest = require('unirest');
+            return new Promise((resolve) => {
+                unirest.post('https://api.openai.com/v1/chat/completions')
+                    .headers({
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${keyToUse}`,
+                    })
+                    .send({
+                        model: model,
+                        messages: [{ role: 'user', content: prompt }],
+                    })
+                    .end((res: any) => {
+                        resolve({
+                            status: res.status,
+                            body: res.body,
+                            success: !res.error,
+                            timestamp: new Date().toISOString(),
+                        });
+                    });
+            });
+        } catch (error: any) {
+            return {
+                success: false,
+                error: error.message,
+                timestamp: new Date().toISOString(),
+            };
+        }
+    }
+
+    @Post('openai-responses')
+    async testOpenAIResponses(@Body() body: { apiKey?: string; model?: string; input?: string; store?: boolean }) {
+        try {
+            const {
+                apiKey,
+                model = 'gpt-4.1-mini',
+                input = 'write a haiku about ai',
+                store = true
+            } = body;
+
+            const keyToUse = apiKey || this.configService.get<string>('OPENAI_API_KEY');
+
+            if (!keyToUse) {
+                return { success: false, message: 'No API key provided' };
+            }
+
+            const unirest = require('unirest');
+            return new Promise((resolve) => {
+                unirest.post('https://api.openai.com/v1/responses')
+                    .headers({
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${keyToUse}`,
+                    })
+                    .send({
+                        model,
+                        input,
+                        store
+                    })
+                    .end((res: any) => {
+                        resolve({
+                            status: res.status,
+                            body: res.body,
+                            success: !res.error,
+                            timestamp: new Date().toISOString(),
+                        });
+                    });
+            });
+        } catch (error: any) {
+            return {
+                success: false,
+                error: error.message,
+                timestamp: new Date().toISOString(),
+            };
+        }
+    }
+
+    @Get('ai-config')
+    async getAIConfig() {
+        const openaiKey = this.configService.get<string>('OPENAI_API_KEY');
+        const openrouterKey = this.configService.get<string>('OPENROUTER_API_KEY');
+
+        return {
+            openai_key_configured: !!openaiKey,
+            openai_key_prefix: openaiKey ? `${openaiKey.substring(0, 7)}...` : null,
+            openrouter_key_configured: !!openrouterKey,
+            openrouter_key_prefix: openrouterKey ? `${openrouterKey.substring(0, 7)}...` : null,
+            preferred_service: openaiKey ? 'OpenAI' : (openrouterKey ? 'OpenRouter' : 'None'),
+            timestamp: new Date().toISOString(),
+        };
+    }
+
     @Get('status')
     async getTestStatus() {
         return {
