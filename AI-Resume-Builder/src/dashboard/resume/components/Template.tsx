@@ -39,6 +39,18 @@ function Template() {
             name: 'Minimal',
             color: '#c0392b',
             isPremium: false
+        },
+        {
+            id: 4,
+            name: 'Classic',
+            color: '#7f8c8d',
+            isPremium: false
+        },
+        {
+            id: 5,
+            name: 'Executive',
+            color: '#2c3e50',
+            isPremium: true
         }
     ]
 

@@ -97,7 +97,7 @@ export default function Home() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Upload Resume</h2>
               <span className="text-xs px-3 py-1 rounded-md bg-purple-100 text-purple-700 font-medium">
-                Quota: {userQuota.runs}/{userQuota.max}
+                Quota: {userQuota.max - userQuota.runs}/{userQuota.max}
               </span>
             </div>
 

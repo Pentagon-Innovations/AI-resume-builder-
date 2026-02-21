@@ -16,11 +16,11 @@ const CVTemplate = ({ resumeInfo }) => {
   } = resumeInfo;
 
   return (
-    <div id="root">
+    <div id="root" style={{ width: '100%', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
       <div className="md:grid-cols-2">
         <div
-          className="shadow-lg h-full p-14 border-t-[20px]"
-          style={{ borderColor: themeColor }}
+          className="shadow-lg min-h-[296mm] p-10 border-t-[20px]"
+          style={{ borderColor: themeColor, backgroundColor: 'white' }}
         >
           <div>
             <h2

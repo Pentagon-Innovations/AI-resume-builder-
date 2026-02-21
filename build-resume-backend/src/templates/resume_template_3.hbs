@@ -8,59 +8,91 @@
   <title>AI Resume Builder</title>
   <base href="/" />
   <style>
-    .four {
-      font-family: Arial, sans-serif;
+    * {
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #f4f4f4;
       margin: 0;
       padding: 0;
-      background: #f4f4f4;
     }
 
-    .four .container {
-      display: flex;
-      max-width: 900px;
-      margin: 20px auto;
+    .resume {
+      width: 100%;
       background: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      min-height: 296mm;
     }
 
-    .four .left-column {
-      width: 60%;
-      padding: 20px;
-    }
-
-    .four .right-column {
-      width: 40%;
-      background: #333;
-      color: #fff;
-      padding: 20px;
+    .header {
       text-align: center;
-    }
-
-    .four .profile-photo {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 0 auto 15px;
-    }
-
-    .four h1,
-    .four h2 {
-      margin-bottom: 10px;
-    }
-
-    .four .section {
+      border-bottom: 2px solid #333;
+      padding-bottom: 15px;
       margin-bottom: 20px;
     }
 
-    .four .experience-item,
-    .four .education-item {
-      margin-bottom: 15px;
+    .header h1 {
+      font-size: 2rem;
+      margin: 0;
+      text-transform: uppercase;
     }
 
-    .four .skills li {
-      list-style: none;
-      padding: 5px 0;
+    .header p {
+      margin: 5px 0;
+      font-size: 0.9rem;
+    }
+
+    .section {
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+
+    .section h3 {
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+
+    .item {
+      margin-bottom: 10px;
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .item-sub {
+      display: flex;
+      justify-content: space-between;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .description {
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-tag {
+      background: #eee;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
     }
   </style>
 </head>

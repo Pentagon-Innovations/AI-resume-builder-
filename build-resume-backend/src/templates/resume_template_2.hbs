@@ -8,57 +8,82 @@
   <meta name="description" content="" />
 
   <style>
+    * {
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+    }
+
     body {
       font-family: 'Open Sans', sans-serif;
       background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
     }
 
     .resume {
+      width: 100%;
       display: grid;
-      grid-template-columns: 1fr 2fr;
+      grid-template-columns: 30% 70%;
       background: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      min-height: 296mm;
     }
 
     .left-column {
       background: #2c3e50;
       color: white;
-      padding: 30px;
+      padding: 20px;
     }
 
     .right-column {
-      padding: 30px;
+      padding: 20px;
     }
 
     .profile-pic {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       border: 3px solid white;
       display: block;
       margin: 0 auto;
+      object-fit: cover;
     }
 
-    h2,
-    h3 {
-      font-family: 'Montserrat', sans-serif;
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    p {
+      font-size: 0.85rem;
+      margin-bottom: 5px;
     }
 
     .section {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      page-break-inside: avoid;
     }
 
-    .skills span,
-    .languages span {
-      display: block;
+    h3 {
+      font-size: 1.1rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 5px;
+    }
+
+    .right-column h3 {
+      color: #2c3e50;
+      border-bottom: 1px solid #eee;
+    }
+
+    .skills span {
+      display: inline-block;
       background: #1abc9c;
-      padding: 5px;
-      margin-top: 5px;
-      border-radius: 5px;
-      text-align: center;
+      padding: 4px 8px;
+      margin: 2px;
+      border-radius: 4px;
+      font-size: 11px;
     }
   </style>
   <div class="resume">

@@ -1616,8 +1616,13 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
     }
 
     @page {
-      size: auto;
-      margin: 0mm;
+      size: A4;
+      margin: 10mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      overflow-wrap: break-word;
     }
 
     .rsw-ce ul {

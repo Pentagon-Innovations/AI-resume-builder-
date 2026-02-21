@@ -1,0 +1,140 @@
+.cv-template-six {
+    .executive-container {
+        display: flex;
+        min-height: 296mm;
+        background: white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .sidebar {
+        width: 30%;
+        padding: 40px 20px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+
+        .profile-section {
+            text-align: center;
+
+            .profile-photo {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                border: 4px solid rgba(255, 255, 255, 0.2);
+                object-fit: cover;
+            }
+        }
+
+        h3 {
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .contact-info p {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .skill-item {
+            margin-bottom: 12px;
+
+            span {
+                display: block;
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+
+            .skill-bar-bg {
+                height: 6px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 3px;
+
+                .skill-bar-fill {
+                    height: 100%;
+                    background: white;
+                    border-radius: 3px;
+                }
+            }
+        }
+    }
+
+    .main-content {
+        width: 70%;
+        padding: 40px;
+        color: #333;
+
+        .header {
+            margin-bottom: 30px;
+
+            h1 {
+                font-size: 36px;
+                font-weight: 800;
+                margin-bottom: 5px;
+            }
+
+            .job-title {
+                font-size: 20px;
+                color: #666;
+                font-weight: 400;
+            }
+        }
+
+        .section {
+            margin-bottom: 30px;
+
+            .section-title {
+                font-size: 18px;
+                font-weight: 700;
+                text-transform: uppercase;
+                margin-bottom: 15px;
+                padding-bottom: 5px;
+            }
+        }
+
+        .experience-item,
+        .education-item {
+            margin-bottom: 20px;
+
+            .exp-header,
+            .edu-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 5px;
+            }
+
+            .exp-title,
+            .edu-school {
+                font-weight: 700;
+                font-size: 15px;
+            }
+
+            .exp-date,
+            .edu-date {
+                font-size: 13px;
+                color: #777;
+            }
+
+            .exp-company,
+            .edu-degree {
+                font-style: italic;
+                font-size: 14px;
+                color: #555;
+                margin-bottom: 8px;
+            }
+
+            .exp-description,
+            .edu-desc {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+        }
+    }
+}

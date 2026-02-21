@@ -139,15 +139,26 @@ export class PdfService {
       await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
       await setTimeout(2000); // Ensure rendering is complete
 
-      // Apply page styles
+      // Apply page styles to help with single-page consolidation
       await page.addStyleTag({
         content: `
         @page {
-            margin-top: 10mm;
-            margin-right: 10mm;
-            margin-bottom: 20mm;
-            margin-left: 10mm;
-        }`,
+            size: A4;
+            margin: 10mm;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+        }
+        * {
+            box-sizing: border-box;
+            overflow-wrap: break-word;
+        }
+        .section, h2, h3, .item {
+            page-break-inside: avoid;
+        }
+        `,
       });
 
       console.log('📄 Generating PDF...');
@@ -155,8 +166,9 @@ export class PdfService {
       const pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true,
-        margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
-        scale: 1.0,
+        preferCSSPageSize: true,
+        margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' },
+        scale: 0.95, // Slight scale down to ensure content fits better on one page
       });
 
       console.log(`✅ PDF generated successfully (${pdfBuffer.length} bytes)`);

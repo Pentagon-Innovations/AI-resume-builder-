@@ -1,0 +1,85 @@
+.cv-template-five {
+  .classic-container {
+    padding: 30px;
+    background: white;
+    font-family: 'Times New Roman', Times, serif;
+    color: #333;
+    line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-height: 296mm;
+  }
+
+  .header {
+    text-align: center;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .job-title {
+      font-size: 18px;
+      font-style: italic;
+      margin-bottom: 15px;
+    }
+
+    .contact-grid {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 12px;
+    }
+  }
+
+  .section {
+    margin-bottom: 25px;
+
+    h2 {
+      font-size: 18px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+  }
+
+  .item {
+    margin-bottom: 15px;
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .item-sub {
+      display: flex;
+      justify-content: space-between;
+      font-style: italic;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .description {
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  }
+
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .skill-tag {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+  }
+}
