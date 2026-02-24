@@ -229,7 +229,7 @@
                 <div class="experience-item">
                     <div class="exp-header">
                         <span class="exp-title">{{title}}</span>
-                        <span class="exp-date">{{startDate}} - {{endDate}}</span>
+                        <span class="exp-date">{{formatDate startDate}} - {{formatDate endDate}}</span>
                     </div>
                     <div class="exp-company">{{companyName}} | {{city}}, {{state}}</div>
                     <div class="exp-description">{{{description}}}</div>
@@ -245,7 +245,7 @@
                 <div class="education-item">
                     <div class="edu-header">
                         <span class="edu-school">{{universityName}}</span>
-                        <span class="edu-date">{{startDate}} - {{endDate}}</span>
+                        <span class="edu-date">{{formatDate startDate}} - {{formatDate endDate}}</span>
                     </div>
                     <div class="edu-degree">{{degree}} in {{major}}</div>
                     <p class="edu-desc">{{description}}</p>

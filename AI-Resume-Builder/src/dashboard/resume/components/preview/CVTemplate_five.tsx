@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatDate } from '@/lib/utils';
 
 const CVTemplate_five = ({ resumeInfo }) => {
     const {
@@ -40,7 +41,7 @@ const CVTemplate_five = ({ resumeInfo }) => {
                             <div key={index} className="item">
                                 <div className="item-header">
                                     <strong>{exp.title}</strong>
-                                    <span>{exp.startDate} - {exp.endDate}</span>
+                                    <span>{formatDate(exp.startDate)} - {formatDate(exp.endDate)}</span>
                                 </div>
                                 <div className="item-sub">
                                     <span>{exp.companyName}</span>
@@ -59,7 +60,7 @@ const CVTemplate_five = ({ resumeInfo }) => {
                             <div key={index} className="item">
                                 <div className="item-header">
                                     <strong>{edu.universityName}</strong>
-                                    <span>{edu.startDate} - {edu.endDate}</span>
+                                    <span>{formatDate(edu.startDate)} - {formatDate(edu.endDate)}</span>
                                 </div>
                                 <div className="item-sub">
                                     <span>{edu.degree} in {edu.major}</span>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatDate } from '@/lib/utils';
 
 interface Skill {
   name: string;
@@ -59,11 +60,6 @@ const CVTemplate_three = ({ resumeInfo }: ResumeProps) => {
     profilePhoto,
   } = resumeInfo;
 
-  // Helper function to format dates
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
 
 
 

@@ -2,62 +2,38 @@
 
 import { useState } from "react";
 import GlobalApi from "service/GlobalApi";
-import { Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-// Register chart elements
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-// ⭐ Plugin for center text
-const centerTextPlugin = {
-  id: "centerText",
-  beforeDraw(chart, args, options) {
-    const { ctx, chartArea: { width, height } } = chart;
-    ctx.save();
-
-    ctx.font = "bold 32px Inter, sans-serif";
-    ctx.fillStyle = "#1F2937";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(`${options.value}%`, width / 2, height / 2 + 10);
-
-    ctx.restore();
-  }
-};
-ChartJS.register(centerTextPlugin);
 
 export default function AnalysisResult({ result, selectedresume }) {
   const [tab, setTab] = useState("skills");
   const [isImprovingAll, setIsImprovingAll] = useState(false);
 
-  // ⭐ Updated Pie Ring Chart Data + Style
-  const pieData = {
-    datasets: [
-      {
-        data: [result?.matchScore || 0, 100 - (result?.matchScore || 0)],
-        backgroundColor: ["#6EC05D", "#E5E7EB"], // green like your sample
-        borderWidth: 0,
-        cutout: "70%", // smooth thickness
-        borderRadius: 40, // perfect round ends
-      },
-    ],
+  // ⭐ Score-based configuration
+  const getScoreConfig = (score) => {
+    if (score >= 80) return {
+      color: "from-emerald-400 to-green-600",
+      bg: "bg-green-50",
+      text: "text-green-700",
+      status: "Excellent Match",
+      label: "Your resume is highly optimized for this role!"
+    };
+    if (score >= 50) return {
+      color: "from-blue-400 to-indigo-600",
+      bg: "bg-blue-50",
+      text: "text-indigo-700",
+      status: "Good Match",
+      label: "Solid foundation, but some key areas can be improved."
+    };
+    return {
+      color: "from-orange-400 to-red-600",
+      bg: "bg-red-50",
+      text: "text-red-700",
+      status: "Needs Improvement",
+      label: "Significant gaps detected. Follow the suggestions below."
+    };
   };
 
-  const pieOptions = {
-    responsive: true,
-    maintainAspectRatio: false, // fixes stretching issues
-    plugins: {
-      legend: { display: false },
-      tooltip: { enabled: false },
-      centerText: { value: result?.matchScore || 0 },
-    },
-    rotation: -90 * (Math.PI / 180), // starts arc at top
-  };
+  const score = result?.matchScore || 0;
+  const config = getScoreConfig(score);
 
   const tabs = [
     { id: "skills", label: "Missing Skills" },
@@ -65,7 +41,7 @@ export default function AnalysisResult({ result, selectedresume }) {
     { id: "improve", label: "Resume Improvements" },
     { id: "topics", label: "Interview Topics" },
     { id: "questions", label: "Interview Questions" },
-    ...(result?.matchScore > 80 ? [
+    ...(score > 80 ? [
       { id: "specializedJD", label: "Personalized JD" },
       { id: "coverLetter", label: "Cover Letter" },
       { id: "alignment", label: "Skill Alignment" }
@@ -117,19 +93,41 @@ export default function AnalysisResult({ result, selectedresume }) {
     <div className="max-w-6xl mt-14 bg-white/70 backdrop-blur-xl p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 mx-auto transition">
 
       {/* Header */}
-      <h3 className="text-3xl font-bold text-gray-900 mb-10">
+      <h3 className="text-3xl font-bold text-gray-900 mb-8">
         AI Analysis Result
       </h3>
 
-      {/* ⭐ Ring Score Chart */}
-      <div className="flex flex-col items-center mb-12">
-        <div className="w-56 h-56 flex items-center justify-center">
-          <Pie data={pieData} options={pieOptions} />
-        </div>
+      {/* ⭐ Modern Score Bar Layout */}
+      <div className={`p-8 rounded-3xl border border-gray-100 shadow-sm mb-12 ${config.bg}`}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex-1">
+            <div className="flex items-center gap-4 mb-2">
+              <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${config.color.replace('from-', 'bg-').split(' ')[0]} text-white shadow-sm`}>
+                {config.status}
+              </span>
+              <span className="text-2xl font-bold text-gray-900">{score}% Match</span>
+            </div>
+            <p className="text-gray-600 font-medium">
+              {config.label}
+            </p>
+          </div>
 
-        <p className="text-center mt-6 text-xl font-semibold text-gray-800">
-          Score: {result?.matchScore || 0}%
-        </p>
+          <div className="flex-1 max-w-md w-full">
+            <div className="h-4 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner">
+              <div
+                className={`h-full bg-gradient-to-r ${config.color} transition-all duration-1000 ease-out flex items-center justify-end pr-2`}
+                style={{ width: `${score}%` }}
+              >
+                <div className="h-1.5 w-1.5 bg-white/50 rounded-full animate-pulse" />
+              </div>
+            </div>
+            <div className="flex justify-between mt-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">
+              <span>Weak</span>
+              <span>Solid</span>
+              <span>Perfect</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Improve Resume Button */}

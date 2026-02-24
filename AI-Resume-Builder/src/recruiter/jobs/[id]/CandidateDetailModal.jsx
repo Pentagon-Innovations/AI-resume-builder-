@@ -61,19 +61,30 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                             <DialogDescription>{candidate.candidateEmail}</DialogDescription>
                         </div>
                         <div className="text-right shrink-0">
-                            <div className="text-3xl font-bold text-indigo-600">{candidate.score}%</div>
-                            <div className="text-xs text-gray-500 font-medium tracking-wider uppercase">Match Score</div>
+                            <div className="flex flex-col items-end">
+                                <div className={`text-4xl font-black ${candidate.score > 75 ? 'text-green-600' : candidate.score > 50 ? 'text-indigo-600' : 'text-red-500'}`}>
+                                    {candidate.score}%
+                                </div>
+                                <div className="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Match Index</div>
+                            </div>
                         </div>
                     </div>
                 </DialogHeader>
 
                 <div className="flex-1 overflow-y-auto pr-2 space-y-6 py-4 custom-scrollbar">
-                    {/* Progress Bar */}
-                    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                            className={`h-full transition-all duration-1000 ${candidate.score > 75 ? 'bg-green-500' : candidate.score > 50 ? 'bg-yellow-500' : 'bg-red-500'}`}
-                            style={{ width: `${candidate.score}%` }}
-                        />
+                    {/* Enhanced Progress Bar */}
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-end">
+                            <span className={`text-[10px] font-bold uppercase tracking-widest ${candidate.score > 75 ? 'text-green-600' : candidate.score > 50 ? 'text-indigo-600' : 'text-red-500'}`}>
+                                {candidate.score > 75 ? 'Excellent' : candidate.score > 50 ? 'Good Match' : 'Weak Match'}
+                            </span>
+                        </div>
+                        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-50">
+                            <div
+                                className={`h-full transition-all duration-1000 ease-out bg-gradient-to-r ${candidate.score > 75 ? 'from-emerald-400 to-green-600' : candidate.score > 50 ? 'from-blue-400 to-indigo-600' : 'from-orange-400 to-red-600'}`}
+                                style={{ width: `${candidate.score}%` }}
+                            />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

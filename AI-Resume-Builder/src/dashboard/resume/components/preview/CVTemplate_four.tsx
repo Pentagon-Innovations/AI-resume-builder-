@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatDate } from '@/lib/utils';
 
 const CVTemplate_four = ({ resumeInfo }) => {
   const {
@@ -39,7 +40,7 @@ const CVTemplate_four = ({ resumeInfo }) => {
                 {experience.map((exp, index) => (
                   <div className="mt-4 border-l-4 border-blue-500 pl-4" key={index}>
                     <h3 className="text-md font-semibold">{exp.title} - {exp.companyName}</h3>
-                    <p className="text-gray-500 text-sm">{exp.city}, {exp.state} ({exp.startDate} - {exp.endDate})</p>
+                    <p className="text-gray-500 text-sm">{exp.city}, {exp.state} ({formatDate(exp.startDate)} - {formatDate(exp.endDate)})</p>
                     <div className="text-gray-600 text-sm mt-2" dangerouslySetInnerHTML={{ __html: exp.description }}></div>
                   </div>
                 ))}
@@ -53,7 +54,7 @@ const CVTemplate_four = ({ resumeInfo }) => {
                 {education.map((edu, index) => (
                   <div className="mt-4 border-l-4 border-green-500 pl-4" key={index}>
                     <h3 className="text-md font-semibold">{edu.degree} in {edu.major}</h3>
-                    <p className="text-gray-500 text-sm">{edu.universityName} ({edu.startDate} - {edu.endDate})</p>
+                    <p className="text-gray-500 text-sm">{edu.universityName} ({formatDate(edu.startDate)} - {formatDate(edu.endDate)})</p>
                     <p className="text-gray-600 text-sm">{edu.description}</p>
                   </div>
                 ))}

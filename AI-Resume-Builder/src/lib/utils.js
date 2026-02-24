@@ -6,8 +6,8 @@ export function cn(...inputs) {
 }
 
 export function formatDate(date) {
-  if (!date) return '';
+  if (!date) return 'Present';
   const d = new Date(date);
-  if (isNaN(d.getTime())) return '';
-  return d.toISOString().split('T')[0];
+  if (isNaN(d.getTime())) return 'Present';
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
 }

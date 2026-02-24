@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatDate } from '@/lib/utils';
 
 const CVTemplate = ({ resumeInfo }) => {
   const {
@@ -79,7 +80,7 @@ const CVTemplate = ({ resumeInfo }) => {
                   <h2 className="text-xs flex justify-between">
                     {exp.companyName}, {exp.city}, {exp.state}
                     <span>
-                      {exp.startDate} To {exp.endDate}
+                      {formatDate(exp.startDate)} To {formatDate(exp.endDate)}
                     </span>
                   </h2>
                   <div className="text-xs my-2" dangerouslySetInnerHTML={{ __html: exp.description }} />
@@ -106,7 +107,7 @@ const CVTemplate = ({ resumeInfo }) => {
                   <h2 className="text-xs flex justify-between">
                     {edu.degree} in {edu.major}
                     <span>
-                      {edu.startDate} - {edu.endDate}
+                      {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
                     </span>
                   </h2>
                   <p className="text-xs my-2">{edu.description}</p>
