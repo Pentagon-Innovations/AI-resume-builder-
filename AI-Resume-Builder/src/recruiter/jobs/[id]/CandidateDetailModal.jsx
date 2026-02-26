@@ -32,7 +32,7 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col rounded-[2.5rem] border-gray-200 shadow-2xl">
                 <DialogHeader>
                     <div className="flex justify-between items-center pr-8">
                         <div className="flex-1">
@@ -71,69 +71,87 @@ function CandidateDetailModal({ candidate, isOpen, onClose, onUpdate }) {
                     </div>
                 </DialogHeader>
 
-                <div className="flex-1 overflow-y-auto pr-2 space-y-6 py-4 custom-scrollbar">
-                    {/* Enhanced Progress Bar */}
-                    <div className="space-y-2">
-                        <div className="flex justify-between items-end">
-                            <span className={`text-[10px] font-bold uppercase tracking-widest ${candidate.score > 75 ? 'text-green-600' : candidate.score > 50 ? 'text-indigo-600' : 'text-red-500'}`}>
-                                {candidate.score > 75 ? 'Excellent' : candidate.score > 50 ? 'Good Match' : 'Weak Match'}
-                            </span>
-                        </div>
-                        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-50">
-                            <div
-                                className={`h-full transition-all duration-1000 ease-out bg-gradient-to-r ${candidate.score > 75 ? 'from-emerald-400 to-green-600' : candidate.score > 50 ? 'from-blue-400 to-indigo-600' : 'from-orange-400 to-red-600'}`}
-                                style={{ width: `${candidate.score}%` }}
-                            />
+                <div className="flex-1 overflow-y-auto pr-2 space-y-8 py-6 custom-scrollbar">
+                    {/* Enhanced Progress Bar Center */}
+                    <div className={`p-8 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden ${candidate.score > 75 ? 'bg-green-50' : candidate.score > 50 ? 'bg-indigo-50' : 'bg-red-50'}`}>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full -mr-10 -mt-10 blur-2xl pointer-events-none" />
+
+                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="flex-1 text-center md:text-left">
+                                <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.15em] border ${candidate.score > 75 ? 'bg-white text-green-700 border-green-100' : candidate.score > 50 ? 'bg-white text-indigo-700 border-indigo-100' : 'bg-white text-red-700 border-red-100'} shadow-sm mb-3 inline-block`}>
+                                    {candidate.score > 75 ? 'Excellent Match' : candidate.score > 50 ? 'Good Match' : 'Weak Match'}
+                                </span>
+                                <h4 className="text-xl font-bold text-gray-900 leading-tight">Match Quality Analysis</h4>
+                            </div>
+
+                            <div className="w-full md:w-64">
+                                <div className="flex justify-between items-end mb-2">
+                                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Score Density</span>
+                                    <span className={`text-sm font-black ${candidate.score > 75 ? 'text-green-600' : candidate.score > 50 ? 'text-indigo-600' : 'text-red-500'}`}>{candidate.score}%</span>
+                                </div>
+                                <div className="h-4 w-full bg-white rounded-full p-0.5 shadow-inner border border-gray-100">
+                                    <div
+                                        className={`h-full transition-all duration-1000 ease-out rounded-full bg-gradient-to-r ${candidate.score > 75 ? 'from-emerald-400 to-green-600' : candidate.score > 50 ? 'from-blue-400 to-indigo-600' : 'from-orange-400 to-red-600'}`}
+                                        style={{ width: `${candidate.score}%` }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Missing Skills */}
-                        <div className="space-y-3">
-                            <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                                <HiExclamationTriangle className="w-4 h-4 mr-2 text-red-500" />
+                        <div className="space-y-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                            <h4 className="flex items-center text-xs font-black text-gray-900 uppercase tracking-widest">
+                                <div className="w-6 h-6 rounded-lg bg-red-50 flex items-center justify-center mr-3">
+                                    <HiExclamationTriangle className="w-4 h-4 text-red-500" />
+                                </div>
                                 Missing Skills
                             </h4>
                             <div className="flex flex-wrap gap-2">
                                 {candidate.missingSkills?.length > 0 ? (
                                     candidate.missingSkills.map((skill, i) => (
-                                        <span key={i} className="px-2 py-1 bg-red-50 text-red-700 text-xs font-medium rounded-md border border-red-100">
+                                        <span key={i} className="px-3 py-1.5 bg-red-50 text-red-700 text-[10px] font-bold rounded-xl border border-red-100">
                                             {skill}
                                         </span>
                                     ))
                                 ) : (
-                                    <span className="text-xs text-gray-500 italic">No missing skills detected.</span>
+                                    <span className="text-xs text-gray-400 italic">No missing skills detected.</span>
                                 )}
                             </div>
                         </div>
 
                         {/* Missing Keywords */}
-                        <div className="space-y-3">
-                            <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                                <HiCheck className="w-4 h-4 mr-2 text-indigo-500" />
+                        <div className="space-y-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                            <h4 className="flex items-center text-xs font-black text-gray-900 uppercase tracking-widest">
+                                <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center mr-3">
+                                    <HiCheck className="w-4 h-4 text-indigo-500" />
+                                </div>
                                 Missing Keywords
                             </h4>
                             <div className="flex flex-wrap gap-2">
                                 {candidate.missingKeywords?.length > 0 ? (
                                     candidate.missingKeywords.map((kw, i) => (
-                                        <span key={i} className="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-md border border-indigo-100">
+                                        <span key={i} className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-xl border border-indigo-100">
                                             {kw}
                                         </span>
                                     ))
                                 ) : (
-                                    <span className="text-xs text-gray-500 italic">No missing keywords detected.</span>
+                                    <span className="text-xs text-gray-400 italic">No missing keywords detected.</span>
                                 )}
                             </div>
                         </div>
                     </div>
 
                     {/* Match Analysis / Improvements */}
-                    <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                        <h4 className="flex items-center text-sm font-semibold text-gray-900">
-                            <HiLightBulb className="w-4 h-4 mr-2 text-yellow-600" />
-                            AI Match Analysis & Improvements
+                    <div className="space-y-4 p-6 bg-gray-50/50 rounded-2xl border border-gray-100 shadow-inner">
+                        <h4 className="flex items-center text-xs font-black text-gray-900 uppercase tracking-widest">
+                            <div className="w-6 h-6 rounded-lg bg-yellow-50 flex items-center justify-center mr-3">
+                                <HiLightBulb className="w-4 h-4 text-yellow-600" />
+                            </div>
+                            AI Strategic Analysis
                         </h4>
-                        <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                        <div className="text-sm text-gray-600 leading-relaxed font-medium bg-white p-5 rounded-xl border border-gray-50 shadow-sm whitespace-pre-line">
                             {candidate.matchAnalysis || "No detailed analysis available."}
                         </div>
                     </div>
