@@ -14,21 +14,24 @@ export default function AnalysisResult({ result, selectedresume }) {
       bg: "bg-green-50",
       text: "text-green-700",
       status: "Excellent Match",
-      label: "Your resume is highly optimized for this role!"
+      label: "Your resume is highly optimized for this role!",
+      statusTextColor: "text-black"
     };
     if (score >= 50) return {
       color: "from-blue-400 to-indigo-600",
       bg: "bg-blue-50",
       text: "text-indigo-700",
       status: "Good Match",
-      label: "Solid foundation, but some key areas can be improved."
+      label: "Solid foundation, but some key areas can be improved!",
+      statusTextColor: "text-black"
     };
     return {
       color: "from-orange-400 to-red-600",
       bg: "bg-red-50",
       text: "text-red-700",
       status: "Needs Improvement",
-      label: "Significant gaps detected. Follow the suggestions below."
+      label: "Significant gaps detected. Follow the suggestions below.",
+      statusTextColor: "text-black"
     };
   };
 
@@ -68,6 +71,7 @@ export default function AnalysisResult({ result, selectedresume }) {
       console.log("Improved Resume Data:", improvedData);
 
       localStorage.setItem("parsedResume", JSON.stringify(improvedData));
+      localStorage.setItem("missingSkills", JSON.stringify(result?.missingSkills || []));
       window.location.href = "/dashboard";
     } catch (err) {
       console.error("Improve resume error:", err);
@@ -117,7 +121,7 @@ export default function AnalysisResult({ result, selectedresume }) {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 relative z-10">
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-4 mb-4">
-              <span className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] ${config.color.replace('from-', 'bg-').split(' ')[0]} text-white shadow-lg`}>
+              <span className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] ${config.color.replace('from-', 'bg-').split(' ')[0]} ${config.statusTextColor} shadow-lg`}>
                 {config.status}
               </span>
               <div className="flex items-baseline gap-1">

@@ -20,7 +20,7 @@ const CVTemplate = ({ resumeInfo }) => {
     <div id="root" style={{ width: '100%', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
       <div className="md:grid-cols-2">
         <div
-          className="shadow-lg min-h-[296mm] p-10 border-t-[20px]"
+          className="shadow-lg min-h-[296mm] p-8 border-t-[15px]"
           style={{ borderColor: themeColor, backgroundColor: 'white' }}
         >
           <div>
@@ -64,7 +64,7 @@ const CVTemplate = ({ resumeInfo }) => {
 
           {/* Professional Experience Section */}
           {experience.length > 0 && (
-            <div className="my-6">
+            <div className="my-4">
               <h2
                 className="text-center font-bold text-sm mb-2"
                 style={{ color: themeColor }}
@@ -91,7 +91,7 @@ const CVTemplate = ({ resumeInfo }) => {
 
           {/* Education Section */}
           {education.length > 0 && (
-            <div className="my-6">
+            <div className="my-4">
               <h2
                 className="text-center font-bold text-sm mb-2"
                 style={{ color: themeColor }}
@@ -118,7 +118,7 @@ const CVTemplate = ({ resumeInfo }) => {
 
           {/* Skills Section */}
           {skills.length > 0 && (
-            <div className="my-6">
+            <div className="my-4">
               <h2
                 className="text-center font-bold text-sm mb-2"
                 style={{ color: themeColor }}

@@ -76,6 +76,38 @@ function Skills() {
             <h2 className='font-bold text-lg'>Skills</h2>
             <p>Add Your top professional key skills</p>
 
+            {/* Suggested Skills from JD */}
+            {(() => {
+                const missingSkills = JSON.parse(localStorage.getItem('missingSkills') || '[]');
+                if (missingSkills.length > 0) {
+                    return (
+                        <div className='my-5 p-4 bg-primary/5 rounded-lg border border-primary/20'>
+                            <h3 className='text-sm font-bold text-primary mb-2 flex items-center gap-2'>
+                                <span className='animate-pulse'>✨</span> Suggested Skills (Missing from JD)
+                            </h3>
+                            <div className='flex flex-wrap gap-2'>
+                                {missingSkills.map((skill, index) => (
+                                    <Button
+                                        key={index}
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-[10px] h-7 bg-white hover:bg-primary hover:text-white transition-all"
+                                        onClick={() => {
+                                            if (!skillsList.find(s => s.name.toLowerCase() === skill.toLowerCase())) {
+                                                setSkillsList([...skillsList, { name: skill, rating: 5 }]);
+                                            }
+                                        }}
+                                    >
+                                        + {skill}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                }
+                return null;
+            })()}
+
             <div>
                 {skillsList && skillsList.length && skillsList.map((item, index) => (
                     <div className='flex justify-between mb-2 border rounded-lg p-3 '>

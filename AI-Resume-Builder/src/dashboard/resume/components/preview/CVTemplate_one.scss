@@ -38,7 +38,7 @@
         margin: 0;
         background: #fff;
         width: 100%;
-        min-height: 296mm;
+        min-height: auto;
     }
 
     #doc2 {
@@ -48,15 +48,15 @@
     }
 
     .yui-gf {
-        margin-bottom: 2em;
-        padding-bottom: 2em;
+        margin-bottom: 1.25em;
+        padding-bottom: 1.25em;
         border-bottom: 1px solid #ccc;
     }
 
     /* //-- header, body, footer -- */
     #hd {
-        margin: 2.5em 0 3em 0;
-        padding-bottom: 1.5em;
+        margin: 1.5em 0 2em 0;
+        padding-bottom: 1em;
         border-bottom: 1px solid #ccc
     }
 
@@ -67,7 +67,7 @@
 
     #bd,
     #ft {
-        margin-bottom: 2em;
+        margin-bottom: 1.5em;
     }
 
     /* //-- footer -- */

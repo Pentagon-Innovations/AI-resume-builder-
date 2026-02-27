@@ -1,5 +1,5 @@
 import { ResumeInfoContext } from '@/context/ResumeInfoContext'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 
 import CVTemplate from './CVTemplate';
 import CVTemplate_one from './preview/CVTemplate_one';
@@ -10,7 +10,9 @@ import CVTemplate_six from './preview/CVTemplate_six';
 
 function ResumePreview() {
 
-  const { resumeInfo } = useContext(ResumeInfoContext);
+  const { resumeInfo, setIsOverflowing } = useContext(ResumeInfoContext);
+  const containerRef = useRef();
+
   useEffect(() => {
     if (resumeInfo?.templateType === 1) {
       import("./preview/CVTemplate_one.scss");
@@ -25,8 +27,29 @@ function ResumePreview() {
     }
   }, [resumeInfo?.templateType]); // Runs when templateType changes
 
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        // A4 height is approx 1122px at 96 DPI
+        const A4_HEIGHT_PX = 1122;
+        if (entry.contentRect.height > A4_HEIGHT_PX) {
+          setIsOverflowing(true);
+        } else {
+          setIsOverflowing(false);
+        }
+      }
+    });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [setIsOverflowing]);
+
   return (
     <div className='h-full'
+      ref={containerRef}
       style={{
         borderColor: resumeInfo?.themeColor
       }}>
