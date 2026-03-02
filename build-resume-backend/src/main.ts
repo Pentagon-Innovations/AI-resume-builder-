@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 let app: NestExpressApplication;
 
 async function bootstrap() {
-  console.log('--- VERCEL DEPLOYMENT BOOTSTRAP (v2) ---');
+  console.log('--- BACKEND BOOTSTRAP ---');
   if (!app) {
     app = await NestFactory.create<NestExpressApplication>(AppModule);
 
@@ -21,7 +21,7 @@ async function bootstrap() {
       const normalized = origin.toLowerCase().trim().replace(/\/+$/, '');
       const isLocal = normalized === 'http://localhost:5173' || normalized === 'http://localhost:3000';
       const isVercel = normalized.endsWith('.vercel.app');
-      const isDomain = normalized.includes('resume-builder-frontend'); // Safety match
+      const isDomain = normalized.includes('aijobmatch.ai') || normalized.includes('resume-builder-frontend'); // Added aijobmatch.ai
       return isLocal || isVercel || isDomain;
     };
 
@@ -50,10 +50,10 @@ async function bootstrap() {
     app.useStaticAssets(join(__dirname, '..', 'public'));
 
     // Only call listen if we are not in a serverless environment
-    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    if (!process.env.VERCEL) {
       const port = process.env.PORT || 3000;
       await app.listen(port);
-      console.log(`Server is running on http://localhost:${port}`);
+      console.log(`✅ Server is running on port ${port} with /api prefix`);
     } else {
       await app.init();
     }
@@ -71,7 +71,7 @@ export default async (req: any, res: any) => {
     const normalized = origin.toLowerCase().trim().replace(/\/+$/, '');
     const isLocal = normalized === 'http://localhost:5173' || normalized === 'http://localhost:3000';
     const isVercel = normalized.endsWith('.vercel.app');
-    const isDomain = normalized.includes('resume-builder-frontend'); // Safety match
+    const isDomain = normalized.includes('aijobmatch.ai') || normalized.includes('resume-builder-frontend');
     return isLocal || isVercel || isDomain;
   };
 
@@ -106,7 +106,7 @@ export default async (req: any, res: any) => {
   }
 };
 
-// Start for local development
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+// Start for local development or VPS
+if (!process.env.VERCEL) {
   bootstrap();
 }

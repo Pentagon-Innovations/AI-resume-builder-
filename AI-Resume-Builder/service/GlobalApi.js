@@ -113,11 +113,15 @@ const GetAllCandidates = () => axiosClient.get('/ats/candidates');
 
 // Analyze
 const AnalyzeResume = (data) => axiosClient.post('/analyze', data, {
-  // headers: { 'Content-Type': 'multipart/form-data' }
+  headers: {
+    'Content-Type': data instanceof FormData ? undefined : 'application/json'
+  }
 });
 const GenerateJD = (data) => axiosClient.post('/analyze/generate-jd', data);
 const ParseResume = (data) => axiosClient.post('/analyze/parse-resume', data, {
-  // headers: { 'Content-Type': 'multipart/form-data' }
+  headers: {
+    'Content-Type': data instanceof FormData ? undefined : 'application/json'
+  }
 });
 
 // Improve Resume

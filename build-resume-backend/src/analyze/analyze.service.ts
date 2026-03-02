@@ -44,6 +44,7 @@ export class AnalyzeService {
       console.log('[DEBUG] Final Resume Text Length:', resumeText?.length || 0);
       if (resumeText) {
         console.log('[DEBUG] Resume Text (Start):', resumeText.substring(0, 500));
+        console.log('[DEBUG] Resume Text (End):', resumeText.substring(resumeText.length - 200));
       }
 
       if (resumeText?.length < 50) {
@@ -74,28 +75,96 @@ export class AnalyzeService {
       }
 
       // 3. LLM AI ANALYSIS
-      console.log('Calling OpenRouter for analysis...');
+      console.log('Calling AI for analysis...');
 
       const prompt = `
-        You are an expert ATS (Applicant Tracking System) and Career Coach. 
-        Analyze the following Resume against the Job Description.
+        You are a highly advanced ATS (Applicant Tracking System) engine and Senior Technical Career Coach.
 
-        Instructions:
-        1. Be thorough and objective. Identify every missing skill and keyword.
-        2. Provide actionable, specific resume improvements.
-        3. Generate insightful interview topics and questions based on the gaps.
-        4. Calculate a granular matchScore (0-100) based on how well the candidate's experience and skills align with the JD requirements. Avoid "safe" or default numbers like 33% or 50% unless truly warranted.
-        5. Return ONLY pure JSON.
-        6. Ensure all keys defined in the structure below are present in your response, even if the array is empty.
+        Your task is to deeply analyze the provided Resume against the Job Description with strict, objective evaluation criteria.
 
-        JSON Structure:
+        CRITICAL RULES:
+        - Be precise, technical, and exhaustive.
+        - Do NOT hallucinate skills that are not explicitly present in the resume.
+        - Only consider explicitly stated skills, technologies, tools, frameworks, certifications, and quantified achievements.
+        - If a technology appears anywhere in the resume (experience, projects, or skills section), count it as present.
+        - Return ONLY valid JSON. No explanations. No markdown. No extra text.
+
+        ----------------------------------------
+        EVALUATION INSTRUCTIONS
+        ----------------------------------------
+
+        1. Technical Skill Gap Analysis
+           - Identify ALL missing required technologies.
+           - Separate clearly between:
+             a) Missing hard skills
+             b) Missing tools/platforms
+             c) Missing methodologies
+           - Be extremely strict about core stack alignment.
+
+        2. Keyword & ATS Optimization
+           - Extract high-value ATS keywords from the Job Description.
+           - Identify which important keywords are absent from the resume.
+           - Focus on exact keyword matches (e.g., "REST APIs" vs "API development").
+
+        3. Experience Alignment
+           - Evaluate:
+             - Years of experience alignment
+             - Domain alignment
+             - Seniority level match
+             - Project complexity relevance
+           - Penalize heavily if required experience level is missing.
+
+        4. Match Score Calculation (0–100)
+           Score must be calculated as follows:
+           - 50% Core Technical Stack Match
+           - 20% Supporting Tools & Ecosystem
+           - 15% Experience Level Alignment
+           - 10% Domain / Industry Relevance
+           - 5% ATS Keyword Coverage
+
+           Score Interpretation:
+           - 90–100 → Exceptional fit (near perfect technical & experience overlap)
+           - 70–89  → Strong fit (minor non-core gaps)
+           - 40–69  → Moderate fit (clear core skill gaps)
+           - 0–39   → Weak fit (minimal alignment)
+
+           IMPORTANT:
+           - If ALL essential technologies are present (even if only in skills section), score must be >= 85.
+           - If more than 50% of required core technologies are missing, score must be <= 60.
+
+        5. Resume Improvements (Actionable)
+           - Provide specific bullet rewrites.
+           - Suggest quantified impact statements.
+           - Suggest missing keywords to insert naturally.
+           - Recommend restructuring if needed.
+           - Suggest technical depth additions where weak.
+
+        6. Interview Preparation
+           - Generate targeted interview topics based ONLY on missing or weak areas.
+           - Provide challenging technical questions tied directly to the gaps.
+           - Questions should test practical, real-world knowledge.
+
+        ----------------------------------------
+        OUTPUT FORMAT (STRICT JSON ONLY)
+        ----------------------------------------
+
         {
-          "matchScore": number (0-100),
-          "missingSkills": ["skill1", "skill2"],
+          "matchScore": number,
+          "coreSkillMatchPercentage": number,
+          "experienceAlignmentScore": number,
+          "missingHardSkills": ["skill1", "skill2"],
+          "missingToolsAndPlatforms": ["tool1", "tool2"],
+          "missingMethodologies": ["methodology1"],
           "missingKeywords": ["keyword1", "keyword2"],
-          "resumeImprovements": ["improvement1", "improvement2"],
+          "resumeImprovements": [
+            "Specific rewrite suggestion 1",
+            "Specific rewrite suggestion 2"
+          ],
           "interviewTopics": ["topic1", "topic2"],
-          "interviewQuestions": ["question1", "question2"]
+          "interviewQuestions": [
+            "Technical question 1",
+            "Technical question 2"
+          ]
         }
 
         Resume:
@@ -107,104 +176,105 @@ export class AnalyzeService {
 
       let analysis: any = {
         matchScore: 0,
-        missingSkills: [],
+        coreSkillMatchPercentage: 0,
+        experienceAlignmentScore: 0,
+        missingHardSkills: [],
+        missingToolsAndPlatforms: [],
+        missingMethodologies: [],
         missingKeywords: [],
         resumeImprovements: [],
         interviewTopics: [],
-        interviewQuestions: []
+        interviewQuestions: [],
+        jdText: jd,
+        diagnostics: {
+          resumeLength: resumeText?.length || 0,
+          jdLength: jd?.length || 0,
+          hasFile: !!file,
+          fileType: file?.mimetype || 'none'
+        }
       };
 
       try {
         const raw = await this.callWithRetry(() => this.aiCall(prompt));
-        console.log('[DEBUG] OpenRouter Raw Response:', raw);
+        console.log('[DEBUG] AI Raw Response Length:', typeof raw === 'string' ? raw.length : 'Object');
 
-        if (!raw || (typeof raw === 'string' && raw.length < 5)) {
-          console.error('[ERROR] OpenRouter returned empty or invalid response');
-          throw new Error('Empty response from OpenRouter API');
+        if (!raw) {
+          console.error('[ERROR] AI returned empty or invalid response');
+          throw new Error('Empty response from AI API');
         }
 
         const cleaned = typeof raw === 'string'
           ? raw.replace(/```json/gi, '').replace(/```/g, '').trim()
           : JSON.stringify(raw);
 
-        console.log('[DEBUG] Cleaned Response (Start):', cleaned.substring(0, 200));
+        console.log('[DEBUG] AI Response (Cleaned Snippet):', cleaned.substring(0, 150));
 
-        let parsed;
+        let parsed: any;
         try {
           parsed = JSON.parse(cleaned);
         } catch (parseErr: any) {
-          // Try to extract JSON from the response if it's wrapped in text
+          console.warn('[WARNING] JSON.parse failed, trying regex match...');
           const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
-            parsed = JSON.parse(jsonMatch[0]);
+            try {
+              parsed = JSON.parse(jsonMatch[0]);
+            } catch (innerErr: any) {
+              console.error('[ERROR] Regex JSON extraction failed:', innerErr.message);
+              throw innerErr;
+            }
           } else {
             throw new Error(`Failed to parse JSON: ${parseErr.message}`);
           }
         }
 
-        console.log('[DEBUG] Parsed Analysis:', JSON.stringify(parsed, null, 2));
+        // Robust Mapping (Handles both user's high-precision keys and potential AI variations)
+        analysis.matchScore = parsed.matchScore ?? parsed.match_score ?? parsed.score ?? 0;
+        analysis.coreSkillMatchPercentage = parsed.coreSkillMatchPercentage ?? 0;
+        analysis.experienceAlignmentScore = parsed.experienceAlignmentScore ?? 0;
+        analysis.missingHardSkills = parsed.missingHardSkills ?? parsed.missingSkills ?? [];
+        analysis.missingToolsAndPlatforms = parsed.missingToolsAndPlatforms ?? [];
+        analysis.missingMethodologies = parsed.missingMethodologies ?? [];
+        analysis.missingKeywords = parsed.missingKeywords ?? [];
+        analysis.resumeImprovements = parsed.resumeImprovements ?? parsed.suggestions ?? [];
+        analysis.interviewTopics = parsed.interviewTopics ?? [];
+        analysis.interviewQuestions = parsed.interviewQuestions ?? parsed.questions ?? [];
 
-        // Robust Mapping (AI sometimes uses snake_case or slightly different names)
-        analysis.matchScore = parsed.matchScore ?? parsed.match_score ?? 0;
-        analysis.missingSkills = parsed.missingSkills ?? parsed.missing_skills ?? [];
-        analysis.missingKeywords = parsed.missingKeywords ?? parsed.missing_keywords ?? [];
-        analysis.resumeImprovements = parsed.resumeImprovements ?? parsed.resume_improvements ?? [];
-        analysis.interviewTopics = parsed.interviewTopics ?? parsed.interview_topics ?? [];
-        analysis.interviewQuestions = parsed.interviewQuestions ?? parsed.interview_questions ?? [];
-
-        // Ensure matchScore is a valid number
         analysis.matchScore = Number(analysis.matchScore);
-        if (isNaN(analysis.matchScore) || analysis.matchScore < 0) {
-          analysis.matchScore = 0;
-        }
-        if (analysis.matchScore > 100) {
-          analysis.matchScore = 100;
-        }
+        if (isNaN(analysis.matchScore) || analysis.matchScore < 0) analysis.matchScore = 0;
+        if (analysis.matchScore > 100) analysis.matchScore = 100;
 
-        console.log('[DEBUG] Final Mapped Analysis:', JSON.stringify(analysis, null, 2));
-        console.log('[DEBUG] Match Score:', analysis.matchScore);
       } catch (err: any) {
         console.error('[ANALYSIS-FLOW-ERROR]', err?.message || err);
-        console.error('[ERROR] OpenRouter Analysis Failed or Parse Error:', err);
-        console.error('[ERROR] Error Stack:', err.stack);
-        // Don't throw - return analysis with default values so user still gets some feedback
+        analysis.diagnostics.error = err.message;
+        analysis.diagnostics.stage = 'AI_ANALYSIS_BLOCK';
       }
 
       // 4. Advanced Embedding-based Matching
-      console.log('Calculating embedding similarity...');
+      console.log('Calculating TF-IDF similarity...');
       try {
-        const embeddingScore = await this.calculateSimilarity(resumeText, jd);
-        console.log('Embedding Score:', embeddingScore);
+        const tfidfScore = await this.calculateSimilarity(resumeText, jd);
+        console.log('TF-IDF Score:', tfidfScore);
 
-        if (!isNaN(embeddingScore) && embeddingScore > 0) {
-          // Blend the scores (e.g., 70% LLM, 30% Embedding) - increased LLM weight
+        if (!isNaN(tfidfScore) && tfidfScore > 0) {
           const llmScore = Number(analysis.matchScore) || 0;
-          if (llmScore > 0) {
-            analysis.matchScore = Math.round((llmScore * 0.7) + (embeddingScore * 100 * 0.3));
-            console.log(`[DEBUG] Blended score - LLM: ${llmScore}, Embedding: ${embeddingScore}, Final: ${analysis.matchScore}`);
+          if (llmScore > 95) {
+            // If LLM says it's nearly perfect, trust it fully to allow for 100%
+            analysis.matchScore = llmScore;
+          } else if (llmScore > 0) {
+            // Increased LLM weight to 85% as LLM is generally better at context than pure TF-IDF
+            analysis.matchScore = Math.round((llmScore * 0.85) + (tfidfScore * 100 * 0.15));
+            console.log(`[DEBUG] Blended score - LLM: ${llmScore}, TF-IDF: ${tfidfScore}, Final: ${analysis.matchScore}`);
           } else {
-            // If LLM score is 0, use embedding score as fallback
-            analysis.matchScore = Math.round(embeddingScore * 100);
-            console.log(`[DEBUG] Using embedding score as fallback: ${analysis.matchScore}`);
+            analysis.matchScore = Math.round(tfidfScore * 100);
           }
-        } else {
-          console.warn('[DEBUG] Embedding score invalid or 0, using LLM score only');
         }
       } catch (e) {
-        console.error('Embedding calculation failed:', e);
-        // Continue with LLM score only
+        console.error('TF-IDF calculation failed:', e);
       }
 
-      // Final Check - ensure we have a valid score
-      if (isNaN(analysis.matchScore) || analysis.matchScore < 0) {
-        console.warn('[WARNING] Invalid matchScore, defaulting to 0');
-        analysis.matchScore = 0;
-      }
-      if (analysis.matchScore > 100) {
-        analysis.matchScore = 100;
-      }
-
-      console.log('[DEBUG] Final matchScore after all processing:', analysis.matchScore);
+      // Ensure final score is valid
+      analysis.matchScore = Math.max(0, Math.min(100, Math.round(analysis.matchScore)));
+      console.log('[DEBUG] Final matchScore:', analysis.matchScore);
 
       // 5. High Match Score Logic (>80%)
       if (analysis.matchScore > 80) {
@@ -334,17 +404,26 @@ export class AnalyzeService {
     }
   }
 
-  // Extract text using pdfreader
+  // Extract text using pdf-parse (Generally more robust than pdfreader)
   private async extractTextFromPDF(buffer: Buffer): Promise<string> {
-    const { PdfReader } = require('pdfreader');
-    return new Promise((resolve, reject) => {
-      let finalText = '';
-      new PdfReader().parseBuffer(buffer, (err, item) => {
-        if (err) reject(err);
-        else if (!item) resolve(finalText);
-        else if (item.text) finalText += item.text + ' ';
+    const pdf = require('pdf-parse');
+    try {
+      const data = await pdf(buffer);
+      console.log('[AnalyzeService] PDF extracted successfully, length:', data.text?.length || 0);
+      return data.text || '';
+    } catch (err: any) {
+      console.error('[AnalyzeService] PDF extraction error:', err.message);
+      // Fallback to pdfreader
+      const { PdfReader } = require('pdfreader');
+      return new Promise((resolve, reject) => {
+        let finalText = '';
+        new PdfReader().parseBuffer(buffer, (err2, item) => {
+          if (err2) reject(err2);
+          else if (!item) resolve(finalText);
+          else if (item.text) finalText += item.text + ' ';
+        });
       });
-    });
+    }
   }
 
   // 🌟 AUTO-DETECT platform & scrape accordingly

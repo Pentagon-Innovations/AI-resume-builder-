@@ -96,41 +96,41 @@ function PersonalDetail({ enabledNext }) {
             <form onSubmit={onSave}>
                 <div className='grid grid-cols-2 mt-5 gap-3'>
                     <div>
-                        <label className='text-sm'>First Name</label>
-                        <Input name="firstName" value={resumeInfo?.firstName || ''} required onChange={handleInputChange} />
+                        <label htmlFor="firstName" className='text-sm'>First Name</label>
+                        <Input id="firstName" name="firstName" autoComplete="given-name" value={resumeInfo?.firstName || ''} required onChange={handleInputChange} />
                     </div>
                     <div>
-                        <label className='text-sm'>Last Name</label>
-                        <Input name="lastName" required onChange={handleInputChange}
+                        <label htmlFor="lastName" className='text-sm'>Last Name</label>
+                        <Input id="lastName" name="lastName" autoComplete="family-name" required onChange={handleInputChange}
                             value={resumeInfo?.lastName || ''} />
                     </div>
                     <div className='col-span-2'>
-                        <label className='text-sm'>Job Title</label>
-                        <Input name="jobTitle" required
+                        <label htmlFor="jobTitle" className='text-sm'>Job Title</label>
+                        <Input id="jobTitle" name="jobTitle" autoComplete="organization-title" required
                             value={resumeInfo?.jobTitle || ''}
                             onChange={handleInputChange} />
                     </div>
                     <div className='col-span-2'>
-                        <label className='text-sm'>Address</label>
-                        <Input name="address" required
+                        <label htmlFor="address" className='text-sm'>Address</label>
+                        <Input id="address" name="address" autoComplete="street-address" required
                             value={resumeInfo?.address || ''}
                             onChange={handleInputChange} />
                     </div>
                     <div>
-                        <label className='text-sm'>Phone</label>
-                        <Input name="phone" required
+                        <label htmlFor="phone" className='text-sm'>Phone</label>
+                        <Input id="phone" name="phone" autoComplete="tel" required
                             value={resumeInfo?.phone || ''}
                             onChange={handleInputChange} />
                     </div>
                     <div>
-                        <label className='text-sm'>Email</label>
-                        <Input name="email" required
+                        <label htmlFor="email" className='text-sm'>Email</label>
+                        <Input id="email" name="email" autoComplete="email" required
                             value={resumeInfo?.email || ''}
                             onChange={handleInputChange} />
                     </div>
                     <div className='col-span-2'>
-                        <label className='text-sm'>Profile Photo</label>
-                        <Input type="file" name="profilePhoto" onChange={handleFileChange} accept="image/*" />
+                        <label htmlFor="profilePhoto" className='text-sm'>Profile Photo</label>
+                        <Input id="profilePhoto" type="file" name="profilePhoto" onChange={handleFileChange} accept="image/*" />
                     </div>
                 </div>
                 <div className='mt-3 flex justify-end'>

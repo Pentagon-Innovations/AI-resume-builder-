@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import GlobalApi from 'service/GlobalApi';
 import { toast } from "sonner";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatDateForInput } from "@/lib/utils";
 
 function Education() {
   const [loading, setLoading] = useState(false);
@@ -91,49 +91,54 @@ function Education() {
             <div>
               <div className="grid grid-cols-2 gap-3 border p-3 my-5 rounded-lg">
                 <div className="col-span-2">
-                  <label>University Name</label>
+                  <label htmlFor={'universityName-' + index}>University Name</label>
                   <Input
+                    id={'universityName-' + index}
                     name="universityName"
                     onChange={(e) => handleChange(e, index)}
                     value={item?.universityName || ''}
                   />
                 </div>
                 <div>
-                  <label>Degree</label>
+                  <label htmlFor={'degree-' + index}>Degree</label>
                   <Input
+                    id={'degree-' + index}
                     name="degree"
                     onChange={(e) => handleChange(e, index)}
                     value={item?.degree || ''}
                   />
                 </div>
                 <div>
-                  <label>Major</label>
+                  <label htmlFor={'major-' + index}>Major</label>
                   <Input
+                    id={'major-' + index}
                     name="major"
                     onChange={(e) => handleChange(e, index)}
                     value={item?.major || ''}
                   />
                 </div>
                 <div>
-                  <label>Start Date</label>
+                  <label htmlFor={'startDate-' + index}>Start Date</label>
                   <Input
+                    id={'startDate-' + index}
                     type="date"
                     name="startDate"
                     onChange={(e) => handleChange(e, index)}
-                    value={formatDate(item?.startDate)}
+                    value={formatDateForInput(item?.startDate)}
                   />
                 </div>
                 <div>
-                  <label>End Date</label>
+                  <label htmlFor={'endDate-' + index}>End Date</label>
                   <Input
+                    id={'endDate-' + index}
                     type="date"
                     name="endDate"
                     disabled={item?.currentlyWorking}
                     onChange={(e) => handleChange(e, index)}
-                    value={item?.currentlyWorking ? '' : formatDate(item?.endDate)}
+                    value={item?.currentlyWorking ? '' : formatDateForInput(item?.endDate)}
                   />
                   <div className="flex items-center gap-2 mt-2">
-                    <input type="checkbox"
+                    <input id={'currentlyStudying-' + index} type="checkbox"
                       name="currentlyWorking"
                       checked={item?.currentlyWorking || false}
                       onChange={(e) => {
@@ -143,12 +148,13 @@ function Education() {
                         setEducationalList(newEntries);
                       }}
                     />
-                    <label className="text-xs">Currently Studying</label>
+                    <label htmlFor={'currentlyStudying-' + index} className="text-xs">Currently Studying</label>
                   </div>
                 </div>
                 <div className="col-span-2">
-                  <label>Description</label>
+                  <label htmlFor={'description-' + index}>Description</label>
                   <Textarea
+                    id={'description-' + index}
                     name="description"
                     onChange={(e) => handleChange(e, index)}
                     value={item?.description || ''}

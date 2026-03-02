@@ -1,11 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import GlobalApi from "service/GlobalApi";
 
 export default function AnalysisResult({ result, selectedresume }) {
+  const navigate = useNavigate();
   const [tab, setTab] = useState("skills");
   const [isImprovingAll, setIsImprovingAll] = useState(false);
+
+  // Use state to allow removing skills/keywords
+  const [hardSkills, setHardSkills] = useState(result?.missingHardSkills || []);
+  const [tools, setTools] = useState(result?.missingToolsAndPlatforms || []);
+  const [methodologies, setMethodologies] = useState(result?.missingMethodologies || []);
+  const [keywords, setKeywords] = useState(result?.missingKeywords || []);
+
+  const removeSkill = (index) => {
+    setSkills(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeKeyword = (index) => {
+    setKeywords(prev => prev.filter((_, i) => i !== index));
+  };
 
   // ⭐ Score-based configuration
   const getScoreConfig = (score) => {
@@ -60,9 +76,12 @@ export default function AnalysisResult({ result, selectedresume }) {
     setIsImprovingAll(true);
     const formData = new FormData();
     formData.append("resume", selectedresume);
-    formData.append("jobDescription", result?.jdText || ""); // Ensure JD text is passed
-    formData.append("missingSkills", JSON.stringify(result?.missingSkills || []));
-    formData.append("missingKeywords", JSON.stringify(result?.missingKeywords || []));
+    formData.append("jobDescription", result?.jdText || "");
+
+    // Combine all missing skills for the improvement logic
+    const allSkills = [...hardSkills, ...tools, ...methodologies];
+    formData.append("missingSkills", JSON.stringify(allSkills));
+    formData.append("missingKeywords", JSON.stringify(keywords));
 
     try {
       const resp = await GlobalApi.FullAutoImprove(formData);
@@ -71,8 +90,8 @@ export default function AnalysisResult({ result, selectedresume }) {
       console.log("Improved Resume Data:", improvedData);
 
       localStorage.setItem("parsedResume", JSON.stringify(improvedData));
-      localStorage.setItem("missingSkills", JSON.stringify(result?.missingSkills || []));
-      window.location.href = "/dashboard";
+      localStorage.setItem("missingSkills", JSON.stringify([...hardSkills, ...tools, ...methodologies])); // Save refined list
+      navigate("/dashboard");
     } catch (err) {
       console.error("Improve resume error:", err);
       const msg = err.response?.data?.message || "Failed to improve resume automatically.";
@@ -83,8 +102,10 @@ export default function AnalysisResult({ result, selectedresume }) {
   };
 
   const displayData = {
-    skills: result?.missingSkills || [],
-    keywords: result?.missingKeywords || [],
+    hardSkills: hardSkills,
+    tools: tools,
+    methodologies: methodologies,
+    keywords: keywords,
     improve: [...(result?.resumeImprovements || result?.suggestions || []), ...(result?.reach100Improvements || [])],
     topics: result?.interviewTopics || [],
     questions: result?.interviewQuestions || [],
@@ -211,15 +232,61 @@ export default function AnalysisResult({ result, selectedresume }) {
       {/* Interactive Content Area */}
       <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100 shadow-inner min-h-[300px]">
         {tab === "skills" && (
-          <div className="flex flex-wrap gap-3">
-            {displayData.skills.length > 0 ? displayData.skills.map((skill, i) => (
-              <span
-                key={i}
-                className="bg-white text-red-700 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-wider shadow-sm border border-red-100 hover:border-red-300 transition-colors"
-              >
-                {skill}
-              </span>
-            )) : <p className="text-gray-400 text-sm italic font-medium">No missing skills found.</p>}
+          <div className="flex flex-col gap-8">
+            {/* Hard Skills Section */}
+            {displayData.hardSkills.length > 0 && (
+              <div>
+                <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-[1px] bg-gray-200" /> Hard Skills
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {displayData.hardSkills.map((skill, i) => (
+                    <span key={i} className="bg-white text-red-700 px-4 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-wider shadow-sm border border-red-50 hover:border-red-200 transition-all flex items-center gap-2">
+                      {skill}
+                      <button onClick={() => setHardSkills(prev => prev.filter((_, idx) => idx !== i))} className="text-red-300 hover:text-red-600">×</button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tools & Platforms Section */}
+            {displayData.tools.length > 0 && (
+              <div>
+                <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-[1px] bg-gray-200" /> Tools & Platforms
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {displayData.tools.map((tool, i) => (
+                    <span key={i} className="bg-white text-indigo-700 px-4 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-wider shadow-sm border border-indigo-50 hover:border-indigo-200 transition-all flex items-center gap-2">
+                      {tool}
+                      <button onClick={() => setTools(prev => prev.filter((_, idx) => idx !== i))} className="text-indigo-300 hover:text-indigo-600">×</button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Methodologies Section */}
+            {displayData.methodologies.length > 0 && (
+              <div>
+                <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-[1px] bg-gray-200" /> Methodologies
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {displayData.methodologies.map((m, i) => (
+                    <span key={i} className="bg-white text-emerald-700 px-4 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-wider shadow-sm border border-emerald-50 hover:border-emerald-200 transition-all flex items-center gap-2">
+                      {m}
+                      <button onClick={() => setMethodologies(prev => prev.filter((_, idx) => idx !== i))} className="text-emerald-300 hover:text-emerald-600">×</button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {displayData.hardSkills.length === 0 && displayData.tools.length === 0 && displayData.methodologies.length === 0 && (
+              <p className="text-gray-400 text-sm italic font-medium">No missing items identified.</p>
+            )}
           </div>
         )}
 
@@ -228,9 +295,16 @@ export default function AnalysisResult({ result, selectedresume }) {
             {displayData.keywords.length > 0 ? displayData.keywords.map((kw, i) => (
               <div
                 key={i}
-                className="bg-white border-l-4 border-yellow-500 p-5 text-sm font-semibold text-gray-700 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white border-l-4 border-yellow-500 p-5 text-sm font-semibold text-gray-700 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex justify-between items-center group"
               >
-                {kw}
+                <span>{kw}</span>
+                <button
+                  onClick={() => removeKeyword(i)}
+                  className="w-5 h-5 rounded-md bg-gray-50 text-gray-400 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 transition-all"
+                  title="Dismiss keyword"
+                >
+                  ×
+                </button>
               </div>
             )) : <p className="text-gray-400 text-sm italic font-medium">No missing keywords found.</p>}
           </div>

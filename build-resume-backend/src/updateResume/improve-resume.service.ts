@@ -126,19 +126,57 @@ export class ImproveResumeService {
       }
 
       const prompt = `
-        Transform this resume text into optimized JSON. 
+        You are an expert resume optimizer. Your goal is to transform the provided resume text into a high-quality JSON format that matches the Job Description as closely as possible.
+
         Job Description: ${jdText}
-        Missing Skills: ${missingSkills.join(', ')}
+        Missing Skills to Integrate: ${missingSkills.join(', ')}
+        Missing Keywords to Integrate: ${missingKeywords.join(', ')}
         
-        Resume: ${resumeText}
+        Resume Text: 
+        ${resumeText}
+
+        Instructions:
+        1. **Core Responsibility**: Your ABSOLUTE goal is to make this resume a 100% PERFECT MATCH for the Job Description.
+        2. **Integration**: Integrate EVERY SINGLE ONE of the 'Missing Skills' and 'Missing Keywords' naturally but prominently into the professional experience (description) and the skills section.
+        3. **Experience**: Rewrite and enhance existing bullet points to demonstrate the missing skills. Use powerful action verbs and quantify achievements. Every bullet point should feel like it was written for this specific job.
+        4. **Formatting**: The 'description' field MUST be a valid HTML string using <ul> and <li> tags.
+        5. **Strict JSON**: Return ONLY pure JSON matching the schema below. No conversational filler.
+        6. **Authenticity**: Maintain the candidate's actual history, but optimize the *description* of their work to align perfectly with the JD.
 
         Schema:
         {
-          "firstName": "", "lastName": "", "email": "", "phone": "", "address": "", "jobTitle": "",
-          "summery": "",
-          "experience": [{ "title": "", "companyName": "", "city": "", "state": "", "startDate": "", "endDate": "", "currentlyWorking": false, "workSummery": "HTML list" }],
-          "education": [{ "universityName": "", "degree": "", "major": "", "startDate": "", "endDate": "", "description": "" }],
-          "skills": [{ "name": "", "rating": 5 }]
+          "firstName": "string",
+          "lastName": "string",
+          "email": "string",
+          "phone": "string",
+          "address": "string",
+          "jobTitle": "Target role or current role",
+          "summery": "Professional summary optimized for the JD",
+          "experience": [
+            {
+              "title": "string",
+              "companyName": "string",
+              "city": "string",
+              "state": "string",
+              "startDate": "string",
+              "endDate": "string",
+              "currentlyWorking": boolean,
+              "description": "<ul><li>bullet 1</li><li>bullet 2</li></ul>"
+            }
+          ],
+          "education": [
+            {
+              "universityName": "string",
+              "degree": "string",
+              "major": "string",
+              "startDate": "string",
+              "endDate": "string",
+              "description": "string"
+            }
+          ],
+          "skills": [
+            { "name": "Skill Name", "rating": 5 }
+          ]
         }
       `;
 
@@ -166,8 +204,8 @@ export class ImproveResumeService {
       // Normalize experience data
       if (parsedData.experience) {
         parsedData.experience.forEach((exp: any) => {
-          if (Array.isArray(exp.workSummery)) {
-            exp.workSummery = '<ul>' + exp.workSummery.map(d => `<li>${d}</li>`).join('') + '</ul>';
+          if (Array.isArray(exp.description)) {
+            exp.description = '<ul>' + exp.description.map(d => `<li>${d}</li>`).join('') + '</ul>';
           }
         });
       }
@@ -217,7 +255,7 @@ export class ImproveResumeService {
         {
           "firstName": "", "lastName": "", "email": "", "phone": "", "address": "", "jobTitle": "",
           "summery": "",
-          "experience": [{ "title": "", "companyName": "", "city": "", "state": "", "startDate": "", "endDate": "", "currentlyWorking": false, "workSummery": "HTML list" }],
+          "experience": [{ "title": "", "companyName": "", "city": "", "state": "", "startDate": "", "endDate": "", "currentlyWorking": false, "description": "HTML list" }],
           "education": [{ "universityName": "", "degree": "", "major": "", "startDate": "", "endDate": "", "description": "" }],
           "skills": [{ "name": "", "rating": 5 }]
         }

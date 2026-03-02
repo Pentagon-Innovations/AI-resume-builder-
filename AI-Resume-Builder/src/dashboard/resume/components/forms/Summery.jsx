@@ -123,7 +123,7 @@ function Summery({ enabledNext }) {
 
         <form className='mt-7' onSubmit={onSave}>
           <div className='flex justify-between items-end'>
-            <label>Add Summery</label>
+            <label htmlFor="summary">Add Summery</label>
             <div className='flex gap-2'>
               <Button variant="outline" onClick={() => improveSummaryWithAI()}
                 disabled={isImproving}
@@ -137,7 +137,7 @@ function Summery({ enabledNext }) {
               </Button>
             </div>
           </div>
-          <Textarea className="mt-5" required
+          <Textarea id="summary" name="summary" className="mt-5" required
             value={summery || ''}
             onChange={(e) => setSummery(e.target.value)}
           />

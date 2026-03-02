@@ -1,5 +1,5 @@
 import { Injectable, StreamableFile, BadRequestException } from '@nestjs/common';
-import puppeteer from 'puppeteer-core';
+import puppeteer from 'puppeteer';
 // @ts-ignore - @sparticuz/chromium may not have type definitions
 import chromium from '@sparticuz/chromium';
 import { setTimeout } from 'node:timers/promises';
@@ -87,52 +87,60 @@ export class PdfService {
       const htmlContent = compileTemplate(resume);
       console.log('✅ HTML content generated');
 
-      // Launch Puppeteer with Vercel-optimized settings
-      console.log('🚀 Launching Puppeteer...');
+      // Use bundled Chromium if on Vercel or explicitly requested
+      const useBundled = !!process.env.VERCEL || process.env.USE_BUNDLED_CHROMIUM === 'true';
+      const wsEndpoint = process.env.PUPPETEER_WS_ENDPOINT;
 
-      const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
-      console.log(`🔍 Environment: ${isProduction ? 'Production/Vercel' : 'Local'}, Node version: ${process.version}`);
+      console.log(`🔍 Environment: ${useBundled ? 'Bundled Chromium' : wsEndpoint ? 'Remote Browser' : 'Standard Puppeteer'}`);
 
       let executablePath: string | undefined;
-      let launchArgs: string[];
+      let launchArgs: string[] = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+      ];
 
-      if (isProduction) {
+      if (wsEndpoint) {
+        console.log(`🔍 Connecting to remote browser: ${wsEndpoint}`);
+        browser = await puppeteer.connect({
+          browserWSEndpoint: wsEndpoint,
+          defaultViewport: chromium.defaultViewport,
+        });
+      } else if (useBundled) {
         try {
           executablePath = await chromium.executablePath();
-
-          // Optimized args for Vercel/AWS Lambda
-          launchArgs = [
-            ...chromium.args,
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-gpu',
-            '--disable-software-rasterizer',
-            '--disable-extensions',
-          ];
-          console.log(`🔍 Using serverless Chromium for Vercel`);
-          console.log('🔍 Executable path:', executablePath);
-          console.log(`🔍 Chromium args: ${JSON.stringify(launchArgs)}`);
+          launchArgs = [...chromium.args, ...launchArgs];
+          console.log(`🔍 Using bundled Chromium (@sparticuz/chromium)`);
         } catch (chromiumError) {
           console.error('❌ Failed to get Chromium executable:', chromiumError);
-          throw new BadRequestException('PDF generation service unavailable. Please try again later.');
+          if (!!process.env.VERCEL) {
+            throw new BadRequestException('PDF generation service unavailable on Vercel.');
+          }
+        }
+
+        if (executablePath) {
+          browser = await puppeteer.launch({
+            args: launchArgs,
+            defaultViewport: chromium.defaultViewport,
+            executablePath,
+            headless: true,
+          } as any);
+        } else {
+          console.warn('⚠️ Bundled Chromium path not found, falling back to standard launch');
+          browser = await puppeteer.launch({
+            args: launchArgs,
+            headless: true,
+          });
         }
       } else {
-        // Local development - use system Chrome or specified path
-        executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || undefined;
-        launchArgs = [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-        ];
-        console.log('🔍 Using local Chrome/Chromium');
+        // Self-hosted (CloudPanel/VPS) - let puppeteer find its own chrome
+        console.log(`🔍 Using standard Puppeteer launch`);
+        browser = await puppeteer.launch({
+          args: launchArgs,
+          headless: true,
+        });
       }
-
-      browser = await puppeteer.launch({
-        args: launchArgs,
-        defaultViewport: isProduction ? chromium.defaultViewport : { width: 1280, height: 720 },
-        executablePath,
-        headless: isProduction ? chromium.headless : true,
-      } as any);
       console.log('✅ Puppeteer launched');
 
       const page = await browser.newPage();
@@ -167,8 +175,8 @@ export class PdfService {
         format: 'A4',
         printBackground: true,
         preferCSSPageSize: true,
-        margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' },
-        scale: 0.95, // Slight scale down to ensure content fits better on one page
+        margin: { top: '5mm', right: '5mm', bottom: '5mm', left: '5mm' }, // Slightly tighter margins
+        scale: 0.98, // Increased scale for better readability, but still safe
       });
 
       console.log(`✅ PDF generated successfully (${pdfBuffer.length} bytes)`);

@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import GlobalApi from 'service/GlobalApi'
 import { toast } from 'sonner'
 import { HiArrowPath } from "react-icons/hi2"
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatDateForInput } from '@/lib/utils'
 
 const formField = {
     title: '',
@@ -99,47 +99,47 @@ function Experience() {
                         <div key={index}>
                             <div className='grid grid-cols-2 gap-3 border p-3 my-5 rounded-lg'>
                                 <div>
-                                    <label className='text-xs'>Position Title</label>
-                                    <Input name="title"
+                                    <label htmlFor={'title-' + index} className='text-xs'>Position Title</label>
+                                    <Input id={'title-' + index} name="title" autoComplete="organization-title"
                                         onChange={(event) => handleChange(index, event)}
                                         value={item?.title || ''}
                                     />
                                 </div>
                                 <div>
-                                    <label className='text-xs'>Company Name</label>
-                                    <Input name="companyName"
+                                    <label htmlFor={'companyName-' + index} className='text-xs'>Company Name</label>
+                                    <Input id={'companyName-' + index} name="companyName" autoComplete="organization"
                                         onChange={(event) => handleChange(index, event)}
                                         value={item?.companyName || ''} />
                                 </div>
                                 <div>
-                                    <label className='text-xs'>City</label>
-                                    <Input name="city"
+                                    <label htmlFor={'city-' + index} className='text-xs'>City</label>
+                                    <Input id={'city-' + index} name="city" autoComplete="address-level2"
                                         onChange={(event) => handleChange(index, event)}
                                         value={item?.city || ''} />
                                 </div>
                                 <div>
-                                    <label className='text-xs'>State</label>
-                                    <Input name="state"
+                                    <label htmlFor={'state-' + index} className='text-xs'>State</label>
+                                    <Input id={'state-' + index} name="state" autoComplete="address-level1"
                                         onChange={(event) => handleChange(index, event)}
                                         value={item?.state || ''}
                                     />
                                 </div>
                                 <div>
-                                    <label className='text-xs'>Start Date</label>
-                                    <Input type="date"
+                                    <label htmlFor={'startDate-' + index} className='text-xs'>Start Date</label>
+                                    <Input id={'startDate-' + index} type="date"
                                         name="startDate"
                                         onChange={(event) => handleChange(index, event)}
-                                        value={formatDate(item?.startDate)} />
+                                        value={formatDateForInput(item?.startDate)} />
                                 </div>
                                 <div>
-                                    <label className='text-xs'>End Date</label>
-                                    <Input type="date" name="endDate"
+                                    <label htmlFor={'endDate-' + index} className='text-xs'>End Date</label>
+                                    <Input id={'endDate-' + index} type="date" name="endDate"
                                         disabled={item?.currentlyWorking}
                                         onChange={(event) => handleChange(index, event)}
-                                        value={item?.currentlyWorking ? '' : formatDate(item?.endDate)}
+                                        value={item?.currentlyWorking ? '' : formatDateForInput(item?.endDate)}
                                     />
                                     <div className="flex items-center gap-2 mt-2">
-                                        <input type="checkbox"
+                                        <input id={'currentlyWorking-' + index} type="checkbox"
                                             name="currentlyWorking"
                                             checked={item?.currentlyWorking || false}
                                             onChange={(e) => {
@@ -149,7 +149,7 @@ function Experience() {
                                                 setExperinceList(newEntries);
                                             }}
                                         />
-                                        <label className="text-xs">Currently Working</label>
+                                        <label htmlFor={'currentlyWorking-' + index} className="text-xs">Currently Working</label>
                                     </div>
                                 </div>
                                 <div className='col-span-2'>

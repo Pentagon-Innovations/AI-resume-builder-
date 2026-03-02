@@ -23,12 +23,9 @@
 
         .resume {
             width: 100%;
-            max-width: 100%;
             display: grid;
-            grid-template-columns: 30% 70%;
+            grid-template-columns: 32% 68%;
             background: #fff;
-            min-height: 296mm;
-            /* A4 height approx */
         }
 
         .left-column {
@@ -70,7 +67,7 @@
 
         .right-column h3 {
             color: #2c3e50;
-            border-bottom: 1px solid #eee;
+            border-bottom: 2px solid #eee;
         }
 
         .section {
@@ -120,10 +117,10 @@
             </div>
             <div class="section">
                 <h3>Work Experience</h3>
-                {{#each Experience}}
+                {{#each experience}}
                 <h4>{{title}} | {{companyName}}</h4>
                 <p>{{formatDate startDate}} - {{formatDate endDate}}</p>
-                {{{workSummery}}}
+                {{{description}}}
                 {{/each}}
             </div>
             <div class="section">

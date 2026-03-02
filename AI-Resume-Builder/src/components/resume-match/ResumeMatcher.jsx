@@ -120,6 +120,8 @@ export default function ResumeMatcher() {
           >
             <input
               type="file"
+              id="resume-upload"
+              name="resume"
               accept=".pdf,.doc,.docx"
               className="hidden"
               ref={fileInputRef}
@@ -134,9 +136,11 @@ export default function ResumeMatcher() {
             <div className="text-xs text-gray-400 mt-1 uppercase">PDF or DOCX only</div>
             {file && <div className="mt-4 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-semibold">Selected: {file.name}</div>}
 
-            <label className="mt-5 inline-flex items-center text-sm cursor-pointer group">
+            <label htmlFor="use-local-file" className="mt-5 inline-flex items-center text-sm cursor-pointer group">
               <input
                 type="checkbox"
+                id="use-local-file"
+                name="useLocalFile"
                 className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2 cursor-pointer"
                 checked={useLocalFile}
                 onChange={(e) => setUseLocalFile(e.target.checked)}
@@ -163,6 +167,8 @@ export default function ResumeMatcher() {
           <p className="text-xs text-gray-500 mb-4">Paste the LinkedIn job URL or full job description text below.</p>
 
           <textarea
+            id="job-description"
+            name="jobDescription"
             value={jdText}
             onChange={(e) => setJdText(e.target.value)}
             placeholder="Paste Job URL or Job Description here..."

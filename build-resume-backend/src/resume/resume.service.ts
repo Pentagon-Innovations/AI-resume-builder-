@@ -71,6 +71,11 @@ export class ResumeService {
     if (!data.title) {
       data.title = 'Untitled Resume';
     }
+    // Handle summary misspelling normalization
+    if (data.summary && !data.summery) {
+      data.summery = data.summary;
+      delete data.summary;
+    }
     if (data.firstName) data.firstName = data.firstName.trim();
     if (data.lastName) data.lastName = data.lastName.trim();
 

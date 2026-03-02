@@ -4,7 +4,7 @@ import { Rating } from '@smastrom/react-rating'
 
 import '@smastrom/react-rating/style.css'
 import { Button } from '@/components/ui/button'
-import { HiArrowPath } from "react-icons/hi2"
+import { HiArrowPath, HiTrash } from "react-icons/hi2"
 import { ResumeInfoContext } from '@/context/ResumeInfoContext'
 import GlobalApi from 'service/GlobalApi'
 import { useParams } from 'react-router-dom'
@@ -34,8 +34,9 @@ function Skills() {
             rating: 0
         }])
     }
-    const RemoveSkills = () => {
-        setSkillsList(skillsList => skillsList.slice(0, -1))
+    const RemoveSkill = (index) => {
+        const newEntries = skillsList.filter((_, i) => i !== index);
+        setSkillsList(newEntries);
     }
 
     const onSave = () => {
@@ -112,13 +113,19 @@ function Skills() {
                 {skillsList && skillsList.length && skillsList.map((item, index) => (
                     <div className='flex justify-between mb-2 border rounded-lg p-3 '>
                         <div>
-                            <label className='text-xs'>Name</label>
-                            <Input className="w-full"
+                            <label htmlFor={'skillName-' + index} className='text-xs'>Name</label>
+                            <Input id={'skillName-' + index} name="skillName" className="w-full"
                                 value={item.name || ''}
                                 onChange={(e) => handleChange(index, 'name', e.target.value)} />
                         </div>
-                        <Rating style={{ maxWidth: 120 }} value={item.rating}
-                            onChange={(v) => handleChange(index, 'rating', v)} />
+                        <div className='flex flex-col items-center justify-center gap-2'>
+                            <Rating style={{ maxWidth: 120 }} value={item.rating}
+                                onChange={(v) => handleChange(index, 'rating', v)} />
+                            <HiTrash
+                                className='h-5 w-5 text-red-500 cursor-pointer hover:scale-110 transition-all'
+                                onClick={() => RemoveSkill(index)}
+                            />
+                        </div>
 
                     </div>
                 ))}
@@ -126,8 +133,6 @@ function Skills() {
             <div className='flex justify-between'>
                 <div className='flex gap-2'>
                     <Button variant="outline" onClick={AddNewSkills} className="text-primary"> + Add More Skill</Button>
-                    <Button variant="outline" onClick={RemoveSkills} className="text-primary"> - Remove</Button>
-
                 </div>
                 <Button disabled={loading} onClick={() => onSave()}>
                     {loading ? <HiArrowPath className='animate-spin' /> : 'Save'}

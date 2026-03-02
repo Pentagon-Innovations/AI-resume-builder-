@@ -15,17 +15,14 @@ function AuthCallback() {
         const lastName = searchParams.get('lastName');
 
         if (token) {
-            // Ideally we'd fetch the user profile here too if not sent in URL
-            // For now, we'll assume the basic token allows entry, and the next API call will fetch data if needed
-            // Or we could pass 'user' as a base64 string in URL, but let's stick to token for now
-
-            // Setting a placeholder user or fetching it
             const userData = { email, firstName, lastName };
-
             login(userData, token, refreshToken);
-            navigate('/dashboard');
+
+            // Clean the URL and replace in history to prevent back-button loops
+            window.history.replaceState({}, document.title, window.location.pathname);
+            navigate('/dashboard', { replace: true });
         } else {
-            navigate('/auth/sign-in');
+            navigate('/auth/sign-in', { replace: true });
         }
     }, [searchParams, login, navigate]);
 
